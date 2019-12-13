@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hasskit/helper/GeneralData.dart';
 import 'package:hasskit/helper/ThemeInfo.dart';
 
-class DeviceTypeHeaderEdit extends StatelessWidget {
+class SliverHeaderEdit extends StatelessWidget {
   final Icon icon;
   final String title;
-  const DeviceTypeHeaderEdit({@required this.icon, @required this.title});
+  const SliverHeaderEdit({@required this.icon, @required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +36,10 @@ class DeviceTypeHeaderEdit extends StatelessWidget {
   }
 }
 
-class DeviceTypeHeaderEditNormal extends StatelessWidget {
+class SliverHeaderNormal extends StatelessWidget {
   final Icon icon;
   final String title;
-  const DeviceTypeHeaderEditNormal({@required this.icon, @required this.title});
+  const SliverHeaderNormal({@required this.icon, @required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -51,18 +51,12 @@ class DeviceTypeHeaderEditNormal extends StatelessWidget {
               FocusScope.of(context).requestFocus(new FocusNode());
             },
             child: Stack(
-              alignment: Alignment.bottomCenter,
+              alignment: Alignment.centerLeft,
               children: <Widget>[
-//                Column(
-//                  children: <Widget>[
-//                    Container(
-//                      height: 5,
-//                      color: Colors.red,
-//                    ),
-//                    Container(height: 5),
-//                  ],
-//                ),
                 Container(
+                  margin: EdgeInsets.fromLTRB(30, 0, 12, 0),
+                  height: 1,
+                  width: gd.mediaQueryWidth - 32,
                   padding: icon.icon == Icons.looks_one ||
                           icon.icon == Icons.looks_two ||
                           icon.icon == Icons.looks_3 ||
@@ -74,25 +68,27 @@ class DeviceTypeHeaderEditNormal extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.topRight,
                         colors: [
-                          ThemeInfo.colorBottomSheet.withOpacity(0.4),
-                          ThemeInfo.colorBottomSheet.withOpacity(0.8),
-                          ThemeInfo.colorBottomSheet.withOpacity(0.7),
-                          ThemeInfo.colorBottomSheet.withOpacity(0.6),
-                          ThemeInfo.colorBottomSheet.withOpacity(0.5),
-                          ThemeInfo.colorBottomSheet.withOpacity(0.4),
-                          ThemeInfo.colorBottomSheet.withOpacity(0.3),
-                          ThemeInfo.colorBottomSheet.withOpacity(0.2),
-                          ThemeInfo.colorBottomSheet.withOpacity(0.1),
-                          ThemeInfo.colorBottomSheet.withOpacity(0.0),
+                          ThemeInfo.colorBottomSheetReverse.withOpacity(0.0),
+                          ThemeInfo.colorBottomSheetReverse.withOpacity(0.0),
+                          ThemeInfo.colorBottomSheetReverse.withOpacity(0.5),
+                          ThemeInfo.colorBottomSheetReverse.withOpacity(0.0),
                         ]),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Opacity(opacity: 0.5, child: icon),
-                      SizedBox(width: 8),
-                      Text("$title"),
+                    boxShadow: [
+//                      new BoxShadow(
+//                        color: ThemeInfo.colorBottomSheet.withOpacity(0.5),
+//                        offset: new Offset(0.0, 1.0),
+//                        blurRadius: 1.0,
+//                      )
                     ],
                   ),
+                ),
+                Row(
+                  children: <Widget>[
+                    SizedBox(width: 10),
+                    Opacity(opacity: 0.5, child: icon),
+                    SizedBox(width: 8),
+                    Text("$title"),
+                  ],
                 ),
               ],
             ),

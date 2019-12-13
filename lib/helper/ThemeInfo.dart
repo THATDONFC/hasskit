@@ -18,12 +18,13 @@ class ThemeInfo {
     ),
   ];
 
-  static const TextStyle textNameButtonActive = TextStyle(
+  static TextStyle textNameButtonActive = TextStyle(
     color: Color.fromRGBO(0, 0, 0, 1),
     fontSize: 16,
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.w600,
     fontFamily: "Roboto",
+    height: 1.0,
   );
 
   static TextStyle get textNameButtonInActive {
@@ -39,8 +40,9 @@ class ThemeInfo {
     color: Color.fromRGBO(0, 0, 0, 0.5),
     fontSize: 16,
     fontStyle: FontStyle.normal,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     fontFamily: "Roboto",
+    height: 1.0,
   );
 
   static TextStyle get textStatusButtonInActive {
@@ -58,7 +60,7 @@ class ThemeInfo {
   }
 
   static const Color colorBackgroundActive =
-      Color.fromRGBO(255, 255, 255, 0.75);
+      Color.fromRGBO(255, 255, 255, 0.50);
 
   static Color get colorEntityBackground {
     if (gd.currentTheme.brightness == Brightness.light) {
@@ -87,6 +89,7 @@ class ThemeInfo {
 //  static const Color colorIconActive = Color.fromRGBO(255, 204, 51, 1);
   static const Color colorIconActive = Color(0xffFFB300);
   static const Color colorIconInActive = Color.fromRGBO(153, 153, 153, 1);
+  static const Color colorBackgroundDark = Color.fromRGBO(28, 28, 28, 1);
 //  static const Color colorIconInActive = Color(0xffFFF8E1);
 
 //  static const Color colorTemp01 = Color.fromRGBO(100, 181, 246, 1);

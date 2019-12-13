@@ -1,23 +1,24 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hasskit/helper/GeneralData.dart';
 import 'package:hasskit/helper/Logger.dart';
 import 'package:hasskit/helper/MaterialDesignIcons.dart';
-import 'package:hasskit/helper/ThemeInfo.dart';
 import 'package:hasskit/helper/WebSocket.dart';
 import 'package:hasskit/model/Entity.dart';
+import 'package:hasskit/view/EntityControl/RgbColorSelector.dart';
 import 'package:provider/provider.dart';
-import 'package:tinycolor/tinycolor.dart';
 
-List<String> colorTemps = [
-  "64B5F6", //Blue
-  "90CAF9", //Blue
-  "BBDEFB", //Blue
-  "F5F5F5", //Gray
-  "FFF9C4", //Yellow
-  "FFF59D", //Yellow
-  "FFF176", //Yellow
+import 'TempColorSelector.dart';
+
+List<Color> colorTemps = [
+  Color(0xff64B5F6), //Blue
+  Color(0xff90CAF9), //Blue
+  Color(0xffBBDEFB), //Blue
+  Color(0xffF5F5F5), //Gray
+  Color(0xffFFF9C4), //Yellow
+  Color(0xffFFF59D), //Yellow
 ];
 
 class EntityControlLightDimmer extends StatefulWidget {
@@ -72,7 +73,7 @@ class LightSlider extends StatefulWidget {
 
 class LightSliderState extends State<LightSlider> {
   double buttonHeight = 300.0;
-  double buttonWidth = 90.0;
+  double buttonWidth = 126.0;
   double currentPosX;
   double currentPosY;
   double startPosX;
@@ -110,10 +111,9 @@ class LightSliderState extends State<LightSlider> {
             buttonValue = mapValue;
           }
         }
-        var colorForeground = ThemeInfo.colorBottomSheetReverse;
-        TinyColor sliderColor;
+        Color sliderColor;
         if (!gd.entities[widget.entityId].isStateOn) {
-          sliderColor = TinyColor.fromRGB(r: 128, g: 128, b: 128);
+          sliderColor = Color.fromRGBO(128, 128, 128, 1.0);
         } else if (gd.entities[widget.entityId].getSupportedFeaturesLights
             .contains("SUPPORT_RGB_COLOR")) {
           var entityRGB = gd.entities[widget.entityId].rgbColor;
@@ -121,8 +121,8 @@ class LightSliderState extends State<LightSlider> {
               entityRGB.length < 3 ||
               entityRGB[0] > 250 && entityRGB[1] > 250 && entityRGB[2] > 250)
             entityRGB = [224, 224, 224];
-          sliderColor = TinyColor.fromRGB(
-              r: entityRGB[0], g: entityRGB[1], b: entityRGB[2]);
+          sliderColor =
+              Color.fromRGBO(entityRGB[0], entityRGB[1], entityRGB[2], 1.0);
         } else if (gd.entities[widget.entityId].getSupportedFeaturesLights
                 .contains("SUPPORT_COLOR_TEMP") &&
             gd.entities[widget.entityId].colorTemp != null &&
@@ -131,31 +131,28 @@ class LightSliderState extends State<LightSlider> {
           var colorTemp = gd.entities[widget.entityId].colorTemp;
           var minMireds = gd.entities[widget.entityId].minMireds;
           var maxMireds = gd.entities[widget.entityId].maxMireds;
-          var miredsDivided = (maxMireds - minMireds) / 7;
+          var miredsDivided = (maxMireds - minMireds) / colorTemps.length;
           var miredsDividedHalf = miredsDivided / 2;
 //          log.d(
 //              "colorTemp $colorTemp minMireds $minMireds maxMireds $maxMireds miredsDivided $miredsDivided");
           if (colorTemp <= minMireds + miredsDivided * 1 - miredsDividedHalf)
-            sliderColor = TinyColor.fromString(colorTemps[0]);
+            sliderColor = colorTemps[0];
           else if (colorTemp <=
               minMireds + miredsDivided * 2 - miredsDividedHalf)
-            sliderColor = TinyColor.fromString(colorTemps[1]);
+            sliderColor = colorTemps[1];
           else if (colorTemp <=
               minMireds + miredsDivided * 3 - miredsDividedHalf)
-            sliderColor = TinyColor.fromString(colorTemps[2]);
+            sliderColor = colorTemps[2];
           else if (colorTemp <=
               minMireds + miredsDivided * 4 - miredsDividedHalf)
-            sliderColor = TinyColor.fromString(colorTemps[3]);
+            sliderColor = colorTemps[3];
           else if (colorTemp <=
               minMireds + miredsDivided * 5 - miredsDividedHalf)
-            sliderColor = TinyColor.fromString(colorTemps[4]);
-          else if (colorTemp <=
-              minMireds + miredsDivided * 6 - miredsDividedHalf)
-            sliderColor = TinyColor.fromString(colorTemps[5]);
+            sliderColor = colorTemps[4];
           else
-            sliderColor = TinyColor.fromString(colorTemps[6]);
+            sliderColor = colorTemps[5];
         } else {
-          sliderColor = TinyColor.fromRGB(r: 192, g: 192, b: 192);
+          sliderColor = colorTemps[0];
         }
 
         return new GestureDetector(
@@ -178,41 +175,40 @@ class LightSliderState extends State<LightSlider> {
                     height: buttonHeight,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(width: 4, color: colorForeground),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black54,
+                          blurRadius:
+                              0.0, // has the effect of softening the shadow
+                          spreadRadius:
+                              1.0, // has the effect of extending the shadow
+                          offset: Offset(
+                            0.0, // horizontal, move right 10
+                            0.0, // vertical, move down 10
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Positioned(
-                    top: 4,
+                    top: 0,
                     child: Container(
-                      width: buttonWidth - 8,
-                      height: buttonHeight - 8,
+                      width: buttonWidth,
+                      height: buttonHeight > 0 ? buttonHeight : 0,
                       decoration: BoxDecoration(
-                        color: sliderColor.color.withOpacity(1),
-                        borderRadius: BorderRadius.circular(12),
+                        color: sliderColor,
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       alignment: Alignment.bottomCenter,
                       child: Container(
-                        width: buttonWidth - 8,
-                        height: buttonValue - 8,
+                        width: buttonWidth,
+                        height: buttonValue > 0 ? buttonValue : 0,
                         alignment: Alignment.topCenter,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(12),
-                              bottomRight: Radius.circular(12)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black54,
-                              blurRadius:
-                                  0.5, // has the effect of softening the shadow
-                              spreadRadius:
-                                  0.5, // has the effect of extending the shadow
-                              offset: Offset(
-                                0.0, // horizontal, move right 10
-                                0.5,
-                              ),
-                            ),
-                          ],
+                              bottomLeft: Radius.circular(16),
+                              bottomRight: Radius.circular(16)),
                         ),
                         child: SizedBox(
                           width: 50,
@@ -221,35 +217,22 @@ class LightSliderState extends State<LightSlider> {
                             MaterialDesignIcons.getIconDataFromIconName(
                                 gd.entities[widget.entityId].getDefaultIcon),
                             size: 45,
-                            color: ThemeInfo.colorIconInActive,
+                            color: sliderColor,
                           ),
                         ),
                       ),
                     ),
                   ),
                   Positioned(
-                    top: 4,
+                    top: 0,
                     child: Container(
-                      width: buttonWidth - 8,
+                      width: buttonWidth,
                       height: upperPartHeight,
                       decoration: BoxDecoration(
-                        color: sliderColor.color.withOpacity(1),
+                        color: Colors.white,
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black54,
-                            blurRadius:
-                                0.5, // has the effect of softening the shadow
-                            spreadRadius:
-                                0.5, // has the effect of extending the shadow
-                            offset: Offset(
-                              0.0, // horizontal, move right 10
-                              -0.5, // vertical, move down 10
-                            ),
-                          ),
-                        ],
+                            topLeft: Radius.circular(16),
+                            topRight: Radius.circular(16)),
                       ),
                       alignment: Alignment.center,
                       child: Text(
@@ -260,7 +243,7 @@ class LightSliderState extends State<LightSlider> {
                             .toString(),
                         style: TextStyle(
                           fontSize: 20,
-                          color: Colors.black54,
+                          color: sliderColor,
                         ),
                       ),
                     ),
@@ -339,189 +322,5 @@ class LightSliderState extends State<LightSlider> {
       buttonValue =
           buttonValue.clamp(lowerPartHeight, buttonHeight - upperPartHeight);
     });
-  }
-}
-
-class RgbColorSelector extends StatefulWidget {
-  final String entityId;
-
-  const RgbColorSelector({@required this.entityId});
-  @override
-  _RgbColorSelectorState createState() => _RgbColorSelectorState();
-}
-
-class _RgbColorSelectorState extends State<RgbColorSelector> {
-  List<String> colors = [
-    "E0E0E0", //Gray
-    "E57373", //Red
-    "F06292", //Pink
-    "BA68C8", //Purple
-    "9575CD", //Deep purple
-    "7986CB", //Indigo
-    "64B5F6", //Blue
-    "4FC3F7", //Light Blue
-    "4DD0E1", //Cyan
-//    "4DB6AC", //Teal
-    "81C784", //Green
-    "AED581", //Light Green
-//    "DCE775", //Lime
-    "FFF176", //Yellow
-    "FFD54F", //Amber
-    "FFB74D", //Orange
-//    "FF8A65", //Deep Orange
-//    "A1887F", //Brown
-  ];
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 115,
-      child: CustomScrollView(
-        slivers: <Widget>[
-          SliverPadding(
-            padding: EdgeInsets.all(8),
-            sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-                mainAxisSpacing: 4.0,
-                crossAxisSpacing: 4.0,
-                childAspectRatio: 1,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return InkWell(
-                    onTap: () {
-                      setState(() {
-                        var selectedColor =
-                            TinyColor.fromString(colors[index]).color;
-                        var outMsg = {
-                          "id": gd.socketId,
-                          "type": "call_service",
-                          "domain": gd.entities[widget.entityId].entityId
-                              .split('.')
-                              .first,
-                          "service": "turn_on",
-                          "service_data": {
-                            "entity_id": widget.entityId,
-//                            "brightness": 255,
-                            "rgb_color": [
-                              selectedColor.red,
-                              selectedColor.green,
-                              selectedColor.blue
-                            ]
-                          },
-                        };
-
-                        var outMsgEncoded = json.encode(outMsg);
-                        webSocket.send(outMsgEncoded);
-                        HapticFeedback.mediumImpact();
-                      });
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(2.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: ThemeInfo.colorBottomSheetReverse,
-//                            border: Border.all(width: 0, color: Colors.white),
-                      ),
-                      child: CircleAvatar(
-                        backgroundColor:
-                            TinyColor.fromString("${colors[index]}").color,
-                      ),
-                    ),
-                  );
-                },
-                childCount: colors.length,
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class TempColorSelector extends StatefulWidget {
-  final String entityId;
-
-  const TempColorSelector({@required this.entityId});
-  @override
-  _TempColorSelectorState createState() => _TempColorSelectorState();
-}
-
-class _TempColorSelectorState extends State<TempColorSelector> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 115,
-      child: CustomScrollView(
-        slivers: <Widget>[
-          SliverPadding(
-            padding: EdgeInsets.all(8),
-            sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-                mainAxisSpacing: 4.0,
-                crossAxisSpacing: 4.0,
-                childAspectRatio: 1,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return InkWell(
-                    onTap: () {
-                      setState(() {
-                        var outMsg = {
-                          "id": gd.socketId,
-                          "type": "call_service",
-                          "domain": gd.entities[widget.entityId].entityId
-                              .split('.')
-                              .first,
-                          "service": "turn_on",
-                          "service_data": {
-                            "entity_id": widget.entityId,
-//                            "brightness": 255,
-                            "color_temp": gd
-                                .mapNumber(
-                                    index.toDouble(),
-                                    0,
-                                    colorTemps.length.toDouble() - 1,
-                                    gd.entities[widget.entityId].minMireds
-                                        .toDouble(),
-                                    gd.entities[widget.entityId].maxMireds
-                                            .toDouble() -
-                                        1)
-                                .toInt()
-                          },
-                        };
-
-                        var outMsgEncoded = json.encode(outMsg);
-                        webSocket.send(outMsgEncoded);
-                        HapticFeedback.mediumImpact();
-
-                        log.d(
-                            "minMireds ${gd.entities[widget.entityId].minMireds} "
-                            "maxMireds ${gd.entities[widget.entityId].maxMireds} "
-                            "index $index");
-                      });
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(2.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: ThemeInfo.colorBottomSheetReverse,
-                      ),
-                      child: CircleAvatar(
-                        backgroundColor:
-                            TinyColor.fromString("${colorTemps[index]}").color,
-                      ),
-                    ),
-                  );
-                },
-                childCount: colorTemps.length,
-              ),
-            ),
-          )
-        ],
-      ),
-    );
   }
 }

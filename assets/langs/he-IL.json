@@ -1,0 +1,125 @@
+{
+    "global": {
+        "duration": "משך זמן",
+        "open": "פתוח",
+        "closed": "סגור",
+        "on": "דולק",
+        "off": "כבוי",
+        "error": "שגיאה",
+        "no_data": "אין מידע זמין",
+        "reset": "איפוס",
+        "ok": "אישור",
+        "left": "שמאל",
+        "right": "ימין",
+        "connect_hass": "התחבר בבקשה ל - Home Assistant",
+        "last_update": "עדכון אחרון",
+        "cancel": "בטל",
+        "settings": "הגדרות",
+        "rooms": "חדרים",
+        "disconnect": "התנתק",
+        "refresh": "רענן",
+        "last_access": "חיבור אחרון",
+        "connected": "מחובר",
+        "disconnected": "מנותק"
+    },
+    "edit": {
+        "select_icon": "בחר אייקון מותאם",
+        "reset_icon": "אפס אייקון",
+        "rbg_color": "לחיצה ארוכה לבחירת צבע",
+        "edit": "עריכה",
+        "arrange": "סדר",
+        "move": "הזז",
+        "delete": "מחק",
+        "devices": "מכשירים",
+        "add_room": "הוסף חדרים חדשים"
+    },
+    "alarm_panel": {
+        "arm_home": "חמש בבית",
+        "arm_away": "חמש מחוץ לבית",
+        "disarmed": "מנוטרל",
+        "pending": "ממתין",
+        "armed_away": "חמוש מחוץ לבית",
+        "armed_home": "חמוש בבית",
+        "armed_night": "חמוש מצב לילה",
+        "armed": "חמוש"
+    },
+    "toggle": {
+        "require_slide_open_disabled": "חובת החלקה לפתיחה מנוטרלת",
+        "require_slide_open_enabled": "חובת החלקה לפתיחה מופעלת",
+        "prevent_accidentally_open": "מנע פתיחה אקראית",
+        "1_touch": "מעתה ניתן לפתוח בלחיצה אחת"
+    },
+    "rgb": {
+        "pick_color": "בחר צבע"
+    },
+    "webview": {
+        "edit": "ערוך לינק לאתר",
+        "saved": "לינק לאתר נשמר",
+        "reload": "טען מחדש אתר",
+        "pin": "הצמד חלונית - מנע גלילה באתר",
+        "unpin": "בטל הצמדת חלונית - אפשר גלילה באתר",
+        "windy": "Windy",
+        "y_weather": "Y! Weather",
+        "live_score": "LiveScore",
+        "aspect": "יחס"
+    },
+    "login": {
+        "connecting": "מתחבר ל",
+        "correct_info": "וודא שהמידע הבא תקין",
+        "cancel": "בטל חיבור כניסה"
+    },
+    "settings": {
+        "home_assistant": "Home Assistant מתחבר",
+        "new_connection": "יצירת חיבור חדש",
+        "use_https": "השתמש ב HTTPS",
+        "connect": "התחבר",
+        "sync": "Google Cloud סנכרון",
+        "theme_color": "צבע תבנית נושא",
+        "language": "שפה",
+        "layout": "פריסה",
+        "about": "אודות HassKit",
+        "about_info": "HassKit היא אפליקציית ידידותית – המכילה אפס צורך בקונפיגרציה מורכבת, וזאת כדי לעזור למשתמשים להתחיל להשתמש באופן מיידי ב-Home Assistant.\n\nHome Assistant היא אחת הפלטפורמות הטובות ביותר לאוטומציה ביתית, עם תכונות עוצמתיות והמגוון הרחב ביותר בעולם של תמיכה במכשירים. Home Assistant דורשת רק חומרה פשוטה / זולה כדי להתחיל.\n\nעם זאת, Home Assistant אינה קלה במיוחד לקינפוג ולוקח זמן להתאמתה לצרכים שלך. HassKit שמה לה למטרה להקל על שלבי הלמידה ולשפר את איכות החיים עבור משתמשי Home Assistantעל ידי מתן מראה מדהים והתקנה של 10 שניות על מנת להתחיל להשתמש בפלטפורמת האוטומציה הנהדרת הזו.\n\nHassKit היא בחינם, קוד פתוח ומתפתח. אנו זקוקים לעזרתכם בכדי לשפר את תכונות האפליקציה כדי שנוכל לשרת אתכם טוב יותר.\n\nאנא מצא אותנו בדיסקורד ובפייסבוק. התרומות שלכם תמיד יתקבלו בברכה.",
+        "3_buttons": "3 כפתורים",
+        "4_buttons": "4 כפתורים"
+    },
+    "google_sync": {
+        "use": "השתמש במידע מהענן",
+        "info": "שמור על פריסת החדרים והתאמת ההתקנים שלך מסונכרנים בין מכשירים. HassKit לא יעלה את נתוני הכניסה שלך באופן מקוון ...",
+        "sign_out": "התנתק",
+        "sign_in": "התחבר",
+        "force_download": "כפה הורדת נתונים מהענן",
+        "sync_problem": "השתמש רק כאשר יש לך בעיה בסנכרון",
+        "force_upload": "כפה העלאת נתונים לענן",
+        "force_reset": "כפה איפוס נתונים בענן"
+    },
+    "theme_selector": {
+        "dark": "ערכת נושא כהה",
+        "light": "ערכת נושא בהירה"
+    },
+    "states": {
+        "on": "דלוק",
+        "turning_on": "מדליק...",
+        "off": "כבוי",
+        "turning_off": "מכבה...",
+        "closed": "סגור",
+        "closing": "סוגר...",
+        "open": "פתוח",
+        "opening": "פותח...",
+        "locked": "נעול",
+        "locking": "נועל...",
+        "unlocked": "לא נעול",
+        "unlocking": "פותח מנעילה...",
+        "disarmed": "מנוטרל",
+        "arm_pending": "ממתין",
+        "armed_away": "חמוש מחוץ לבית",
+        "armed_home": "חמוש בבית",
+        "armed_night": "חמוש מצב לילה",
+        "armed": "חמוש",
+        "fan_high": "גבוהה",
+        "fan_high_medium": "בינוני גבוהה",
+        "fan_medium": "בינוני",
+        "fan_medium_low": "בינוני חלש",
+        "fan_low": "חלש",
+        "fan_lowest": "חלש ביותר"
+    }
+}

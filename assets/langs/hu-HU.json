@@ -1,0 +1,125 @@
+{
+    "global": {
+        "duration": "Időtartam",
+        "open": "nyitva",
+        "closed": "zárva",
+        "on": "be",
+        "off": "ki",
+        "error": "Hiba",
+        "no_data": "nincs elérhető adat",
+        "reset": "Újraindít",
+        "ok": "Ok",
+        "left": "Balra",
+        "right": "Jobbra",
+        "connect_hass": "Csatlakozz a\nHome Assistant-hez.",
+        "last_update": "Utolsó frissítés",
+        "cancel": "Mégsem",
+        "settings": "Beállítások",
+        "rooms": "Szobák",
+        "disconnect": "Kapcsolat bontása",
+        "refresh": "Frissítés",
+        "last_access": "Utolsó Hozzáférés",
+        "connected": "Csatlakozva",
+        "disconnected": "Nincs Kapcsolat"
+    },
+    "edit": {
+        "select_icon": "Egyedi Ikon Választás",
+        "reset_icon": "Alapértelmezett Ikon",
+        "rbg_color": "Nyomd Hosszan a Színekhez",
+        "edit": "Szerkesztés",
+        "arrange": "Rendezés",
+        "move": "Mozgatás",
+        "delete": "Törlés",
+        "devices": "Eszközei",
+        "add_room": "Új Szoba Hozzáadása"
+    },
+    "alarm_panel": {
+        "arm_home":"Otthoni Mód Élesítése",
+        "arm_away": "Távoli Mód Élesítése",
+        "disarmed": "Kikapcsolva",
+        "pending": "Függőben",
+        "armed_away": "Távoli Mód Élesítve",
+        "armed_home": "Otthoni Mód Élesítve",
+        "armed_night": "Éjszakai Mód Élesítve",
+        "armed": "Élesítve"
+    },
+    "toggle": {
+        "require_slide_open_disabled": "Csúszka a Nyitáshoz Kikapcsolva",
+        "require_slide_open_enabled": "Csúszka a Nyitáshoz Engedélyezve",
+        "prevent_accidentally_open": "Véletlen Nyitás Megakadályozása",
+        "1_touch": "most már nyitható egy érintéssel"
+    },
+    "rgb": {
+        "pick_color": "Válassz Színt!"
+    },
+    "webview": {
+        "edit": "Weboldal Szerkesztése",
+        "saved": "Weboldal Mentve",
+        "reload": "Weboldal Frissítése",
+        "pin": "Nézet Rögzítése - Görgetés kikapcsolása",
+        "unpin": "Nézet Feloldása - Görgetés engedélyezése",
+        "windy": "Windy",
+        "y_weather": "Y! Weather",
+        "live_score": "LiveScore",
+        "aspect": "Aspect"
+    },
+    "login": {
+        "connecting": "Kapcsolódás:",
+        "correct_info": "Győződj meg róla, hogy az adatok helyesek",
+        "cancel": "Belépés Megszakítása"
+    },
+    "settings": {
+        "home_assistant": "Home Assistant Kapcsolat",
+        "new_connection": "Új Kapcsolat...",
+        "use_https": "HTTPS használata",
+        "connect": "Csatlakozás",
+        "sync": "Google Felhő Sync",
+        "theme_color": "Téma Színe",
+        "language": "Nyelv",
+        "layout": "Elrendezés",
+        "about": "A HassKitről",
+        "about_info": "A HassKit egy felhasználóbarát, konfigurálást nem igénylő alkalmazás, amely megkönnyíti a Home Assistant használatát.\n\nA Home Assistant az egyik legjobb okosotthon platform hatékony megoldásokkal és funkciókkal, mindemellett a világon a legszéleskörűbb eszköztámogatással. A Home Assistant mindössze néhány egyszerű és olcsó hardvert igényel.\n\nEnnek ellenére a Home Assistant konfigurálása nem egyszerű és eltart egy ideig, hogy testreszabjuk. A HassKit célja megkönnyíteni a kezdeti lépéseket és javítani a felhasználói élményen egy intuitív felhasználói felülettel, hogy mindössze 10 másodperc alatt használatba vehessük ezt a csodás otthonautomatizálási platformot.\n\nA HassKit egy ingyenes, nyílt forráskódú, fejlesztés alatt álló szoftver. A legjobb felhasználói élmény megvalósításához szükségünk van a segítségedre.\n\nKeress meg minket Discordon és Facebookon. Köszönjük az együttműködésed.",
+        "3_buttons": "3 Gombos",
+        "4_buttons": "4 Gombos"
+    },
+    "google_sync": {
+        "use": "Felhő Szinkronizálás Használata",
+        "info": "Minden eszközödön ugyanúgy jelennek meg a szobák és az eszközbeállítások. A HassKit nem tölti fel a Felhőbe a bejelentkezési adataidat...",
+        "sign_out": "Kijelentkezés",
+        "sign_in": "Bejelentkezés",
+        "force_download": "Felhő Adatok Kényszerített Letöltése",
+        "sync_problem": "CSAK akkor használd, ha szinkronizálási problémák lépnek fel",
+        "force_upload": "Kényszerített Feltöltés a Felhőbe",
+        "force_reset": "Felhő Adatok Alaphelyzetbe Állítása"
+    },
+    "theme_selector": {
+        "dark": "Sötét",
+        "light": "Világos"
+    },
+    "states": {
+        "on": "Be",
+        "turning_on": "Bekapcsolás...",
+        "off": "Ki",
+        "turning_off": "Kikapcsolás...",
+        "closed": "Bezárva",
+        "closing": "Bezárás...",
+        "open": "Nyitva",
+        "opening": "Nyitás...",
+        "locked": "Zárva",
+        "locking": "Zárás...",
+        "unlocked": "Kinyitva",
+        "unlocking": "Kinyitás...",
+        "disarmed": "Kikapcsolva",
+        "arm_pending": "Függőben",
+        "armed_away": "Távoli Mód Élesítve",
+        "armed_home": "Otthoni Mód Élesítve",
+        "armed_night": "Éjszakai Mód Élesítve",
+        "armed": "Élesítve",
+        "fan_high": "Nagy",
+        "fan_high_medium": "Közepesen Nagy",
+        "fan_medium": "Közepes",
+        "fan_medium_low": "Közepesen Alacsony",
+        "fan_low": "Alacsony",
+        "fan_lowest": "Legalacsonyabb"
+    }
+}

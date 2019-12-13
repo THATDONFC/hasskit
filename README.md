@@ -22,6 +22,7 @@ An Elegant Home Assistant Control App
 </tbody>
 </table>
 <br><br>
+
 ## Please join us on
 
 <table width="100%">
@@ -35,15 +36,15 @@ An Elegant Home Assistant Control App
 
 ## What is HassKit
 
-HassKit is a Touch Friendly - Zero Config to help user instantly start using Home Assistant.
+HassKit is a Touch-Friendly - Zero Config App to help users instantly start using Home Assistant (Hass).
 
-Home Assistant is a one of the best platform for Home Automation with powerful features, world widest range of devices support and only require very simple/cheap hardware (Hello \$25 Raspberry Pi).
+Hass is one of the best platforms for Home Automation, with powerful features and the world's widest range of device support. Hass only requires some simple/cheap hardware to get started.
 
-However, Home Assistant is not easy to setup and require a few months to master. HassKit aim to ease the learning steps and improve the quality of life for Home Assistant users by providing a stunning look and 10 seconds setup to start using the wonderful Home Automation platform.
+However, Hass is not easy to set up and requires a few months to master. HassKit aims to ease the learning steps and improve the quality of life for Hass users by providing a stunning look and 10-second setup to start using this wonderful Home Automation platform.
 
-HassKit is free, open-source and under development. We need your help to improve the app feature in order to better serve you.
+HassKit is free, open-source and under development. We need your help to improve the app's features for us to better serve you.
 
-Please find us on Discord and Facebook. Your contributions are welcome.
+Please find us on Discord and Facebook. Your contributions are always welcome.
 
 https://discord.gg/cqYr52P
 
@@ -51,8 +52,11 @@ https://www.facebook.com/groups/709634206223205
 
 ## How can I install the App?
 
-Download on Apple App Store
+Download from Github, usually the most updated version (android only)
+https://github.com/tuanha2000vn/hasskit/releases
+
+Download on the Apple App Store
 https://apps.apple.com/us/app/hasskit/id1485362169
 
-Download on Google Playstore
+Download on the Google Playstore
 https://play.google.com/store/apps/details?id=com.thhkstudio.hasskit

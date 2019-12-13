@@ -5,7 +5,11 @@ class EntityOverride {
   String icon;
   bool openRequireAttention;
 
-  EntityOverride({this.friendlyName, this.icon, this.openRequireAttention});
+  EntityOverride({
+    this.friendlyName,
+    this.icon,
+    this.openRequireAttention,
+  });
   factory EntityOverride.fromJson(Map<String, dynamic> json) {
     try {
       return EntityOverride(

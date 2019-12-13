@@ -1,0 +1,125 @@
+{
+    "global": {
+        "duration": "Duration",
+        "open": "open",
+        "closed": "closed",
+        "on": "on",
+        "off": "off",
+        "error": "Error",
+        "no_data": "has no data available",
+        "reset": "Reset",
+        "ok": "Ok",
+        "left": "Left",
+        "right": "Right",
+        "connect_hass": "Please Connect To\nHome Assistant",
+        "last_update": "Last update",
+        "cancel": "Cancel",
+        "settings": "Settings",
+        "rooms": "Rooms",
+        "disconnect": "Disconnect",
+        "refresh": "Refresh",
+        "last_access": "Last Access",
+        "connected": "Connected",
+        "disconnected": "Disconnected"
+    },
+    "edit": {
+        "select_icon": "Select Custom Icon",
+        "reset_icon": "Reset Icon",
+        "rbg_color": "Long Press To Edit Color",
+        "edit": "Edit",
+        "arrange": "Arrange",
+        "move": "Move",
+        "delete": "Delete",
+        "devices": "Devices",
+        "add_room": "Add New Room"
+    },
+    "alarm_panel": {
+        "arm_home":"Arm Home",
+        "arm_away": "Arm Away",
+        "disarmed": "Disarmed",
+        "pending": "Pending",
+        "armed_away": "Armed Away",
+        "armed_home": "Armed Home",
+        "armed_night": "Armed Night",
+        "armed": "Armed"
+    },
+    "toggle": {
+        "require_slide_open_disabled": "Require Slide to Open Disabled",
+        "require_slide_open_enabled": "Require Slide to Open Enabled",
+        "prevent_accidentally_open": "Prevent accidentally open",
+        "1_touch": "now can be opened with 1 touch"
+    },
+    "rgb": {
+        "pick_color": "Pick a color!"
+    },
+    "webview": {
+        "edit": "Edit Website",
+        "saved": "Website saved",
+        "reload": "Reload Website",
+        "pin": "Pin Website - Prevent Website scrolling",
+        "unpin": "Unpin Website - Allow Website scrolling",
+        "windy": "Windy",
+        "y_weather": "Y! Weather",
+        "live_score": "LiveScore",
+        "aspect": "Aspect"
+    },
+    "login": {
+        "connecting": "Connecting to",
+        "correct_info": "Make sure the following info are correct",
+        "cancel": "Cancel Web Login Connection"
+    },
+    "settings": {
+        "home_assistant": "Home Assistant Connection",
+        "new_connection": "Create New Connection...",
+        "use_https": "Use https",
+        "connect": "Connect",
+        "sync": "Google Cloud Sync",
+        "theme_color": "Theme Color",
+        "language": "Language",
+        "layout": "Layout",
+        "about": "About HassKit",
+        "about_info": "HassKit is a Touch-Friendly - Zero Config App to help users instantly start using Home Assistant.\n\nHome Assistant is one of the best platforms for Home Automation, with powerful features and the world's widest range of device support. Home Assistant only requires some simple/cheap hardware to get started.\n\nHowever, Home Assistant is not very easy to configure and it takes a while to adjust to your needs. HassKit aims to ease the learning steps and improve the quality of life for Home Assistant users by providing a stunning look and 10-second setup to start using this wonderful Home Automation platform.\n\nHassKit is free, open-source and under development. We need your help to improve the app's features for us to better serve you.\n\nPlease find us on Discord and Facebook. Your contributions are always welcome.",
+        "3_buttons": "3 Buttons",
+        "4_buttons": "4 Buttons"
+    },
+    "google_sync": {
+        "use": "Use Cloud Data Sync",
+        "info": "Keep your rooms layout and device customization synchronized accross devices. HassKit won't upload your login data online...",
+        "sign_out": "Sign Out",
+        "sign_in": "Sign In",
+        "force_download": "Force download data from cloud",
+        "sync_problem": "Use ONLY when you have sync issue",
+        "force_upload": "Force upload data to cloud",
+        "force_reset": "Force reset data on cloud"
+    },
+    "theme_selector": {
+        "dark": "Dark Theme",
+        "light": "Light Theme"
+    },
+    "states": {
+        "on": "On",
+        "turning_on": "Turning On...",
+        "off": "Off",
+        "turning_off": "Turning Off...",
+        "closed": "Closed",
+        "closing": "Closing...",
+        "open": "Open",
+        "opening": "Opening...",
+        "locked": "Locked",
+        "locking": "Locking...",
+        "unlocked": "Unlocked",
+        "unlocking": "Unlocking...",
+        "disarmed": "Disarmed",
+        "arm_pending": "Pending",
+        "armed_away": "Armed away",
+        "armed_home": "Armed home",
+        "armed_night": "Armed night",
+        "armed": "Armed",
+        "fan_high": "High",
+        "fan_high_medium": "Medium High",
+        "fan_medium": "Medium",
+        "fan_medium_low": "Medium Low",
+        "fan_low": "Low",
+        "fan_lowest": "Lowest"
+    }
+}

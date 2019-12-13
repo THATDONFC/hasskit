@@ -5,6 +5,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:hasskit/helper/GeneralData.dart';
 import 'package:hasskit/helper/Logger.dart';
 import 'package:hasskit/helper/ThemeInfo.dart';
+import 'package:hasskit/helper/LocaleHelper.dart';
 
 const kAndroidUserAgent =
     'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
@@ -43,11 +44,11 @@ class HomeAssistantLogin extends StatelessWidget {
                 SizedBox(height: 25),
                 SpinKitThreeBounce(
                   size: 40,
-                  color: ThemeInfo.colorIconActive,
+                  color: ThemeInfo.colorIconActive.withOpacity(0.5),
                 ),
                 SizedBox(height: 25),
                 Text(
-                  "Connecting to",
+                  Translate.getString("login.connecting", context),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 25),
@@ -59,7 +60,7 @@ class HomeAssistantLogin extends StatelessWidget {
                 ),
                 SizedBox(height: 25),
                 Text(
-                  "Make sure the following info are correct",
+                  Translate.getString("login.correct_info", context),
                   textAlign: TextAlign.center,
                 ),
                 Text(
@@ -71,9 +72,10 @@ class HomeAssistantLogin extends StatelessWidget {
                   width: 100,
                   child: RaisedButton(
                     onPressed: () {
-                      Navigator.pop(context, "Cancel Web Login Connection");
+                      Navigator.pop(context,
+                          Translate.getString("login.cancel", context));
                     },
-                    child: Text("Cancel"),
+                    child: Text(Translate.getString("global.cancel", context)),
                   ),
                 ),
                 Expanded(
@@ -120,6 +122,8 @@ class _HomeAssistantLoginWebViewState extends State<HomeAssistantLoginWebView> {
         var authCode = url.split('code=')[1];
         gd.sendHttpPost(gd.loginDataCurrent.getUrl, authCode, context);
         log.w('authCode [' + authCode + ']');
+        //prevent autoConnect hijack gd.loginDataCurrent.url set back
+        gd.autoConnect = true;
         widget.closePage();
       }
     });
@@ -148,7 +152,8 @@ class _HomeAssistantLoginWebViewState extends State<HomeAssistantLoginWebView> {
             child: Column(
               children: <Widget>[
                 Text(
-                  "Make sure the following info are correct",
+                  Translate.getString("login.correct_info", context),
+//                  "Make sure the following info are correct",
                   textAlign: TextAlign.center,
                 ),
                 Text(
@@ -167,17 +172,20 @@ class _HomeAssistantLoginWebViewState extends State<HomeAssistantLoginWebView> {
                   children: <Widget>[
                     RaisedButton(
                       onPressed: () {
-                        Navigator.of(context).pushNamed('/widget');
+                        widget.closePage();
+//                        Navigator.pop(context);
                       },
-                      child: const Text('OK'),
+//                      child:
+//                          Text(Translate.getString("global.cancel", context)),
+                      child: Text("Cancel"),
                     ),
                     SizedBox(width: 8),
                     RaisedButton(
                       onPressed: () {
-                        widget.closePage();
-//                        Navigator.pop(context);
+                        Navigator.of(context).pushNamed('/widget');
                       },
-                      child: const Text('Cancel'),
+//                      child: Text(Translate.getString("global.ok", context)),
+                      child: Text("OK"),
                     ),
                   ],
                 ),

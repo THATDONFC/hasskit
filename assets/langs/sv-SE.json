@@ -1,0 +1,125 @@
+{
+    "global": {
+        "duration": "Varaktighet",
+        "open": "öppen",
+        "closed": "stängd",
+        "on": "på",
+        "off": "av",
+        "error": "Fel",
+        "no_data": "har ingen data",
+        "reset": "Återställ",
+        "ok": "Ok",
+        "left": "Vänster",
+        "right": "Höger",
+        "connect_hass": "Var vänlig anslut till\nHome Assistant",
+        "last_update": "Senast uppdaterad",
+        "cancel": "Avbryt",
+        "settings": "Inställningar",
+        "rooms": "Rum",
+        "disconnect": "Koppla ifrån",
+        "refresh": "Uppdatera",
+        "last_access": "Senast tillgång",
+        "connected": "Ansluten",
+        "disconnected": "Bortkopplad"
+    },
+    "edit": {
+        "select_icon": "Välj ikon",
+        "reset_icon": "Återställ ikon",
+        "rbg_color": "Tryck länge för att redigera färg",
+        "edit": "Redigera",
+        "arrange": "Arrangera",
+        "move": "Flytta",
+        "delete": "Ta bort",
+        "devices": "Enheter",
+        "add_room": "Lägg till nytt rum"
+    },
+    "alarm_panel": {
+        "arm_home": "Hemma",
+        "arm_away": "Borta",
+        "disarmed": "Avlarmat",
+        "pending": "Larmar",
+        "armed_away": "Larmat: borta",
+        "armed_home": "Larmat: hemma",
+        "armed_night": "Larmat: natt",
+        "armed": "Larmat"
+    },
+    "toggle": {
+        "require_slide_open_disabled": "Kräv slide för att öppna inaktiverat",
+        "require_slide_open_enabled": "Kräv slide för att öppna aktiverat",
+        "prevent_accidentally_open": "Förhindra oavsiktligt öppning",
+        "1_touch": "kan nu öppnas med 1 tryck"
+    },
+    "rgb": {
+        "pick_color": "Välj färg!"
+    },
+    "webview": {
+        "edit": "Redigera url",
+        "saved": "Url sparad",
+        "reload": "Ladda om url",
+        "pin": "Fäst hemsida - Förhindra scroll på hemsidan",
+        "unpin": "Lossa hemsida - Tillåt scroll på hemsidan",
+        "windy": "Windy",
+        "y_weather": "Y! Weather",
+        "live_score": "LiveScore",
+        "aspect": "Aspekt"
+    },
+    "login": {
+        "connecting": "Anslut till",
+        "correct_info": "Se till att följande information är korrekt",
+        "cancel": "Avbryt anslutning"
+    },
+    "settings": {
+        "home_assistant": "Home Assistant anslutning",
+        "new_connection": "Skapa ny anslutning...",
+        "use_https": "Använd https",
+        "connect": "Anslut",
+        "sync": "Google Cloud Sync",
+        "theme_color": "Tema färg",
+        "language": "Språk",
+        "layout": "Layout",
+        "about": "Om HassKit",
+        "about_info": "HassKit är en touch-vänlig - noll konfigurerings app för att hjälpa till att få det lätt att komma igång med Home Assistant.\n\nHome Assistant är en av de bästa plattformarna för hem automatition, med kraftfulla funktioner och stödjer väldigt många enheter. Home Assistant kräver väldigt lite av hårdvaran och han köras på billig hårdvara. Dock så är Home Assistant inte lätt att komma igång med då det kräver mycket konfigurering och även lite script kunskaper. HassKits mål är att ta bort denna tröskel och göra Home Assistant tillgängligt för alla.\n\nHassKit är gratis och open source. Det är under utveckling. Vi behöver hjälp med att göra appen ännu bättre med mer funktioner!\n\nNi kan hitta oss på Discord eller Facebook. Dina bidrag är alltid välkomna.",
+        "3_buttons": "3 Knappar",
+        "4_buttons": "4 Knappar"
+    },
+    "google_sync": {
+        "use": "Använd google måln sync",
+        "info": "Håller din rum, layout och enhets konfiguration synkroniserad över enheter. HassKit laddar inte upp din login data.",
+        "sign_out": "Logga ut",
+        "sign_in": "Logga in",
+        "force_download": "Tvinga ner data från målnet",
+        "sync_problem": "Använd ENDAST när du har problem med synkronisering",
+        "force_upload": "Tvinga uppladdning av data till målnet",
+        "force_reset": "Tvinga en återställning av datan i målnet"
+    },
+    "theme_selector": {
+        "dark": "Mörkt tema",
+        "light": "Ljust tema"
+    },
+    "states": {
+        "on": "På",
+        "turning_on": "Slår på...",
+        "off": "Av",
+        "turning_off": "Stänger av...",
+        "closed": "Stängd",
+        "closing": "Stänger...",
+        "open": "Öppen",
+        "opening": "Öppnar...",
+        "locked": "Låst",
+        "locking": "Låser...",
+        "unlocked": "Olåst",
+        "unlocking": "Låser upp...",
+        "disarmed": "Avlarmat",
+        "arm_pending": "Larmar",
+        "armed_away": "Larmat: borta",
+        "armed_home": "Larmat: hemma",
+        "armed_night": "Larmat: natt",
+        "armed": "Larmat",
+        "fan_high": "Hög",
+        "fan_high_medium": "Medium hög",
+        "fan_medium": "Medium",
+        "fan_medium_low": "Medium låg",
+        "fan_low": "Låg",
+        "fan_lowest": "Lågast"
+    }
+}

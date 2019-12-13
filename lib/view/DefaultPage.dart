@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hasskit/helper/GeneralData.dart';
+import 'package:hasskit/helper/LocaleHelper.dart';
 import 'package:hasskit/helper/MaterialDesignIcons.dart';
 
 class DefaultPage extends StatelessWidget {
@@ -23,7 +24,7 @@ class DefaultPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Text(
-                "Please Connect To\nHome Assistant",
+                Translate.getString("global.connect_hass", context),
                 style: Theme.of(context).textTheme.title,
                 textAlign: TextAlign.center,
               ),
@@ -33,7 +34,7 @@ class DefaultPage extends StatelessWidget {
                 style: Theme.of(context).textTheme.caption,
                 textAlign: TextAlign.justify,
                 maxLines: 3,
-                textScaleFactor: gd.textScaleFactor,
+                textScaleFactor: gd.textScaleFactorFix,
                 overflow: TextOverflow.ellipsis,
               ),
             ],

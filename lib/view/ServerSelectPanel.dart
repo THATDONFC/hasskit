@@ -6,6 +6,7 @@ import 'package:hasskit/helper/Logger.dart';
 import 'package:hasskit/helper/MaterialDesignIcons.dart';
 import 'package:hasskit/helper/WebSocket.dart';
 import 'package:hasskit/model/LoginData.dart';
+import 'package:hasskit/helper/LocaleHelper.dart';
 
 class ServerSelectPanel extends StatelessWidget {
   final LoginData loginData;
@@ -15,7 +16,7 @@ class ServerSelectPanel extends StatelessWidget {
 //    log.w("Widget build ServerSelectPanel");
     List<Widget> secondaryWidgets;
     Widget deleteWidget = new IconSlideAction(
-        caption: 'Delete',
+        caption: Translate.getString("edit.delete", context),
         color: Colors.transparent,
         icon: Icons.delete,
         onTap: () {
@@ -32,7 +33,7 @@ class ServerSelectPanel extends StatelessWidget {
     secondaryWidgets = [deleteWidget];
     if (gd.loginDataCurrent.getUrl == loginData.getUrl) {
       var disconnectWidget = IconSlideAction(
-          caption: 'Disconnect',
+          caption: Translate.getString("global.disconnect", context),
           color: Colors.transparent,
           icon: MaterialDesignIcons.getIconDataFromIconName(
               "mdi:server-network-off"),
@@ -101,15 +102,22 @@ class ServerSelectPanel extends StatelessWidget {
                       Text(loginData.getUrl,
                           style: Theme.of(context).textTheme.subhead,
                           maxLines: 2,
-                          textScaleFactor: gd.textScaleFactor,
+                          textScaleFactor: gd.textScaleFactorFix,
                           overflow: TextOverflow.ellipsis),
                       Text(
                           gd.loginDataCurrent.getUrl == loginData.getUrl
-                              ? "Status: ${gd.connectionStatus}"
-                              : "Last Access: ${loginData.timeSinceLastAccess}",
+                              ? "Status: " +
+                                  (gd.connectionStatus == "Connected"
+                                      ? Translate.getString(
+                                          "global.connected", context)
+                                      : Translate.getString(
+                                          "global.disconnected", context))
+                              : Translate.getString(
+                                      "global.last_access", context) +
+                                  ": ${loginData.timeSinceLastAccess}",
                           style: Theme.of(context).textTheme.body1,
                           maxLines: 5,
-                          textScaleFactor: gd.textScaleFactor,
+                          textScaleFactor: gd.textScaleFactorFix,
                           overflow: TextOverflow.ellipsis),
                     ],
                   ),
@@ -123,7 +131,7 @@ class ServerSelectPanel extends StatelessWidget {
         (gd.loginDataCurrent.getUrl == loginData.getUrl &&
                 gd.connectionStatus == "Connected")
             ? IconSlideAction(
-                caption: 'Refresh',
+                caption: Translate.getString("global.refresh", context),
                 color: Colors.transparent,
                 icon:
                     MaterialDesignIcons.getIconDataFromIconName("mdi:refresh"),
@@ -132,7 +140,7 @@ class ServerSelectPanel extends StatelessWidget {
                   webSocket.initCommunication();
                 })
             : IconSlideAction(
-                caption: 'Connect',
+                caption: Translate.getString("settings.connect", context),
                 color: Colors.transparent,
                 icon: MaterialDesignIcons.getIconDataFromIconName(
                     "mdi:server-network"),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hasskit/helper/GeneralData.dart';
 import 'package:hasskit/model/Entity.dart';
+import 'package:hasskit/view/CustomScrollView/ViewNormal.dart';
 import 'package:hasskit/view/slivers/SliverEntities.dart';
 import 'package:hasskit/view/slivers/SliverNavigationBar.dart';
-import 'package:hasskit/view/CustomScrollView/ViewNormal.dart';
 
-import 'DeviceTypeHeader.dart';
+import '../slivers/SliverHeader.dart';
 
 class ViewSort extends StatelessWidget {
   final int roomIndex;
@@ -32,12 +32,13 @@ class ViewSort extends StatelessWidget {
       slivers: [
         SliverNavigationBar(roomIndex: roomIndex),
         row1.length + row1Cam.length > 0
-            ? DeviceTypeHeaderEditNormal(icon: Icon(Icons.looks_one), title: '')
+            ? SliverHeaderNormal(icon: Icon(Icons.looks_one), title: '')
             : gd.emptySliver,
         row1.length > 0
             ? SliverEntitiesSort(
                 roomIndex: roomIndex,
-                itemPerRow: gd.itemsPerRow,
+                aspectRatio: gd.buttonRatio,
+                isCamera: false,
                 entities: row1,
                 rowNumber: 1,
               )
@@ -45,18 +46,20 @@ class ViewSort extends StatelessWidget {
         row1Cam.length > 0
             ? SliverEntitiesSort(
                 roomIndex: roomIndex,
-                itemPerRow: 1,
+                aspectRatio: 8 / 5,
+                isCamera: true,
                 entities: row1Cam,
                 rowNumber: 1,
               )
             : gd.emptySliver,
         row2.length + row2Cam.length > 0
-            ? DeviceTypeHeaderEditNormal(icon: Icon(Icons.looks_two), title: '')
+            ? SliverHeaderNormal(icon: Icon(Icons.looks_two), title: '')
             : gd.emptySliver,
         row2.length > 0
             ? SliverEntitiesSort(
                 roomIndex: roomIndex,
-                itemPerRow: gd.itemsPerRow,
+                aspectRatio: gd.buttonRatio,
+                isCamera: false,
                 entities: row2,
                 rowNumber: 2,
               )
@@ -64,18 +67,20 @@ class ViewSort extends StatelessWidget {
         row2Cam.length > 0
             ? SliverEntitiesSort(
                 roomIndex: roomIndex,
-                itemPerRow: 1,
+                aspectRatio: 8 / 5,
+                isCamera: true,
                 entities: row2Cam,
                 rowNumber: 2,
               )
             : gd.emptySliver,
         row3.length + row3Cam.length > 0
-            ? DeviceTypeHeaderEditNormal(icon: Icon(Icons.looks_3), title: '')
+            ? SliverHeaderNormal(icon: Icon(Icons.looks_3), title: '')
             : gd.emptySliver,
         row3.length > 0
             ? SliverEntitiesSort(
                 roomIndex: roomIndex,
-                itemPerRow: gd.itemsPerRow,
+                aspectRatio: gd.buttonRatio,
+                isCamera: false,
                 entities: row3,
                 rowNumber: 3,
               )
@@ -83,18 +88,20 @@ class ViewSort extends StatelessWidget {
         row3Cam.length > 0
             ? SliverEntitiesSort(
                 roomIndex: roomIndex,
-                itemPerRow: 1,
+                aspectRatio: 8 / 5,
+                isCamera: true,
                 entities: row3Cam,
                 rowNumber: 3,
               )
             : gd.emptySliver,
         row4.length + row4Cam.length > 0
-            ? DeviceTypeHeaderEditNormal(icon: Icon(Icons.looks_4), title: '')
+            ? SliverHeaderNormal(icon: Icon(Icons.looks_4), title: '')
             : gd.emptySliver,
         row4.length > 0
             ? SliverEntitiesSort(
                 roomIndex: roomIndex,
-                itemPerRow: gd.itemsPerRow,
+                aspectRatio: gd.buttonRatio,
+                isCamera: false,
                 entities: row4,
                 rowNumber: 4,
               )
@@ -102,7 +109,8 @@ class ViewSort extends StatelessWidget {
         row4Cam.length > 0
             ? SliverEntitiesSort(
                 roomIndex: roomIndex,
-                itemPerRow: 1,
+                aspectRatio: 8 / 5,
+                isCamera: true,
                 entities: row4Cam,
                 rowNumber: 4,
               )

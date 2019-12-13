@@ -3,138 +3,149 @@ import 'package:hasskit/helper/GeneralData.dart';
 import 'package:hasskit/helper/Logger.dart';
 import 'package:hasskit/helper/ThemeInfo.dart';
 import 'package:hasskit/model/Entity.dart';
-import 'package:hasskit/view/EntityControl/EntityControlCamera.dart';
+import 'package:hasskit/view/EntityControl/EntityControlCameraVideoPlayer.dart';
+import 'package:hasskit/view/EntityControl/EntityControlCameraWebView.dart';
+import 'package:hasskit/view/EntityControl/EntityControlParent.dart';
+import 'package:hasskit/view/slivers/SliverWebView.dart';
 import 'package:reorderables/reorderables.dart';
 
-import '../EntityControl/EntityControlParent.dart';
-import '../EntityRectangle.dart';
-import '../EntitySquare.dart';
+import '../EntityButton.dart';
+import '../EntityCamera.dart';
 
 class SliverEntitiesNormal extends StatelessWidget {
   final int roomIndex;
-  final int itemPerRow;
-  final List<Entity> entities;
+  final double aspectRatio;
+  final bool isCamera;
+  final List<String> entities;
 
   const SliverEntitiesNormal({
     @required this.roomIndex,
-    @required this.itemPerRow,
+    @required this.aspectRatio,
+    @required this.isCamera,
     @required this.entities,
   });
+
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: EdgeInsets.all(12),
-      sliver: SliverGrid(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: itemPerRow,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-          childAspectRatio: itemPerRow <= 2 ? 8 / 5.5 : 8 / 8,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            return itemPerRow <= 2
-                ? EntityRectangle(
-                    entityId: entities[index].entityId,
-                    borderColor: Colors.transparent,
-                    onTapCallback: () {
-                      log.d(
-                          "${entities[index].entityId} SliverEntitiesNormal onTapCallback");
-                      gd.cameraStreamUrl = "";
-                      gd.cameraStreamId = 0;
-                      gd.requestCameraStream(entities[index].entityId);
+    List<Widget> sliverWidgets = [];
 
-                      showModalBottomSheet(
-                        context: context,
-                        backgroundColor: ThemeInfo.colorBottomSheet,
-                        isScrollControlled: true,
-                        useRootNavigator: true,
-                        builder: (BuildContext context) {
-//                          return EntityControlCamera(
-//                              entityId: entities[index].entityId);
-                          return EntityControlCamera(
-                              entityId: entities[index].entityId);
-                        },
-                      );
-                    },
-                    onLongPressCallback: () {
-                      log.d(
-                          "${entities[index].entityId} SliverEntitiesNormal onTapCallback");
-                      gd.cameraStreamUrl = "";
-                      gd.cameraStreamId = 0;
-                      gd.requestCameraStream(entities[index].entityId);
+    for (int i = 0; i < entities.length; i++) {
+      var entityId = entities[i];
+      if (entityId.contains("WebView")) {
+        var webView = WebView(webViewsId: entityId);
+        sliverWidgets.add(webView);
+      } else if (entityId.contains("camera.") &&
+          gd.entities[entityId] != null) {
+        var entityCamera = EntityCamera(
+          entityId: entityId,
+          onTapCallback: () {
+            log.d("$entityId SliverEntitiesNormal onTapCallback");
+            gd.cameraStreamUrl = "";
+            gd.cameraStreamId = 0;
+            gd.requestCameraStream(entityId);
 
-                      showModalBottomSheet(
-                        context: context,
-                        backgroundColor: ThemeInfo.colorBottomSheet,
-                        isScrollControlled: true,
-                        useRootNavigator: true,
-                        builder: (BuildContext context) {
-                          return EntityControlCamera(
-                              entityId: entities[index].entityId);
-                        },
-                      );
-                    },
-                  )
-                : EntitySquare(
-                    entityId: entities[index].entityId,
-                    borderColor: Colors.transparent,
-                    onTapCallback: () {
-                      log.d(
-                          "${entities[index].entityId} SliverEntitiesNormal onTapCallback");
-
-                      if (entities[index].entityType == EntityType.group ||
-                          entities[index].entityType ==
-                              EntityType.accessories ||
-                          entities[index].entityType == EntityType.cameras ||
-                          !entities[index].isStateOn &&
-                              gd.entitiesOverride[entities[index].entityId] !=
-                                  null &&
-                              gd.entitiesOverride[entities[index].entityId]
-                                      .openRequireAttention !=
-                                  null &&
-                              gd.entitiesOverride[entities[index].entityId]
-                                      .openRequireAttention ==
-                                  true ||
-                          entities[index].entityId.contains('lock.') &&
-                              !entities[index].isStateOn) {
-                        showModalBottomSheet(
-                          context: context,
-                          elevation: 1,
-                          backgroundColor: ThemeInfo.colorBottomSheet,
-                          isScrollControlled: true,
-                          useRootNavigator: true,
-                          builder: (BuildContext context) {
-                            return EntityControlParent(
-                                entityId: entities[index].entityId);
-                          },
-                        );
-                      } else {
-                        gd.toggleStatus(entities[index]);
-                      }
-                    },
-                    onLongPressCallback: () {
-                      log.d(
-                          "${entities[index].entityId} SliverEntitiesNormal onLongPressCallback");
-                      showModalBottomSheet(
-                        context: context,
-                        elevation: 1,
-                        backgroundColor: ThemeInfo.colorBottomSheet,
-                        isScrollControlled: true,
-                        useRootNavigator: true,
-                        builder: (BuildContext context) {
-                          return EntityControlParent(
-                              entityId: entities[index].entityId);
-                        },
-                      );
-                    },
-                    indicatorIcon: "SliverEntitiesNormal",
-                  );
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: ThemeInfo.colorBottomSheet,
+              isScrollControlled: true,
+              useRootNavigator: true,
+              builder: (BuildContext context) {
+                return Theme.of(context).platform == TargetPlatform.iOS
+                    ? EntityControlCameraWebView(entityId: entityId)
+                    : EntityControlCameraVideoPlayer(entityId: entityId);
+              },
+            );
           },
-          childCount: entities.length,
-        ),
-      ),
-    );
+          onLongPressCallback: () {
+            log.d("$entityId SliverEntitiesNormal onTapCallback");
+            gd.cameraStreamUrl = "";
+            gd.cameraStreamId = 0;
+            gd.requestCameraStream(entityId);
+
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: ThemeInfo.colorBottomSheet,
+              isScrollControlled: true,
+              useRootNavigator: true,
+              builder: (BuildContext context) {
+                return Theme.of(context).platform == TargetPlatform.iOS
+                    ? EntityControlCameraWebView(entityId: entityId)
+                    : EntityControlCameraVideoPlayer(entityId: entityId);
+              },
+            );
+          },
+        );
+        sliverWidgets.add(entityCamera);
+      } else if (gd.entities[entityId] != null) {
+        var entityButton = EntityButton(
+          entityId: entityId,
+          onTapCallback: () {
+            log.d("$entityId SliverEntitiesNormal onTapCallback");
+
+            if (gd.entities[entityId].entityType == EntityType.group ||
+                gd.entities[entityId].entityType == EntityType.mediaPlayers ||
+                gd.entities[entityId].entityType == EntityType.climateFans ||
+                gd.entities[entityId].entityType == EntityType.accessories ||
+                gd.entities[entityId].entityType == EntityType.cameras ||
+                !gd.entities[entityId].isStateOn &&
+                    gd.entitiesOverride[entityId] != null &&
+                    gd.entitiesOverride[entityId].openRequireAttention !=
+                        null ||
+                entityId.contains('lock.') &&
+                    !gd.entities[entityId].isStateOn ||
+                gd.entities[entityId].currentPosition != null) {
+              showModalBottomSheet(
+                context: context,
+                elevation: 1,
+                backgroundColor: ThemeInfo.colorBottomSheet,
+                isScrollControlled: true,
+                useRootNavigator: true,
+                builder: (BuildContext context) {
+                  return EntityControlParent(entityId: entityId);
+                },
+              );
+            } else {
+              gd.toggleStatus(gd.entities[entityId]);
+              gd.clickedStatus[entityId] = true;
+            }
+          },
+          onLongPressCallback: () {
+            log.d("$entityId SliverEntitiesNormal onLongPressCallback");
+            showModalBottomSheet(
+              context: context,
+              elevation: 1,
+              backgroundColor: ThemeInfo.colorBottomSheet,
+              isScrollControlled: true,
+              useRootNavigator: true,
+              builder: (BuildContext context) {
+                return EntityControlParent(entityId: entityId);
+              },
+            );
+          },
+        );
+        sliverWidgets.add(entityButton);
+      } else {
+//        log.e("Error entityId $entityId");
+      }
+    }
+
+    return sliverWidgets.length < 1
+        ? gd.emptySliver
+        : SliverPadding(
+            padding: EdgeInsets.all(12),
+            sliver: SliverGrid(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount:
+                    isCamera ? gd.layoutCameraCount : gd.layoutButtonCount,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                childAspectRatio: aspectRatio,
+              ),
+              delegate: SliverChildListDelegate(
+                sliverWidgets,
+              ),
+            ),
+          );
   }
 }
 
@@ -164,14 +175,13 @@ class SliverEntitiesEdit extends StatelessWidget {
           crossAxisCount: itemPerRow,
           mainAxisSpacing: 8,
           crossAxisSpacing: 8,
-          childAspectRatio: itemPerRow == 1 ? 8 / 5 : 8 / 8,
+          childAspectRatio: itemPerRow == 1 ? 8 / 5 : 8 / 5,
         ),
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             return itemPerRow == 1
-                ? EntityRectangle(
+                ? EntityCamera(
                     entityId: entities[index].entityId,
-                    borderColor: borderColor,
                     onTapCallback: () {
                       log.d(
                           "${entities[index].entityId} SliverEntitiesEdit onTapCallback");
@@ -203,9 +213,8 @@ class SliverEntitiesEdit extends StatelessWidget {
                       }
                     },
                   )
-                : EntitySquare(
+                : EntityButton(
                     entityId: entities[index].entityId,
-                    borderColor: borderColor,
                     onTapCallback: () {
                       log.d(
                           "${entities[index].entityId} SliverEntitiesEdit onTapCallback");
@@ -229,7 +238,6 @@ class SliverEntitiesEdit extends StatelessWidget {
                             entities[index].friendlyName, context);
                       }
                     },
-                    indicatorIcon: "SliverEntitiesEdit+$clickToAdd",
                   );
           },
           childCount: entities.length,
@@ -242,13 +250,16 @@ class SliverEntitiesEdit extends StatelessWidget {
 class SliverEntitiesSort extends StatelessWidget {
   final int roomIndex;
   final int rowNumber;
-  final int itemPerRow;
-  final List<Entity> entities;
+  final bool isCamera;
+  final double aspectRatio;
+
+  final List<String> entities;
 
   const SliverEntitiesSort({
     @required this.roomIndex,
     @required this.rowNumber,
-    @required this.itemPerRow,
+    @required this.isCamera,
+    @required this.aspectRatio,
     @required this.entities,
   });
 
@@ -258,51 +269,63 @@ class SliverEntitiesSort extends StatelessWidget {
       return SliverEntitiesNormal(
         roomIndex: roomIndex,
         entities: entities,
-        itemPerRow: itemPerRow,
+        isCamera: isCamera,
+        aspectRatio: aspectRatio,
       );
     }
 
-    double spacing = 8;
-    double edge = 8;
+    var totalWidth = gd.mediaQueryWidth;
 
-    var width = (gd.mediaQueryWidth - (edge * 2 + spacing * itemPerRow - 1)) /
-        itemPerRow;
+    var totalItemPerRow =
+        isCamera ? gd.layoutCameraCount : gd.layoutButtonCount;
+    if (totalItemPerRow < 1) totalItemPerRow = 1;
+    var totalSpaceBetween = 8 * totalItemPerRow - 1;
+    var width = (totalWidth - totalSpaceBetween - 8 * 2) / totalItemPerRow;
+//    log.d(
+//        "gd.mediaQueryWidth ${gd.mediaQueryWidth} totalWidth $totalWidth  totalItemPerRow $totalItemPerRow");
     List<Widget> entityShape = [];
+    List<String> entityIdFiltered = [];
+    for (String entityId in entities) {
+//      log.d("SliverEntitiesSort entityId $entityId");
+      if (!entityId.contains("WebView") && gd.entities[entityId] == null)
+        continue;
 
-    for (Entity entity in entities) {
-      Widget widget = new Transform.scale(
-        scale: 1,
-        child: Container(
-          width: width,
-          height: itemPerRow == 1 ? width / 8 * 5 : width,
-          child: itemPerRow == 1
-              ? EntityRectangle(
-                  entityId: entity.entityId,
-                  borderColor: ThemeInfo.colorIconActive,
-                  onTapCallback: null,
-                  onLongPressCallback: null)
-              : EntitySquare(
-                  entityId: entity.entityId,
-                  borderColor: ThemeInfo.colorIconActive,
-                  onTapCallback: null,
-                  onLongPressCallback: null,
-                  indicatorIcon: "SliverEntitiesSort",
-                ),
-        ),
+      entityIdFiltered.add(entityId);
+
+      Widget widget = Container(
+        width: width,
+        height: width * 1 / aspectRatio,
+        child: entityId.contains("WebView")
+            ? WebView(
+                webViewsId: entityId,
+              )
+            : entityId.contains("camera.")
+                ? EntityCamera(
+                    entityId: entityId,
+                    onTapCallback: null,
+                    onLongPressCallback: null)
+                : EntityButton(
+                    entityId: entityId,
+                    onTapCallback: null,
+                    onLongPressCallback: null,
+                  ),
       );
+
       entityShape.add(widget);
     }
 
     void _onReorder(int oldIndex, int newIndex) {
-      String oldEntityId = entities[oldIndex].entityId;
-      String newEntityId = entities[newIndex].entityId;
+      String oldEntityId = entityIdFiltered[oldIndex];
+      String newEntityId = entityIdFiltered[newIndex];
+      log.w(
+          "_onReorder oldIndex $oldIndex newIndex $newIndex roomIndex $roomIndex rowNumber $rowNumber oldEntityId $oldEntityId newEntityId $newEntityId \n$entities");
       gd.roomEntitySort(roomIndex, rowNumber, oldEntityId, newEntityId);
     }
 
     var wrap = ReorderableWrap(
       needsLongPressDraggable: false,
-      spacing: spacing,
-      runSpacing: spacing,
+      spacing: 8,
+      runSpacing: 8,
       padding: const EdgeInsets.all(0),
       children: entityShape,
       onReorder: _onReorder,
@@ -317,14 +340,14 @@ class SliverEntitiesSort extends StatelessWidget {
       },
     );
 
-    var wrapCentered = Center(
-      child: wrap,
-    );
+//    var wrapCentered = Center(
+//      child: wrap,
+//    );
 
     return SliverPadding(
-      padding: EdgeInsets.all(edge),
+      padding: EdgeInsets.all(8),
       sliver: SliverList(
-        delegate: SliverChildListDelegate([wrapCentered]),
+        delegate: SliverChildListDelegate([wrap]),
       ),
     );
   }

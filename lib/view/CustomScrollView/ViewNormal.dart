@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hasskit/helper/GeneralData.dart';
 import 'package:hasskit/helper/ThemeInfo.dart';
 import 'package:hasskit/model/Entity.dart';
-import 'package:hasskit/view/CustomScrollView/DeviceTypeHeader.dart';
 import 'package:hasskit/view/slivers/SliverEntities.dart';
+import 'package:hasskit/view/slivers/SliverEntityStatusRunning.dart';
+import 'package:hasskit/view/slivers/SliverHeader.dart';
 import 'package:hasskit/view/slivers/SliverNavigationBar.dart';
 
 class ViewNormal extends StatelessWidget {
@@ -48,14 +49,16 @@ class ViewNormal extends StatelessWidget {
     }
 
     return CustomScrollView(
+      controller: gd.viewNormalController,
       slivers: [
         SliverNavigationBar(roomIndex: roomIndex),
+        SliverEntityStatusRunning(),
         showAddFirstButton
             ? SliverPadding(
                 padding: EdgeInsets.all(12),
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: gd.itemsPerRow,
+                    crossAxisCount: gd.layoutCameraCount,
                     mainAxisSpacing: 8.0,
                     crossAxisSpacing: 10.0,
                     childAspectRatio: 1,
@@ -70,7 +73,7 @@ class ViewNormal extends StatelessWidget {
                         child: Opacity(
                           opacity: 0.5,
                           child: IconButton(
-                            iconSize: 60 * 3 / gd.itemsPerRow,
+                            iconSize: 60 * 3 / gd.layoutCameraCount,
                             onPressed: () {
                               gd.viewMode = ViewMode.edit;
                             },
@@ -87,70 +90,78 @@ class ViewNormal extends StatelessWidget {
               )
             : gd.emptySliver,
         row1.length + row1Cam.length > 0
-            ? DeviceTypeHeaderEditNormal(icon: Icon(Icons.looks_one), title: '')
+            ? SliverHeaderNormal(icon: Icon(Icons.looks_one), title: '')
             : gd.emptySliver,
         row1.length > 0
             ? SliverEntitiesNormal(
                 roomIndex: roomIndex,
-                itemPerRow: gd.itemsPerRow,
+                aspectRatio: gd.buttonRatio,
+                isCamera: false,
                 entities: row1,
               )
             : gd.emptySliver,
         row1Cam.length > 0
             ? SliverEntitiesNormal(
                 roomIndex: roomIndex,
-                itemPerRow: 1,
+                aspectRatio: 8 / 5,
+                isCamera: true,
                 entities: row1Cam,
               )
             : gd.emptySliver,
         row2.length + row2Cam.length > 0
-            ? DeviceTypeHeaderEditNormal(icon: Icon(Icons.looks_two), title: '')
+            ? SliverHeaderNormal(icon: Icon(Icons.looks_two), title: '')
             : gd.emptySliver,
         row2.length > 0
             ? SliverEntitiesNormal(
                 roomIndex: roomIndex,
-                itemPerRow: gd.itemsPerRow,
+                aspectRatio: gd.buttonRatio,
+                isCamera: false,
                 entities: row2,
               )
             : gd.emptySliver,
         row2Cam.length > 0
             ? SliverEntitiesNormal(
                 roomIndex: roomIndex,
-                itemPerRow: 1,
+                aspectRatio: 8 / 5,
+                isCamera: true,
                 entities: row2Cam,
               )
             : gd.emptySliver,
         row3.length + row3Cam.length > 0
-            ? DeviceTypeHeaderEditNormal(icon: Icon(Icons.looks_3), title: '')
+            ? SliverHeaderNormal(icon: Icon(Icons.looks_3), title: '')
             : gd.emptySliver,
         row3.length > 0
             ? SliverEntitiesNormal(
                 roomIndex: roomIndex,
-                itemPerRow: gd.itemsPerRow,
+                aspectRatio: gd.buttonRatio,
+                isCamera: false,
                 entities: row3,
               )
             : gd.emptySliver,
         row3Cam.length > 0
             ? SliverEntitiesNormal(
                 roomIndex: roomIndex,
-                itemPerRow: 1,
+                aspectRatio: 8 / 5,
+                isCamera: true,
                 entities: row3Cam,
               )
             : gd.emptySliver,
-        row4.length + row4.length > 0
-            ? DeviceTypeHeaderEditNormal(icon: Icon(Icons.looks_4), title: '')
+        row4.length + row4Cam.length > 0
+            ? SliverHeaderNormal(icon: Icon(Icons.looks_4), title: '')
             : gd.emptySliver,
         row4.length > 0
             ? SliverEntitiesNormal(
                 roomIndex: roomIndex,
-                itemPerRow: gd.itemsPerRow,
+                aspectRatio: gd.buttonRatio,
+                isCamera: false,
                 entities: row4,
               )
             : gd.emptySliver,
         row4Cam.length > 0
             ? SliverEntitiesNormal(
                 roomIndex: roomIndex,
-                itemPerRow: 1,
+                aspectRatio: 8 / 5,
+                isCamera: true,
                 entities: row4Cam,
               )
             : gd.emptySliver,
@@ -202,7 +213,61 @@ class ViewNormal extends StatelessWidget {
   }
 }
 
-List<Entity> entityFilterByRow(int roomIndex, int rowNumber, bool isCamera) {
+List<String> webViewByRow(int roomIndex, int rowNumber) {
+  List<String> webViews = [];
+
+  switch (rowNumber) {
+    case 1:
+      {
+        for (int i = 0; i < gd.webViewSupportMax; i++) {
+          if (gd.roomList[roomIndex].favorites.contains("WebView${i + 1}")) {
+            webViews.add("WebView${i + 1}");
+          }
+        }
+      }
+      break;
+    case 2:
+      {
+        for (int i = 0; i < gd.webViewSupportMax; i++) {
+          if (gd.roomList[roomIndex].entities.contains("WebView${i + 1}")) {
+            webViews.add("WebView${i + 1}");
+          }
+        }
+      }
+      break;
+    case 3:
+      {
+        for (int i = 0; i < gd.webViewSupportMax; i++) {
+          if (gd.roomList[roomIndex].row3.contains("WebView${i + 1}")) {
+            webViews.add("WebView${i + 1}");
+          }
+        }
+      }
+      break;
+    case 4:
+      {
+        for (int i = 0; i < gd.webViewSupportMax; i++) {
+          if (gd.roomList[roomIndex].row4.contains("WebView${i + 1}")) {
+            webViews.add("WebView${i + 1}");
+          }
+        }
+      }
+      break;
+    default:
+      {
+        for (int i = 0; i < gd.webViewSupportMax; i++) {
+          if (gd.roomList[roomIndex].favorites.contains("WebView${i + 1}")) {
+            webViews.add("WebView${i + 1}");
+          }
+        }
+      }
+      break;
+  }
+
+  return webViews;
+}
+
+List<String> entityFilterByRow(int roomIndex, int rowNumber, bool isCamera) {
   List<String> roomRowEntities = [];
 
   switch (rowNumber) {
@@ -228,18 +293,25 @@ List<Entity> entityFilterByRow(int roomIndex, int rowNumber, bool isCamera) {
       break;
     default:
       {
-        roomRowEntities = gd.roomList[roomIndex].entities;
+        roomRowEntities = gd.roomList[roomIndex].favorites;
       }
       break;
   }
 
-  List<Entity> entitiesFilter = [];
+  List<String> entitiesFilter = [];
   for (String entityId in roomRowEntities) {
-    var entity = gd.entities[entityId];
-    if (entity != null &&
-        (isCamera && entity.entityType == EntityType.cameras ||
-            !isCamera && entity.entityType != EntityType.cameras)) {
-      entitiesFilter.add(entity);
+    if (!entityId.contains("WebView") && gd.entities[entityId] == null)
+      continue;
+
+    bool containCamera =
+        entityId.contains("camera.") || entityId.contains("WebView");
+//
+//    if (containCamera) {
+//      log.w("containCamera $entityId");
+//    }
+
+    if (isCamera && containCamera || !isCamera && !containCamera) {
+      entitiesFilter.add(entityId);
     }
   }
 

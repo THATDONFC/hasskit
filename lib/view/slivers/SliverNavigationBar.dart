@@ -1,8 +1,10 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hasskit/helper/GeneralData.dart';
 import 'package:hasskit/helper/MaterialDesignIcons.dart';
 import 'package:hasskit/helper/ThemeInfo.dart';
+import 'package:hasskit/view/EntityControl/EntityControlParent.dart';
 import 'package:provider/provider.dart';
 
 import '../CustomPopupMenu.dart';
@@ -16,7 +18,7 @@ class SliverNavigationBar extends StatelessWidget {
 //    log.w("Widget build SliverNavigationBar");
 
     Widget temperatureWidget = Container();
-    Color backgroundColor;
+//    Color backgroundColor;
     Color iconColor;
 
     IconData topIcon;
@@ -31,6 +33,9 @@ class SliverNavigationBar extends StatelessWidget {
           "${generalData.roomList[roomIndex].imageIndex} "
           "${generalData.roomList[roomIndex].tempEntityId} "
           "${generalData.roomList[roomIndex].entities.length} "
+          "${generalData.eventsEntities} "
+          "${generalData.activeDevicesShow} "
+          "${generalData.activeDevicesOn.length} "
           "${generalData.viewMode} ",
       builder: (context, data, child) {
         //        if (roomIndex != null &&
@@ -49,86 +54,78 @@ class SliverNavigationBar extends StatelessWidget {
         }
 
         if (tempState != null) {
-//          log.w("tempState $tempState");
+//          log.d("tempState $tempState");
 
           if (tempState > 35) {
-            backgroundColor = ThemeInfo.colorTemp05.withOpacity(0.5);
+//            backgroundColor = ThemeInfo.colorTemp05.withOpacity(0.5);
             iconColor = ThemeInfo.colorTemp05;
           } else if (tempState > 30) {
-            backgroundColor = ThemeInfo.colorTemp04.withOpacity(0.5);
+//            backgroundColor = ThemeInfo.colorTemp04.withOpacity(0.5);
             iconColor = ThemeInfo.colorTemp04;
           } else if (tempState > 20) {
-            backgroundColor = ThemeInfo.colorTemp03.withOpacity(0.5);
+//            backgroundColor = ThemeInfo.colorTemp03.withOpacity(0.5);
             iconColor = ThemeInfo.colorTemp03;
           } else if (tempState > 15) {
-            backgroundColor = ThemeInfo.colorTemp02.withOpacity(0.5);
+//            backgroundColor = ThemeInfo.colorTemp02.withOpacity(0.5);
             iconColor = ThemeInfo.colorTemp02;
           } else {
-            backgroundColor = ThemeInfo.colorTemp01.withOpacity(0.5);
+//            backgroundColor = ThemeInfo.colorTemp01.withOpacity(0.5);
             iconColor = ThemeInfo.colorTemp01;
           }
-          temperatureWidget = Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.fromLTRB(3, 0, 12, 2),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(80),
-                  color: ThemeInfo.colorBottomSheet.withOpacity(0.5),
-                ),
-                child: Row(
-                  children: <Widget>[
-                    Stack(
-                      children: <Widget>[
-//                        Icon(
-//                          MaterialDesignIcons.getIconDataFromIconName(
-//                              "mdi:checkbox-blank-circle-outline"),
-//                          color: iconColor,
-//                        ),
-                        Icon(
-                          MaterialDesignIcons.getIconDataFromIconName(
-                              "mdi:thermometer"),
-                          size: 24,
-                          color: iconColor,
-                        ),
-                      ],
-                      alignment: Alignment.center,
-                    ),
+          temperatureWidget = InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                elevation: 1,
+                backgroundColor: ThemeInfo.colorBottomSheet,
+                isScrollControlled: true,
+                useRootNavigator: true,
+                builder: (BuildContext context) {
+                  return EntityControlParent(
+                      entityId: gd.entities[gd.roomList[roomIndex].tempEntityId]
+                          .entityId);
+                },
+              );
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.fromLTRB(3, 0, 12, 2),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(80),
+                    color: iconColor.withOpacity(0.25),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        MaterialDesignIcons.getIconDataFromIconName(
+                            "mdi:thermometer"),
+                        size: 24,
+                        color: iconColor,
+                      ),
 //                    SizedBox(width: 2),
-                    Text("${tempState.toStringAsFixed(1)}°",
-                        textScaleFactor: gd.textScaleFactor),
-                  ],
+                      AutoSizeText(
+                        "${tempState.toStringAsFixed(1)}°",
+                        textScaleFactor: gd.textScaleFactorFix,
+                        style:
+                            TextStyle(color: ThemeInfo.colorBottomSheetReverse),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-//              Stack(
-//                alignment: Alignment.center,
-//                children: <Widget>[
-//                  CircleAvatar(
-//                    backgroundColor: Colors.black26,
-//                    radius: 14,
-//                  ),
-//                  Icon(
-//                    MaterialDesignIcons.getIconDataFromIconName(
-//                        "mdi:thermometer"),
-//                    color: iconColor,
-//                  ),
-//                ],
-//              ),
-//              Text("$tempState", textScaleFactor: gd.textScaleFactor),
-            ],
+              ],
+            ),
           );
         }
 
         return CupertinoSliverNavigationBar(
-//          leading: Image(
-//            image: AssetImage(
-//                'assets/images/icon_transparent_border_transparent.png'),
-//          ),
           leading: temperatureWidget,
-          backgroundColor: backgroundColor,
-          largeTitle: Text(
+          backgroundColor: ThemeInfo.colorBottomSheet.withOpacity(0.5),
+          largeTitle: AutoSizeText(
             gd.getRoomName(roomIndex),
-            textScaleFactor: gd.textScaleFactor,
+            style: TextStyle(color: ThemeInfo.colorBottomSheetReverse),
             overflow: TextOverflow.ellipsis,
           ),
           trailing: Container(
@@ -136,6 +133,40 @@ class SliverNavigationBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
+                gd.activeDevicesOn.length > 0
+                    ? InkWell(
+                        onTap: () {
+                          gd.activeDevicesShow = !gd.activeDevicesShow;
+                          if (gd.activeDevicesShow)
+                            gd.viewNormalController.animateTo(0,
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeIn);
+                        },
+                        child: Stack(
+                          alignment: Alignment.topRight,
+                          children: <Widget>[
+                            Icon(Icons.notifications,
+                                color: Theme.of(context).textTheme.title.color),
+                            Container(
+                              width: 15,
+                              height: 15,
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: ThemeInfo.colorIconActive,
+                                shape: BoxShape.circle,
+                              ),
+                              child: FittedBox(
+                                child: AutoSizeText(
+                                  "${gd.activeDevicesOn.length}",
+                                  style: TextStyle(color: Colors.white),
+                                  maxLines: 1,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    : Container(),
                 gd.roomList.length > 0
                     ? InkWell(
                         onTap: () {

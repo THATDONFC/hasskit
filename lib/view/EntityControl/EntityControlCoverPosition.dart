@@ -43,7 +43,7 @@ class CoverSlider extends StatefulWidget {
 
 class CoverSliderState extends State<CoverSlider> {
   double buttonHeight = 300.0;
-  double buttonWidth = 90.0;
+  double buttonWidth = 126.0;
   double currentPosX;
   double currentPosY;
   double startPosX;
@@ -71,7 +71,7 @@ class CoverSliderState extends State<CoverSlider> {
                 0,
                 100,
                 lowerPartHeight,
-                buttonHeight - upperPartHeight - 8);
+                buttonHeight - upperPartHeight);
             buttonValue = mapValue;
           }
           log.d(
@@ -98,42 +98,42 @@ class CoverSliderState extends State<CoverSlider> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       color: ThemeInfo.colorBottomSheetReverse,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black54,
+                          blurRadius:
+                              0.0, // has the effect of softening the shadow
+                          spreadRadius:
+                              1.0, // has the effect of extending the shadow
+                          offset: Offset(
+                            0.0, // horizontal, move right 10
+                            0.0, // vertical, move down 10
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Positioned(
-                    top: 4,
+                    top: 0,
                     child: Container(
-                      width: buttonWidth - 8,
-                      height: buttonHeight - 8,
+                      width: buttonWidth,
+                      height: buttonHeight,
                       decoration: BoxDecoration(
                         color: gd.entities[widget.entityId].isStateOn
                             ? ThemeInfo.colorIconActive
                             : ThemeInfo.colorIconInActive,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       alignment: Alignment.bottomCenter,
                       child: Container(
-                        width: buttonWidth - 8,
+                        width: buttonWidth,
                         height: buttonValue,
                         alignment: Alignment.topCenter,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(12),
-                              bottomRight: Radius.circular(12)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black54,
-                              blurRadius:
-                                  0.5, // has the effect of softening the shadow
-                              spreadRadius:
-                                  0.5, // has the effect of extending the shadow
-                              offset: Offset(
-                                0.0, // horizontal, move right 10
-                                0.5,
-                              ),
-                            ),
-                          ],
+                              bottomLeft: Radius.circular(16),
+                              bottomRight: Radius.circular(16)),
                         ),
                         child: SizedBox(
                           width: 50,
@@ -151,34 +151,22 @@ class CoverSliderState extends State<CoverSlider> {
                     ),
                   ),
                   Positioned(
-                    top: 4,
+                    top: 0,
                     child: Container(
-                      width: buttonWidth - 8,
+                      width: buttonWidth,
                       height: upperPartHeight,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black54,
-                            blurRadius:
-                                0.5, // has the effect of softening the shadow
-                            spreadRadius:
-                                0.5, // has the effect of extending the shadow
-                            offset: Offset(
-                              0.0, // horizontal, move right 10
-                              -0.5, // vertical, move down 10
-                            ),
-                          ),
-                        ],
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
                       ),
                       alignment: Alignment.center,
                       child: Text(
                         gd
                             .mapNumber(buttonValue, lowerPartHeight,
-                                buttonHeight - upperPartHeight - 8, 0, 100)
+                                buttonHeight - upperPartHeight, 0, 100)
                             .toInt()
                             .toString(),
                         style: TextStyle(
@@ -219,7 +207,7 @@ class CoverSliderState extends State<CoverSlider> {
       () {
         draggingTime = DateTime.now().add(Duration(seconds: 1));
         var sendValue = gd.mapNumber(buttonValue, lowerPartHeight,
-            buttonHeight - upperPartHeight - 8, 0, 100);
+            buttonHeight - upperPartHeight, 0, 100);
 
         log.d("_onVerticalDragEnd $sendValue");
         var outMsg;
@@ -262,8 +250,8 @@ class CoverSliderState extends State<CoverSlider> {
 //      log.d(
 //          "_onVerticalDragUpdate currentPosX ${currentPosX.toStringAsFixed(0)} currentPosY ${currentPosY.toStringAsFixed(0)}");
       buttonValue = buttonValueOnTapDown + (startPosY - currentPosY);
-      buttonValue = buttonValue.clamp(
-          lowerPartHeight, buttonHeight - upperPartHeight - 8);
+      buttonValue =
+          buttonValue.clamp(lowerPartHeight, buttonHeight - upperPartHeight);
     });
   }
 }

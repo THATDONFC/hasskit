@@ -1,38 +1,20 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hasskit/helper/GeneralData.dart';
 import 'package:hasskit/helper/MaterialDesignIcons.dart';
 import 'package:hasskit/helper/ThemeInfo.dart';
-import 'package:hasskit/helper/WebSocket.dart';
 import 'package:provider/provider.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class EntityControlClimate extends StatelessWidget {
   final String entityId;
-
   const EntityControlClimate({@required this.entityId});
 
   @override
   Widget build(BuildContext context) {
-    Timer _delayOutMsg;
-    String delayOutMsg;
-
-    void delayClimate() {
-      webSocket.send(delayOutMsg);
-      gd.delayGetStatesTimer(5);
-    }
-
-    void delayClimateTimer(int seconds) {
-      _delayOutMsg?.cancel();
-      _delayOutMsg = null;
-
-      _delayOutMsg = Timer(Duration(seconds: seconds), delayClimate);
-    }
-
+//    var hvacVal = "Off";
     return Selector<GeneralData, String>(
       selector: (_, generalData) =>
           "${generalData.entities[entityId].state}" +
@@ -110,10 +92,7 @@ class EntityControlClimate extends StatelessWidget {
               }
             };
             var outMsgEncoded = json.encode(outMsg);
-//        print('outMsgEncoded $outMsgEncoded');
-            webSocket.send(outMsgEncoded);
-            HapticFeedback.mediumImpact();
-            gd.delayGetStatesTimer(5);
+            gd.sendSocketMessage(outMsgEncoded);
           },
         );
 
@@ -128,7 +107,7 @@ class EntityControlClimate extends StatelessWidget {
                     gd.textToDisplay(hvacMode),
                     style: Theme.of(context).textTheme.subhead,
                     overflow: TextOverflow.ellipsis,
-                    textScaleFactor: gd.textScaleFactor,
+                    textScaleFactor: gd.textScaleFactorFix,
                     textAlign: TextAlign.right,
                   ),
                 ),
@@ -174,6 +153,23 @@ class EntityControlClimate extends StatelessWidget {
         var fanModesScrollController =
             FixedExtentScrollController(initialItem: fanModeIndex);
 
+//        Map<String, Widget> hvacSegments = <String, Widget>{
+//          "Off": Text('Off'),
+//          "Heat": Text('Heat'),
+//          "Cool": Text('Cool'),
+//        };
+
+//        var hvacSegment = CupertinoSlidingSegmentedControl<String>(
+//          thumbColor: ThemeInfo.colorBottomSheetReverse.withOpacity(0.5),
+//          padding: EdgeInsets.all(12),
+//          children: hvacSegments,
+//          onValueChanged: (String val) {
+//            hvacVal = val;
+//            log.d("onValueChanged hvacVal $hvacVal");
+//          },
+//          groupValue: hvacVal,
+//        );
+
         return Column(
           children: <Widget>[
             SizedBox(
@@ -181,31 +177,40 @@ class EntityControlClimate extends StatelessWidget {
               height: 240,
               child: slider,
             ),
+//            hvacSegment,
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("assets/images/gradient-1.png"),
-                          fit: BoxFit.fill),
-                      color: ThemeInfo.colorBottomSheetReverse.withOpacity(0.2),
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.5),
+                            Colors.black.withOpacity(0.0),
+                            Colors.black.withOpacity(0.5),
+                          ]),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(8),
                         bottomLeft: Radius.circular(8),
+                      ),
+                      border: Border.all(
+//          color: ThemeInfo.pickerActivateStyle.color,
+                        width: 1.0,
                       ),
                     ),
                     height: 120,
                     child: CupertinoPicker(
                       squeeze: 1.45,
-                      diameterRatio: 2,
+                      diameterRatio: 1.1,
                       offAxisFraction: -0.5,
                       scrollController: hvacModesScrollController,
-                      magnification: 0.7,
+                      magnification: 1,
                       backgroundColor: Colors.transparent,
                       children: hvacModes,
-                      itemExtent: 60, //height of each item
+                      itemExtent: 32, //height of each item
                       looping: true,
                       onSelectedItemChanged: (int index) {
                         hvacModeIndex = index;
@@ -221,9 +226,8 @@ class EntityControlClimate extends StatelessWidget {
                             "hvac_mode": "${entity.hvacModes[hvacModeIndex]}"
                           }
                         };
-                        delayOutMsg = json.encode(outMsg);
-                        delayClimateTimer(1);
-                        HapticFeedback.mediumImpact();
+                        var delayOutMsg = json.encode(outMsg);
+                        gd.sendSocketMessageDelay(delayOutMsg, 1);
                       },
                     ),
                   ),
@@ -238,24 +242,32 @@ class EntityControlClimate extends StatelessWidget {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("assets/images/gradient-1.png"),
-                          fit: BoxFit.fill),
-                      color: ThemeInfo.colorBottomSheetReverse.withOpacity(0.2),
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.5),
+                            Colors.black.withOpacity(0.0),
+                            Colors.black.withOpacity(0.5),
+                          ]),
                       borderRadius: BorderRadius.only(
                           topRight: Radius.circular(8),
                           bottomRight: Radius.circular(8)),
+                      border: Border.all(
+//          color: ThemeInfo.pickerActivateStyle.color,
+                        width: 1.0,
+                      ),
                     ),
                     height: 120,
                     child: CupertinoPicker(
                       squeeze: 1.45,
-                      diameterRatio: 2,
+                      diameterRatio: 1.1,
                       offAxisFraction: 0.5,
                       scrollController: fanModesScrollController,
-                      magnification: 0.7,
+                      magnification: 1,
                       backgroundColor: Colors.transparent,
                       children: fanModes,
-                      itemExtent: 60, //height of each item
+                      itemExtent: 32, //height of each item
                       looping: true,
                       onSelectedItemChanged: (int index) {
                         fanModeIndex = index;
@@ -270,9 +282,8 @@ class EntityControlClimate extends StatelessWidget {
                             "fan_mode": "${entity.fanModes[fanModeIndex]}"
                           }
                         };
-                        delayOutMsg = json.encode(outMsg);
-                        delayClimateTimer(1);
-                        HapticFeedback.mediumImpact();
+                        var delayOutMsg = json.encode(outMsg);
+                        gd.sendSocketMessageDelay(delayOutMsg, 1);
                       },
                     ),
                   ),

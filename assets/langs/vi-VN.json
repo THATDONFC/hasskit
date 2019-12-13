@@ -1,0 +1,125 @@
+{
+    "global": {
+        "duration": "Độ dài",
+        "open": "Mở",
+        "closed": "Đóng",
+        "on": "Bật",
+        "off": "Tắt",
+        "error": "Lỗi",
+        "no_data": "Không có dữ liệu",
+        "reset": "Đặt lại",
+        "ok": "Ok",
+        "left": "Trái",
+        "right": "Phải",
+        "connect_hass": "Vui lòng kết nối với\nHome Assistant",
+        "last_update": "Cập nhật lần cuối",
+        "cancel": "Hủy",
+        "settings": "Cài đặt",
+        "rooms": "Phòng",
+        "disconnect": "Ngắt kết nối",
+        "refresh": "Làm mới",
+        "last_access": "Kết nối lần cuối",
+        "connected": "Đã kết nối",
+        "disconnected": "Ngắt kết nối"
+    },
+    "edit": {
+        "select_icon": "Lựa chọn biểu tượng tùy chọn",
+        "reset_icon": "Đặt lại biểu tượng",
+        "rbg_color": "Giữ lâu để sửa mầu",
+        "edit": "Sửa",
+        "arrange": "Xắp xếp",
+        "move": "Di chuyển",
+        "delete": "Xóa",
+        "devices": "",
+        "add_room": "Thêm phòng mới"
+    },
+    "alarm_panel": {
+        "arm_home":"Ở nhà",
+        "arm_away": "Đi vắng",
+        "disarmed": "Vô hiệu hóa",
+        "pending": "Chuẩn bị",
+        "armed_away": "Đi vắng",
+        "armed_home": "Ở nhà",
+        "armed_night": "Ban đêm",
+        "armed": "Đã bật"
+    },
+    "toggle": {
+        "require_slide_open_disabled": "Bỏ chế độ trượt để mở",
+        "require_slide_open_enabled": "Bật chết độ trượt để mở",
+        "prevent_accidentally_open": "Ngăn chặn vô tình mở",
+        "1_touch": "Có thể mở với 1 chạm"
+    },
+    "rgb": {
+        "pick_color": "Chọn mầu!"
+    },
+    "webview": {
+        "edit": "Sửa website",
+        "saved": "Website đã lưu",
+        "reload": "Tải lại website",
+        "pin": "Đính website - không cho phép cuộn",
+        "unpin": "Gỡ đính website - cho phép cuộn",
+        "windy": "Windy",
+        "y_weather": "Y! Weather",
+        "live_score": "LiveScore",
+        "aspect": "Tỉ lệ"
+    },
+    "login": {
+        "connecting": "Đang kết nối tới",
+        "correct_info": "Đảm bảo các thông tin sau đây chính xác",
+        "cancel": "Hủy kết nối đăng nhập web"
+    },
+    "settings": {
+        "home_assistant": "Kết nối Home Assistant",
+        "new_connection": "Tạo kết nối mới...",
+        "use_https": "Dùng https",
+        "connect": "Kêt nối",
+        "sync": "Đồng bộ qua Google Cloud",
+        "theme_color": "Chủ đề mầu",
+        "language": "Ngôn ngữ",
+        "layout": "Bố trí",
+        "about": "Thông tin về HassKit",
+        "about_info": "HassKit là một ứng dụng mạnh mẽ và thân thiện giúp người dùng ngay lập tức sử dụng Home Assistant mà không cần qua các thao tác cài đặt phức tạp.\n\nHome Assistant là một trong những nền tảng tốt nhất cho nhà thông minh, với các tính năng mạnh mẽ và quy mô hỗ trợ thiết bị nhiều nhất thế giới. Home Assistant chỉ yêu cầu một số phần cứng đơn giản / không đắt tiền để bắt đầu điều khiển nhà thông minh.\n\nTuy nhiên, Home Assistant không dễ thiết lập và cần một thời gian để tinh chỉnh các tính năng theo ý thích. HassKit sinh ra với mục đích đơn giản hóa các yêu cầu cấu hình  phức tạp của Home Assistant bằng cách cung cấp giao diện tuyệt đẹp và thiết lập 10 giây để có thể bắt đầu sử dụng nền tảng nhà thông minh tuyệt vời này.\n\nHassKit miễn phí, mã nguồn mở và đang được phát triển. Chúng tôi mong nhận được sự giúp đỡ của bạn để cải thiện các tính năng của ứng dụng qua đó phục vụ bạn tốt hơn.\n\nHãy tham gia cùng chúng tôi trên Discord và Facebook. Xin cảm ơn đóng góp dưới mọi hình thức của bạn.",
+        "3_buttons": "3 nút một hàng",
+        "4_buttons": "4 nút một hàng"
+    },
+    "google_sync": {
+        "use": "Sử dụng động bộ dữ liệu đám mây",
+        "info": "Đồng bộ hóa thiết lập phòng và tùy chỉnh các thiết bị thông qua điện toán đám mây. HassKit không tải lên dữ liệu đăng nhập của bạn lên mạng...",
+        "sign_out": "Đăng xuất",
+        "sign_in": "Đăng nhập",
+        "force_download": "Tải dữ liệu từ đám mây",
+        "sync_problem": "Chỉ sử dụng khi bạn gặp sự cố đồng bộ hóa",
+        "force_upload": "Tải dữ liệu lên đám mây",
+        "force_reset": "Đặt lại dữ liệu trên đám mây"
+    },
+    "theme_selector": {
+        "dark": "Chủ đề tối",
+        "light": "Chủ đề sáng"
+    },
+    "states": {
+        "on": "Bật",
+        "turning_on": "Đang bật...",
+        "off": "Tắt",
+        "turning_off": "Đang tắt...",
+        "closed": "Đóng",
+        "closing": "Đang đóng...",
+        "open": "Mở",
+        "opening": "Đang mở...",
+        "locked": "Khóa",
+        "locking": "Đang khóa...",
+        "unlocked": "Mở",
+        "unlocking": "Đang mở khóa...",
+        "disarmed": "Mở khóa",
+        "arm_pending": "Chuẩn bị khóa",
+        "armed_away": "Khóa ở ngoài",
+        "armed_home": "Khóa ở nhà",
+        "armed_night": "Khóa ban đêm",
+        "armed": "Đã khóa",
+        "fan_high": "Nhanh",
+        "fan_high_medium": "Nhanh vừa",
+        "fan_medium": "Vừa",
+        "fan_medium_low": "Chậm vừa",
+        "fan_low": "Chậm",
+        "fan_lowest": "Chậm nhất"
+    }
+}

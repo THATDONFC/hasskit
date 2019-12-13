@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
 import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flushbar/flushbar.dart';
@@ -13,11 +14,13 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hasskit/helper/ThemeInfo.dart';
 import 'package:hasskit/helper/WebSocket.dart';
-import 'package:hasskit/model/CameraThumbnail.dart';
+import 'package:hasskit/model/BaseSetting.dart';
+import 'package:hasskit/model/CameraInfo.dart';
 import 'package:hasskit/model/Entity.dart';
 import 'package:hasskit/model/EntityOverride.dart';
 import 'package:hasskit/model/LoginData.dart';
 import 'package:hasskit/model/Room.dart';
+import 'package:hasskit/model/Sensor.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validators/validators.dart';
@@ -59,38 +62,42 @@ class GeneralData with ChangeNotifier {
     return value;
   }
 
-  double _mediaQueryWidth = 411.42857142857144;
+//  double _mediaQueryWidth = 411.42857142857144;
 
-  double get mediaQueryWidth => _mediaQueryWidth;
-
-  set mediaQueryWidth(double val) {
-//    log.d('mediaQueryWidth $val');
-    if (val == null) {
-      throw new ArgumentError();
-    }
-    if (_mediaQueryWidth != val) {
-      _mediaQueryWidth = val;
-      notifyListeners();
-    }
+  double get mediaQueryWidth {
+    return MediaQuery.of(mediaQueryContext).size.width;
   }
 
-  double _mediaQueryHeight = 0;
+  double get mediaQueryHeight {
+    return MediaQuery.of(mediaQueryContext).size.height;
+  }
 
-  double get mediaQueryHeight => _mediaQueryHeight;
+  double get mediaQueryShortestSide {
+    return MediaQuery.of(mediaQueryContext).size.shortestSide;
+  }
 
-  set mediaQueryHeight(double val) {
-//    log.d('mediaQueryHeight $val');
-    if (val == null) {
-      throw new ArgumentError();
-    }
-    if (_mediaQueryHeight != val) {
-      _mediaQueryHeight = val;
-      notifyListeners();
-    }
+  double get mediaQueryLongestSide {
+    return MediaQuery.of(mediaQueryContext).size.longestSide;
+  }
+
+  Orientation get mediaQueryOrientation {
+    return MediaQuery.of(mediaQueryContext).orientation;
+  }
+
+  bool get isTablet {
+    return mediaQueryShortestSide >= 500;
+  }
+
+  double get textScaleFactorFix {
+    return 1.0;
   }
 
   double get textScaleFactor {
-    return mediaQueryWidth / 411.42857142857144;
+    int totalRowButton = layoutButtonCount;
+    if (!isTablet || mediaQueryOrientation == Orientation.portrait) {
+      return (mediaQueryWidth / 411.42857142857144) * (3 / totalRowButton);
+    }
+    return (mediaQueryLongestSide / 411.42857142857144) * (3 / totalRowButton);
   }
 
   int _lastSelectedRoom = 0;
@@ -211,143 +218,90 @@ class GeneralData with ChangeNotifier {
     return UnmodifiableMapView(_entities);
   }
 
-  void getStates(List<dynamic> message) {
-    log.d('getStates');
-    _entities.clear();
-    _entities = {};
+  void socketGetStates(List<dynamic> message) {
+//    log.d('socketGetStates $message');
+
+    List<String> previousEntitiesList = entities.keys.toList();
 
     for (dynamic mess in message) {
       Entity entity = Entity.fromJson(mess);
       if (entity == null || entity.entityId == null) {
-        log.e('getStates entity.entityId');
+        log.e('socketGetStates entity.entityId');
         continue;
       }
-//      if (entity.entityId.contains("group")) {
-//        log.d("${entity.entityId} group");
+
+//      if (entity.entityId.contains("sensor.")) {
+//        log.w(
+//            "\n socketGetStates ${entity.entityId} state ${entity.state} isStateOn ${entity.isStateOn} mess $mess");
 //      }
+
+      if (previousEntitiesList.contains(entity.entityId))
+        previousEntitiesList.remove(entity.entityId);
+
       _entities[entity.entityId] = entity;
     }
 
-//    log.d('_entities.length ${entities.length}');
-    log.d('_entities.length ${_entities.length}');
-    notifyListeners();
-  }
-
-  List<String> lovelaceEntities = [];
-
-  void getLovelaceConfig(dynamic message) {
-    log.d('getLovelaceConfig');
-
-    List<dynamic> viewsParse = message['result']['views'];
-//    log.d('viewsParse.length ${viewsParse.length}');
-
-    for (var viewParse in viewsParse) {
-      List<dynamic> badgesParse = viewParse['badges'];
-      for (var badgeParse in badgesParse) {
-        badgeParse = processEntityId(badgeParse.toString());
-//        log.d('badgeParse $badgeParse');
-        if (isEntityNameValid(badgeParse) &&
-            !lovelaceEntities.contains(badgeParse)) {
-          lovelaceEntities.add(badgeParse);
-        }
-      }
-
-      List<dynamic> cardsParse = viewParse['cards'];
-
-      for (var cardParse in cardsParse) {
-        var type = cardParse['type'];
-        if (type == 'entities' || type == 'glance') {
-          List<dynamic> entitiesParse = cardParse['entities'];
-          for (var entityParse in entitiesParse) {
-            entityParse = processEntityId(entityParse.toString());
-//            log.d('entityParse 1 $entityParse');
-            if (isEntityNameValid(entityParse) &&
-                !lovelaceEntities.contains(entityParse)) {
-              lovelaceEntities.add(entityParse);
-            }
-          }
-        } else {
-          var entityParse = cardParse['entity'];
-          entityParse = processEntityId(entityParse.toString());
-//          log.d('entityParse 2 $entityParse');
-          if (isEntityNameValid(entityParse) &&
-              !lovelaceEntities.contains(entityParse)) {
-            lovelaceEntities.add(entityParse);
-          }
-        }
+    if (previousEntitiesList.length > 0) {
+      for (String entityId in previousEntitiesList) {
+        log.e(
+            "Remove $entityId from _entities, it's no longer in recent get_states");
+        _entities.remove(entityId);
       }
     }
 
-//    log.d('lovelaceEntities.length ${lovelaceEntities.length} ');
-
-//    int i = 1;
-//    for (var entity in lovelaceEntities) {
-//      log.d('$i. lovelaceEntities $entity');
-//      i++;
-//    }
+//    log.d('socketGetStates total entities ${_entities.length}');
     notifyListeners();
   }
 
   void socketSubscribeEvents(dynamic message) {
-//    print('socketSubscribeEvents $message');
-    Entity newEntity = Entity.fromJson(message['event']['data']['new_state']);
-    if (newEntity == null || newEntity.entityId == null) {
-      log.e('socketSubscribeEvents newEntity == null');
+    String entityId;
+    try {
+      entityId = message['event']['data']['new_state']["entity_id"];
+    } catch (e) {
+      log.e("socketSubscribeEvents $e");
+      entityId = null;
+    }
+
+    if (entityId == null || entityId == "" || entityId == "null") {
       return;
     }
 
-//    if (newEntity.entityId.contains("cover.")) {
-//      log.d(
-//          "\nsocketSubscribeEvents fan. ${message['event']['data']['new_state']}");
-//    }
+    eventEntityUpdate(entityId);
+    _entities[entityId] =
+        Entity.fromJson(message['event']['data']['new_state']);
 
-//    _entities[newEntity.entityId] = newEntity;
-//    return;
+    if (_entities[entityId] != null &&
+        _entities[entityId].entityId.contains("fan.")) {
+      log.w(
+          "\n socketSubscribeEvents $entityId message $message['event']['data']['new_state']");
+      if (!_entities.containsKey(entityId)) {
+        log.e("_entities.containsKey($entityId");
+      }
+    }
 
-    Entity oldEntity = entities[newEntity.entityId];
+    notifyListeners();
+  }
 
-    if (oldEntity != null) {
-      oldEntity.state = newEntity.state;
-      oldEntity.icon = newEntity.icon;
-      oldEntity.friendlyName = newEntity.friendlyName;
-
-//      if (newEntity.entityId.contains('climate.')) {
-      oldEntity.hvacModes = newEntity.hvacModes;
-      oldEntity.minTemp = newEntity.minTemp;
-      oldEntity.maxTemp = newEntity.maxTemp;
-      oldEntity.targetTempStep = newEntity.targetTempStep;
-      oldEntity.currentTemperature = newEntity.currentTemperature;
-      oldEntity.temperature = newEntity.temperature;
-      oldEntity.fanMode = newEntity.fanMode;
-      oldEntity.fanModes = newEntity.fanModes;
-      oldEntity.deviceCode = newEntity.deviceCode;
-      oldEntity.manufacturer = newEntity.manufacturer;
-//      }
-
-//      if (newEntity.entityId.contains('fan.')) {
-      oldEntity.speedList = newEntity.speedList;
-      oldEntity.oscillating = newEntity.oscillating;
-      oldEntity.speedLevel = newEntity.speedLevel;
-      oldEntity.speed = newEntity.speed;
-      oldEntity.angle = newEntity.angle;
-      oldEntity.directSpeed = newEntity.directSpeed;
-//      }
-
-//      if (newEntity.entityId.contains('light.')) {
-      oldEntity.supportedFeatures = newEntity.supportedFeatures;
-      oldEntity.brightness = newEntity.brightness;
-      oldEntity.rgbColor = newEntity.rgbColor;
-      oldEntity.minMireds = newEntity.minMireds;
-      oldEntity.maxMireds = newEntity.maxMireds;
-      oldEntity.colorTemp = newEntity.colorTemp;
-//    }
-      oldEntity.currentPosition = newEntity.currentPosition;
-      notifyListeners();
-    } else {
-      _entities[newEntity.entityId] = newEntity;
-      log.e('WTF newEntity ${newEntity.entityId}');
+  String _eventsEntities;
+  String get eventsEntities => _eventsEntities;
+  set eventsEntities(String val) {
+    if (val != _eventsEntities) {
+      _eventsEntities = val;
       notifyListeners();
     }
+  }
+
+  Map<String, String> _eventEntity = {};
+  String eventEntity(String val) {
+    if (_eventEntity[val] == null) {
+      return "";
+    }
+    return _eventEntity[val];
+  }
+
+  void eventEntityUpdate(String val) {
+    _eventEntity[val] = val + random.nextInt(100).toString();
+    notifyListeners();
   }
 
   bool isEntityNameValid(String entityId) {
@@ -383,154 +337,56 @@ class GeneralData with ChangeNotifier {
     return entityId;
   }
 
-  Map<String, CameraThumbnail> cameraThumbnails = {};
-  Map<String, DateTime> activeCameras = {};
-  Map<String, ImageProvider> cameraThumbnailsOld = {};
-  Map<int, String> cameraThumbnailsId = {};
-
-  ImageProvider getCameraThumbnailOld(String entityId) {
-    if (cameraThumbnailsOld[entityId] == null) {
-      cameraThumbnailsOld[entityId] = AssetImage('assets/images/loader.png');
+  Map<String, CameraInfo> cameraInfos = {};
+  List<String> cameraInfosActive = [];
+  cameraInfoGet(String entityId) {
+    if (!cameraInfos.containsKey(entityId)) {
+      cameraInfos[entityId] = CameraInfo(
+        entityId: entityId,
+        updatedTime: DateTime.now().subtract(Duration(days: 1)),
+        requestingTime: DateTime.now().subtract(Duration(days: 1)),
+        currentImage: AssetImage("assets/images/loader.png"),
+        previousImage: AssetImage("assets/images/loader.png"),
+      );
     }
-    return cameraThumbnailsOld[entityId];
+    return cameraInfos[entityId];
   }
 
-  ImageProvider getCameraThumbnail(String entityId) {
-    if (cameraThumbnails[entityId] == null) {
-      return cameraThumbnailsOld[entityId];
-    }
-    return cameraThumbnails[entityId].image;
-  }
+  Future<void> cameraInfosUpdate(String entityId) async {
+    CameraInfo cameraInfo = gd.cameraInfoGet(entityId);
 
-  DateTime getCameraLastUpdate(String entityId) {
-    if (cameraThumbnails[entityId] == null) {
-      return DateTime.now().subtract(Duration(days: 1));
-    }
-    return cameraThumbnails[entityId].receivedDateTime;
-  }
-
-  void requestCameraImage(String entityId, {bool force = false}) {
-    if (entityId == null ||
-        activeCameras[entityId] != null &&
-            activeCameras[entityId].isAfter(DateTime.now())) {
+    if (cameraInfo.requestingTime.isAfter(DateTime.now())) {
+//      log.d("updateImage $entityId requestingTime.isAfter");
       return;
     }
 
-    if (cameraThumbnails[entityId] == null ||
-        cameraThumbnails[entityId]
-            .receivedDateTime
-            .isBefore(DateTime.now().subtract(Duration(seconds: 10)))) {
-      var outMsg = {
-        'id': gd.socketId,
-        'type': 'camera_thumbnail',
-        'entity_id': entityId,
-      };
-      webSocket.send(jsonEncode(outMsg));
-      activeCameras[entityId] = DateTime.now().add(Duration(seconds: 10));
-//      log.d('requestCameraImage $entityId');
-    }
-  }
+//    log.d("CameraInfo.updateImage $entityId");
+    cameraInfo.requestingTime = DateTime.now().add(Duration(seconds: 10));
+    final url = gd.currentUrl +
+        gd.entities[entityId].entityPicture +
+        "&time=" +
+        DateTime.now().millisecondsSinceEpoch.toString();
+    final response = await http.get(url);
 
-  void camerasThumbnailUpdate(String entityId, String content) async {
-    CameraThumbnail cameraThumbnail = CameraThumbnail(
-      entityId: entityId,
-      receivedDateTime: DateTime.now(),
-      image: MemoryImage(base64Decode(content)),
-    );
-    cameraThumbnails[entityId] = cameraThumbnail;
-//    log.d('camerasThumbnailUpdate $entityId');
-//    log.d('cameraThumbnails.length ${cameraThumbnails.length}');
-    notifyListeners();
-    await Future.delayed(const Duration(milliseconds: 1000));
-    cameraThumbnailsOld[entityId] = cameraThumbnails[entityId].image;
-//    log.d('oldImage.length ${cameraThumbnailsOld.length}');
-    notifyListeners();
-  }
-
-  String timePassed(DateTime previousTime) {
-    var totalDiff = DateTime.now().difference(previousTime).inMilliseconds;
-    var duration = Duration(milliseconds: totalDiff);
-    var format =
-        '${duration.inDays}:${duration.inHours.remainder(24)}:${duration.inMinutes.remainder(60)}:${(duration.inSeconds.remainder(60))}';
-    var spit = format.split(':');
-    var recVal = '';
-    bool lessThanASecond = true;
-
-    var day = int.parse(spit[0]);
-    var hour = int.parse(spit[1]);
-    var minute = int.parse(spit[2]);
-    var second = int.parse(spit[3]);
-
-    if (day > 365) {
-      return '...';
-    }
-    if (day > 0) {
-      String s = ' day, ';
-      if (day > 1) {
-        s = ' days, ';
+    if (response.statusCode == 200) {
+      try {
+//        log.d(
+//            "CameraInfo.updateImage $entityId response.statusCode == 200 url $url");
+        cameraInfo.previousImage = cameraInfo.currentImage;
+        cameraInfo.currentImage = NetworkImage(url);
+        cameraInfo.updatedTime = DateTime.now();
+        notifyListeners();
+      } catch (e) {
+        log.w("CameraInfo.updateImage $entityId catch $e");
       }
-      recVal = recVal + day.toString() + s;
-      lessThanASecond = false;
+    } else {
+      log.w(
+          "CameraInfo.updateImage $entityId error response.statusCode ${response.statusCode}");
     }
-    if (hour > 0 || !lessThanASecond) {
-      String s = ' hour, ';
-      if (hour > 1) {
-        s = ' hours, ';
-      }
-      recVal = recVal + hour.toString() + s;
-      lessThanASecond = false;
-    }
-    if (minute > 0 || !lessThanASecond) {
-      String s = ' minute, ';
-      if (minute > 1) {
-        s = ' minutes, ';
-      }
-      recVal = recVal + minute.toString() + s;
-      lessThanASecond = false;
-    }
-    String s = ' s';
-    recVal = recVal + second.toString() + s;
-
-    return recVal;
   }
 
   ThemeData get currentTheme {
-    return ThemeInfo.themesData[themeIndex];
-  }
-
-  int _themeIndex = 1;
-
-  int get themeIndex => _themeIndex;
-
-  set themeIndex(int value) {
-    {
-      if (_themeIndex != value) {
-        _themeIndex = value;
-        notifyListeners();
-      }
-    }
-  }
-
-  int _itemsPerRow = 3;
-
-  int get itemsPerRow => _itemsPerRow;
-
-  set itemsPerRow(int value) {
-    {
-      if (_itemsPerRow != value) {
-        _itemsPerRow = value;
-        notifyListeners();
-      }
-    }
-  }
-
-  themeChange() {
-    themeIndex = themeIndex + 1;
-    if (themeIndex >= ThemeInfo.themesData.length) {
-      themeIndex = 0;
-    }
-    log.d('themeIndex $themeIndex');
-    notifyListeners();
+    return ThemeInfo.themesData[baseSetting.themeIndex];
   }
 
   List<LoginData> loginDataList = [];
@@ -615,7 +471,6 @@ class GeneralData with ChangeNotifier {
   }
 
   void loginDataListSortAndSave(String debug) {
-//    log.e('LoginData.loginDataListSortAndSave $debug');
     try {
       if (loginDataList != null && loginDataList.length > 0) {
         loginDataList.sort((a, b) => b.lastAccess.compareTo(a.lastAccess));
@@ -623,10 +478,8 @@ class GeneralData with ChangeNotifier {
         log.d('loginDataList.length ${loginDataList.length}');
       } else {
         gd.saveString('loginDataList', jsonEncode(loginDataList));
-//        log.d('LoginData.loginDataListSortAndSave NO DATA');
       }
       notifyListeners();
-//      loginDataListSortAndSaveFirebaseTimer(10);
     } catch (e) {
       log.w("loginDataListSortAndSave $e");
     }
@@ -710,19 +563,19 @@ class GeneralData with ChangeNotifier {
     }
   }
 
-  int _loveLaceConfigId = 0;
-
-  get loveLaceConfigId => _loveLaceConfigId;
-
-  set loveLaceConfigId(int value) {
-    if (value == null) {
-      throw new ArgumentError();
-    }
-    if (_loveLaceConfigId != value) {
-      _loveLaceConfigId = value;
-      notifyListeners();
-    }
-  }
+//  int _loveLaceConfigId = 0;
+//
+//  get loveLaceConfigId => _loveLaceConfigId;
+//
+//  set loveLaceConfigId(int value) {
+//    if (value == null) {
+//      throw new ArgumentError();
+//    }
+//    if (_loveLaceConfigId != value) {
+//      _loveLaceConfigId = value;
+//      notifyListeners();
+//    }
+//  }
 
   bool _useSSL = false;
 
@@ -832,18 +685,26 @@ class GeneralData with ChangeNotifier {
         favorites: [
           "fan.acorn_fan",
           "climate.air_conditioner_1",
-          "cover.cover_03",
           "cover.cover_06",
+          "binary_sensor.motion_sensor_158d000358b1a2",
+          "alarm_control_panel.home_alarm",
+          "cover.cover_03",
+          "fan.living_room_ceiling_fan",
+          "light.light_01",
           "lock.lock_9",
+          "sensor.humidity_158d0002e98f27",
+          "sensor.pressure_158d0002e98f27",
+          "sensor.temperature_158d0002e98f27",
+          "light.gateway_light_7c49eb891797",
         ],
         entities: [
           "camera.camera_1",
           "camera.camera_2",
+          "WebView1",
         ],
         row3: [
           "switch.socket_sonoff_s20",
           "switch.tuya_neo_coolcam_10a",
-          "light.gateway_light_7c49eb891797",
         ],
         row4: [
           "climate.air_conditioner_2",
@@ -902,6 +763,7 @@ class GeneralData with ChangeNotifier {
           "cover.cover_08",
           "switch.socket_sonoff_s20",
           "switch.tuya_neo_coolcam_10a",
+          "WebView1",
         ],
         entities: [],
         row3: [],
@@ -964,23 +826,23 @@ class GeneralData with ChangeNotifier {
   }
 
   List<String> backgroundImage = [
-    'assets/background_images/Dark Blue.jpg',
-    'assets/background_images/Dark Green.jpg',
-    'assets/background_images/Light Blue.jpg',
-    'assets/background_images/Light Green.jpg',
+    'assets/background_images/Dark_Blue.jpg',
+    'assets/background_images/Dark_Green.jpg',
+    'assets/background_images/Light_Blue.jpg',
+    'assets/background_images/Light_Green.jpg',
     'assets/background_images/Orange.jpg',
     'assets/background_images/Red.jpg',
-    'assets/background_images/Blue Gradient.jpg',
-    'assets/background_images/Green Gradient.jpg',
-    'assets/background_images/Yellow Gradient.jpg',
-    'assets/background_images/White Gradient.jpg',
-    'assets/background_images/Black Gradient.jpg',
-    'assets/background_images/Light Pink.jpg',
-    'assets/background_images/Abstract 1.jpg',
-    'assets/background_images/Abstract 2.jpg',
-    'assets/background_images/Abstract 3.jpg',
-    'assets/background_images/Abstract 4.jpg',
-    'assets/background_images/Abstract 5.jpg',
+    'assets/background_images/Blue_Gradient.jpg',
+    'assets/background_images/Green_Gradient.jpg',
+    'assets/background_images/Yellow_Gradient.jpg',
+    'assets/background_images/White_Gradient.jpg',
+    'assets/background_images/Black_Gradient.jpg',
+    'assets/background_images/Light_Pink.jpg',
+    'assets/background_images/Abstract_1.jpg',
+    'assets/background_images/Abstract_2.jpg',
+    'assets/background_images/Abstract_3.jpg',
+    'assets/background_images/Abstract_4.jpg',
+    'assets/background_images/Abstract_5.jpg',
   ];
 
   setRoomBackgroundImage(Room room, int backgroundImageIndex) {
@@ -1072,29 +934,31 @@ class GeneralData with ChangeNotifier {
     notifyListeners();
   }
 
+  Timer _roomListSaveTimer;
+
   void roomListSave(bool saveFirebase) {
+    notifyListeners();
+    _roomListSaveTimer?.cancel();
+    _roomListSaveTimer = null;
+    _roomListSaveTimer = Timer(Duration(seconds: 5), () {
+      roomListSaveActually(saveFirebase);
+    });
+  }
+
+  void roomListSaveActually(bool saveFirebase) {
+    log.d("roomListSaveActually $saveFirebase");
+    _roomListSaveTimer?.cancel();
+    _roomListSaveTimer = null;
     try {
       var url = gd.loginDataCurrent.getUrl.replaceAll(".", "-");
       url = url.replaceAll("/", "-");
       url = url.replaceAll(":", "-");
       gd.saveString('roomList $url', jsonEncode(roomList));
-      if (saveFirebase) roomListSaveFirebaseTimer(5);
+      if (saveFirebase) roomListSaveFirebase();
       log.w('roomListSave $url roomList.length ${roomList.length}');
     } catch (e) {
       log.w("roomListSave $e");
     }
-  }
-
-  Timer _roomListSaveFirebase;
-
-  void roomListSaveFirebaseTimer(int seconds) {
-    _roomListSaveFirebase?.cancel();
-    _roomListSaveFirebase = null;
-
-    log.d("roomListSaveFirebase delay");
-
-    _roomListSaveFirebase =
-        Timer(Duration(seconds: seconds), roomListSaveFirebase);
   }
 
   void roomListSaveFirebase() async {
@@ -1125,11 +989,15 @@ class GeneralData with ChangeNotifier {
       _roomListString = val;
 
       if (_roomListString != null && _roomListString.length > 0) {
-        log.w('FOUND _roomListString');
-        List<dynamic> roomListJson = jsonDecode(_roomListString);
+        log.w('FOUND _roomListString $_roomListString');
+//        List<dynamic> roomListJson = jsonDecode(_roomListString);
 
         roomList.clear();
         roomList = [];
+
+        var roomListJson = jsonDecode(_roomListString);
+
+        log.w("roomListJson $roomListJson");
 
         for (var roomJson in roomListJson) {
           Room room = Room.fromJson(roomJson);
@@ -1184,7 +1052,7 @@ class GeneralData with ChangeNotifier {
         recVal = recVal + '???' + " ";
       }
     }
-    return recVal;
+    return recVal.trim();
 //    if (text.length > 1) {
 //      return text[0].toUpperCase() + text.substring(1);
 //    } else if (text.length > 0) {
@@ -1194,10 +1062,10 @@ class GeneralData with ChangeNotifier {
 //    }
   }
 
-  Map<String, String> toggleStatusMap = {};
+//  Map<String, String> toggleStatusMap = {};
 
   void toggleStatus(Entity entity) {
-    toggleStatusMap[entity.entityId] = random.nextInt(10).toString();
+//    toggleStatusMap[entity.entityId] = random.nextInt(10).toString();
 //    log.d("toggleStatusMap ${toggleStatusMap.values.toList()}");
     if (entity.entityType != EntityType.lightSwitches &&
         entity.entityType != EntityType.scriptAutomation &&
@@ -1207,16 +1075,20 @@ class GeneralData with ChangeNotifier {
       return;
     }
 
-    log.w("toggleStatus ${entity.entityId}");
+    eventEntity(entity.entityId);
     delayGetStatesTimer(5);
     entity.toggleState();
     HapticFeedback.mediumImpact();
     notifyListeners();
   }
 
+  Map<String, bool> clickedStatus = {};
+  bool getClickedStatus(String entityId) {
+    if (clickedStatus[entityId] != null) return clickedStatus[entityId];
+    return false;
+  }
+
   void setState(Entity entity, String state, String message) {
-    toggleStatusMap[entity.entityId] = random.nextInt(10).toString();
-//    log.d("toggleStatusMap ${toggleStatusMap.values.toList()}");
     entity.state = state;
     delayGetStatesTimer(5);
     webSocket.send(message);
@@ -1241,18 +1113,37 @@ class GeneralData with ChangeNotifier {
     notifyListeners();
   }
 
+  void sendSocketMessage(message) {
+//    log.d("sendSocketMessage $outMsg");
+    webSocket.send(message);
+    HapticFeedback.mediumImpact();
+    gd.delayGetStatesTimer(5);
+  }
+
+  Timer _sendSocketMessageDelay;
+
+  void sendSocketMessageDelay(outMsg, int delay) {
+    _sendSocketMessageDelay?.cancel();
+    _sendSocketMessageDelay = null;
+    _sendSocketMessageDelay = Timer(Duration(seconds: delay), () {
+      sendSocketMessage(outMsg);
+    });
+  }
+
   Timer _delayGetStates;
 
   void delayGetStatesTimer(int seconds) {
     _delayGetStates?.cancel();
     _delayGetStates = null;
 
-    _delayGetStates = Timer(Duration(seconds: seconds), delayGetStates);
+//    _delayGetStates = Timer(Duration(seconds: seconds), delayGetStates);
+    _delayGetStates = Timer(Duration(seconds: seconds), httpApiStates);
   }
 
   void delayGetStates() {
     var outMsg = {'id': gd.socketId, 'type': 'get_states'};
-    webSocket.send(json.encode(outMsg));
+    var message = jsonEncode(outMsg);
+    webSocket.send(message);
     gd.connectionStatus = 'Sending get_states';
     log.w('delayGetStates!');
   }
@@ -1448,6 +1339,21 @@ class GeneralData with ChangeNotifier {
     entitiesOverrideSave(true);
   }
 
+  BaseSetting baseSetting = BaseSetting(
+      phoneLayout: 3,
+      tabletLayout: 69,
+      shapeLayout: 1,
+      themeIndex: 1,
+      lastArmType: "arm_home",
+      notificationDevices: [],
+      colorPicker: [
+        "0xffEEEEEE",
+        "0xffEF5350",
+        "0xffFFCA28",
+        "0xff66BB6A",
+        "0xff42A5F5",
+        "0xffAB47BC",
+      ]);
   String _baseSettingString;
 
   String get baseSettingString => _baseSettingString;
@@ -1458,30 +1364,129 @@ class GeneralData with ChangeNotifier {
 
       if (_baseSettingString != null && _baseSettingString.length > 0) {
         log.w('FOUND _baseSettingString $_baseSettingString');
-        gd.itemsPerRow = jsonDecode(_baseSettingString)['itemsPerRow'];
-        gd.themeIndex = jsonDecode(_baseSettingString)['themeIndex'];
-      } else {
-        log.w('loadBaseSetting baseSettingString.length == 0');
-        gd.itemsPerRow = 3;
-        gd.themeIndex = 1;
-      }
 
+        val = jsonDecode(val);
+        baseSetting = BaseSetting.fromJson(val);
+      } else {
+        log.w('CAN NOT FIND baseSetting adding default data');
+        baseSetting.phoneLayout = 3;
+        baseSetting.tabletLayout = 69;
+        baseSetting.shapeLayout = 1;
+        baseSetting.themeIndex = 1;
+        baseSetting.lastArmType = "arm_away";
+        baseSetting.notificationDevices = [];
+        baseSetting.colorPicker = [
+          "0xffEEEEEE",
+          "0xffEF5350",
+          "0xffFFCA28",
+          "0xff66BB6A",
+          "0xff42A5F5",
+          "0xffAB47BC",
+        ];
+      }
       notifyListeners();
     }
   }
 
-  void baseSettingSave() {
+  Timer _baseSettingSaveTimer;
+
+  void baseSettingSave(bool saveFirebase) {
+    notifyListeners();
+    _baseSettingSaveTimer?.cancel();
+    _baseSettingSaveTimer = null;
+    _baseSettingSaveTimer = Timer(Duration(seconds: 5), () {
+      baseSettingSaveActually(saveFirebase);
+    });
+  }
+
+  void baseSettingSaveActually(bool saveFirebase) {
+    log.d("baseSettingSaveActually $saveFirebase");
+
     try {
       var jsonBaseSetting = {
-        'itemsPerRow': gd.itemsPerRow,
-        'themeIndex': gd.themeIndex,
+        'phoneLayout': baseSetting.phoneLayout,
+        'tabletLayout': baseSetting.tabletLayout,
+        'shapeLayout': baseSetting.shapeLayout,
+        'themeIndex': baseSetting.themeIndex,
+        'lastArmType': baseSetting.lastArmType,
+        'notificationDevices': baseSetting.notificationDevices,
+        'colorPicker': baseSetting.colorPicker,
+        'webView1Ratio': baseSetting.webView1Ratio,
+        'webView1Url': baseSetting.webView1Url,
+        'webView2Ratio': baseSetting.webView2Ratio,
+        'webView2Url': baseSetting.webView2Url,
+        'webView3Ratio': baseSetting.webView3Ratio,
+        'webView3Url': baseSetting.webView3Url,
       };
-      gd.saveString('baseSetting', jsonEncode(jsonBaseSetting));
-      log.w('save baseSetting $jsonBaseSetting');
+
+      var url = gd.loginDataCurrent.getUrl.replaceAll(".", "-");
+      url = url.replaceAll("/", "-");
+      url = url.replaceAll(":", "-");
+
+      gd.saveString('baseSetting $url', jsonEncode(jsonBaseSetting));
+      log.w('save baseSetting $url $jsonBaseSetting');
+
+      if (saveFirebase) baseSettingSaveFirebase();
     } catch (e) {
       log.w("baseSettingSave $e");
     }
     notifyListeners();
+  }
+
+  BaseSetting baseSettingHassKitDemo = BaseSetting(
+    themeIndex: 1,
+    phoneLayout: 3,
+    tabletLayout: 69,
+    shapeLayout: 1,
+    lastArmType: "arm_away",
+    colorPicker: [
+      "0xffEEEEEE",
+      "0xffEF5350",
+      "0xffFFCA28",
+      "0xff66BB6A",
+      "0xff42A5F5",
+      "0xffAB47BC",
+    ],
+    notificationDevices: [
+      "fan.acorn_fan",
+      "climate.air_conditioner_1",
+      "cover.cover_06",
+      "binary_sensor.motion_sensor_158d000358b1a2",
+      "binary_sensor.motion_sensor_158d0002f1d1d2",
+      "cover.cover_03",
+      "light.light_01",
+      "lock.lock_9",
+      "light.gateway_light_7c49eb891797",
+      "switch.socket_sonoff_s20",
+      "switch.tuya_neo_coolcam_10a",
+      "climate.air_conditioner_2",
+      "climate.air_conditioner_3",
+      "climate.air_conditioner_4",
+      "climate.air_conditioner_5",
+      "fan.kaze_fan",
+      "fan.lucci_air_fan",
+      "fan.super_fan",
+    ],
+  );
+
+  void baseSettingSaveFirebase() {
+    if (gd.firebaseUser != null) {
+      var url = gd.loginDataCurrent.getUrl.replaceAll(".", "-");
+      url = url.replaceAll("/", "-");
+      url = url.replaceAll(":", "-");
+
+      var jsonBaseSetting = baseSetting.toJson();
+
+      log.w('baseSettingSaveFirebase $url');
+      Firestore.instance
+          .collection('UserData')
+          .document('${gd.firebaseUser.uid}')
+          .updateData(
+        {
+          'baseSetting $url': jsonEncode(jsonBaseSetting),
+        },
+      );
+    }
   }
 
   Map<String, EntityOverride> entitiesOverride = {};
@@ -1508,10 +1513,6 @@ class GeneralData with ChangeNotifier {
               EntityOverride.fromJson(entitiesOverrideIdList);
         }
         log.d('entitiesOverride.length ${entitiesOverride.length}');
-
-        for (int i = 0; i < entitiesOverride.length; i++) {
-          log.d("${entitiesOverride[i]}");
-        }
       } else {
         log.w('CAN NOT FIND entitiesOverride');
         entitiesOverride = {};
@@ -1521,7 +1522,20 @@ class GeneralData with ChangeNotifier {
     }
   }
 
+  Timer _entitiesOverrideSaveTimer;
+
   void entitiesOverrideSave(bool saveFirebase) {
+    notifyListeners();
+    _entitiesOverrideSaveTimer?.cancel();
+    _entitiesOverrideSaveTimer = null;
+    _entitiesOverrideSaveTimer = Timer(Duration(seconds: 5), () {
+      entitiesOverrideSaveActually(saveFirebase);
+    });
+  }
+
+  void entitiesOverrideSaveActually(bool saveFirebase) {
+    log.d("entitiesOverrideSaveActually $saveFirebase");
+
     try {
       Map<String, EntityOverride> entitiesOverrideClean = {};
 
@@ -1539,21 +1553,11 @@ class GeneralData with ChangeNotifier {
       entitiesOverride = entitiesOverrideClean;
       gd.saveString('entitiesOverride', jsonEncode(entitiesOverride));
       log.w('save entitiesOverride.length ${entitiesOverride.length}');
-      if (saveFirebase) entitiesOverrideSaveFirebaseTimer(5);
+      if (saveFirebase) entitiesOverrideSaveFirebase();
     } catch (e) {
       log.w("entitiesOverrideSave $e");
     }
     notifyListeners();
-  }
-
-  Timer _entitiesOverrideSaveFirebase;
-
-  void entitiesOverrideSaveFirebaseTimer(int seconds) {
-    _entitiesOverrideSaveFirebase?.cancel();
-    _entitiesOverrideSaveFirebase = null;
-
-    _entitiesOverrideSaveFirebase =
-        Timer(Duration(seconds: seconds), entitiesOverrideSaveFirebase);
   }
 
   void entitiesOverrideSaveFirebase() {
@@ -1593,6 +1597,7 @@ class GeneralData with ChangeNotifier {
     "mdi:brightness-7",
     "mdi:camera",
     "mdi:candle",
+    "mdi:candycane",
     "mdi:cast",
     "mdi:ceiling-light",
     "mdi:check-outline",
@@ -1627,6 +1632,7 @@ class GeneralData with ChangeNotifier {
     "mdi:music-note",
     "mdi:music-note-off",
     "mdi:page-layout-sidebar-right",
+    "mdi:pine-tree",
     "mdi:power",
     "mdi:power-cycle",
     "mdi:power-off",
@@ -1717,6 +1723,7 @@ class GeneralData with ChangeNotifier {
   FirebaseUser get firebaseUser => _firebaseUser;
   set firebaseUser(FirebaseUser val) {
     if (_firebaseUser != val) {
+      log.e("_firebaseUser != val _firebaseUser $_firebaseUser val $val");
       _firebaseUser = val;
       getSettings("_firebaseUser != null");
       createFirebaseDocument();
@@ -1804,14 +1811,20 @@ class GeneralData with ChangeNotifier {
       if (gd.snapshots != null) {
         await for (var documents in gd.snapshots) {
           if (firebaseUser != null && documents.data != null) {
-            log.d("NEW streamData ${documents.data.length}");
-            gd.entitiesOverrideString = "";
-            gd.entitiesOverrideString = documents.data["entitiesOverride"];
-            gd.roomListString = "";
+            log.d("getStreamData streamData ${documents.data.length}");
+
             var url = gd.loginDataCurrent.getUrl.replaceAll(".", "-");
             url = url.replaceAll("/", "-");
             url = url.replaceAll(":", "-");
-            gd.roomListString = documents.data["roomList $url"];
+
+            if (documents.data["entitiesOverride"].toString().length > 0)
+              gd.entitiesOverrideString = documents.data["entitiesOverride"];
+
+            if (documents.data["baseSetting $url"].toString().length > 0)
+              gd.baseSettingString = documents.data["baseSetting $url"];
+
+            if (documents.data["roomList $url"].toString().length > 0)
+              gd.roomListString = documents.data["roomList $url"];
           }
         }
       }
@@ -1839,27 +1852,36 @@ class GeneralData with ChangeNotifier {
       return;
     }
 
-    //force the trigger reset
-    gd.baseSettingString = "";
-    gd.baseSettingString = await gd.getString('baseSetting');
-
     //no firebase return load disk data
     if (gd.firebaseUser == null) {
       log.e("gd.firebaseUser == null");
+      var url = gd.loginDataCurrent.getUrl.replaceAll(".", "-");
+      url = url.replaceAll("/", "-");
+      url = url.replaceAll(":", "-");
+
       //force the trigger reset
       gd.entitiesOverrideString = "";
       gd.entitiesOverrideString = await gd.getString('entitiesOverride');
       //force the trigger reset
+      gd.baseSettingString = "";
+      gd.baseSettingString = await gd.getString('baseSetting $url');
+      if (gd.baseSettingString == null || gd.baseSettingString.length < 1) {
+        log.w(
+            "gd.baseSettingString == null || gd.baseSettingString.length < 1");
+        if (gd.currentUrl == "http://hasskitdemo.duckdns.org:8123") {
+          log.w(
+              "gd.baseSettingString currentUrl == http://hasskitdemo.duckdns.org:8123");
+          gd.baseSettingString = jsonEncode(gd.baseSettingHassKitDemo);
+        }
+      }
+      //force the trigger reset
       gd.roomListString = "";
-      var url = gd.loginDataCurrent.getUrl.replaceAll(".", "-");
-      url = url.replaceAll("/", "-");
-      url = url.replaceAll(":", "-");
       gd.roomListString = await gd.getString('roomList $url');
       if (gd.roomListString == null || gd.roomListString.length < 1) {
         if (gd.currentUrl == "http://hasskitdemo.duckdns.org:8123") {
-          gd.roomListString = json.encode(gd.roomListHassKitDemo);
+          gd.roomListString = jsonEncode(gd.roomListHassKitDemo);
         } else {
-          gd.roomListString = json.encode(gd.roomListDefault);
+          gd.roomListString = jsonEncode(gd.roomListDefault);
         }
       }
       return;
@@ -1879,21 +1901,41 @@ class GeneralData with ChangeNotifier {
         .then(
       (DocumentSnapshot ds) {
         log.e("gd.firebaseCurrentUser != null ds.exists");
-        //force the trigger reset
-        gd.entitiesOverrideString = "";
-        gd.entitiesOverrideString = ds["entitiesOverride"];
-        //force the trigger reset
-        gd.roomListString = "";
         var url = gd.loginDataCurrent.getUrl.replaceAll(".", "-");
         url = url.replaceAll("/", "-");
         url = url.replaceAll(":", "-");
-        gd.roomListString = ds['roomList $url'];
+
+        var entitiesOverride = ds["entitiesOverride"].toString();
+        if (entitiesOverride.length > 0) {
+          //force the trigger reset
+          gd.entitiesOverrideString = "";
+          gd.entitiesOverrideString = entitiesOverride;
+        }
+
+        var baseSetting = ds['baseSetting $url'].toString();
+        if (baseSetting.length > 0) {
+          gd.baseSettingString = "";
+          gd.baseSettingString = baseSetting;
+        }
+
+        var roomList = ds['roomList $url'].toString();
+        if (roomList.length > 0) {
+          //force the trigger reset
+          gd.roomListString = "";
+          gd.roomListString = roomList;
+        }
 
         if (gd.roomListString == null || gd.roomListString.length < 1) {
           if (gd.currentUrl == "http://hasskitdemo.duckdns.org:8123") {
             gd.roomListString = json.encode(gd.roomListHassKitDemo);
           } else {
             gd.roomListString = json.encode(gd.roomListDefault);
+          }
+        }
+
+        if (gd.baseSetting == null) {
+          if (gd.currentUrl == "http://hasskitdemo.duckdns.org:8123") {
+            gd.baseSetting = gd.baseSettingHassKitDemo;
           }
         }
       },
@@ -1903,10 +1945,11 @@ class GeneralData with ChangeNotifier {
 
     roomListSave(false);
     entitiesOverrideSave(false);
-    baseSettingSave();
+    baseSettingSave(false);
   }
 
   void uploadCloudData() async {
+    baseSettingSaveFirebase();
     roomListSaveFirebase();
     entitiesOverrideSaveFirebase();
   }
@@ -1967,11 +2010,242 @@ class GeneralData with ChangeNotifier {
           "entity_id": entityId,
         };
 
-        webSocket.send(jsonEncode(outMsg));
+        var message = jsonEncode(outMsg);
+        webSocket.send(message);
         log.d("requestCameraStream ${jsonEncode(outMsg)}");
       }
     } catch (e) {
       log.e("requestCameraStream $entityId $e");
     }
+  }
+
+  List<Sensor> sensors = [];
+
+  String classDefaultIcon(String deviceClass) {
+    deviceClass = deviceClass.replaceAll(".", "");
+    switch (deviceClass) {
+      case "alarm_control_panel":
+        return "mdi:shield";
+      case "automation":
+        return "mdi:home-automation";
+      case "binary_sensor":
+        return "mdi:run";
+      case "camera":
+        return "mdi:webcam";
+      case "climate":
+        return "mdi:thermostat";
+      case "cover":
+        return "mdi:garage-open";
+      case "fan":
+        return "mdi:fan";
+      case "input_number":
+        return "mdi:pan-vertical";
+      case "light":
+        return "mdi:lightbulb-on";
+      case "lock":
+        return "mdi:lock-open";
+      case "media_player":
+        return "mdi:theater";
+      case "person":
+        return "mdi:account";
+      case "sun":
+        return "mdi:white-balance-sunny";
+      case "switch":
+        return "mdi:toggle-switch";
+      case "timer":
+        return "mdi:timer";
+      case "vacuum":
+        return "mdi:robot-vacuum";
+      case "weather":
+        return "mdi:weather-partlycloudy";
+      default:
+        return "";
+    }
+  }
+
+  List<Entity> get activeDevicesOn {
+    List<Entity> entities = [];
+    for (String notificationDevice in baseSetting.notificationDevices) {
+      if (gd.entities[notificationDevice] != null &&
+          gd.entities[notificationDevice].isStateOn) {
+        entities.add(gd.entities[notificationDevice]);
+      }
+    }
+    return entities;
+  }
+
+  bool activeDevicesSupportedType(String entityId) {
+    if (entityId.contains("light.") ||
+        entityId.contains("switch.") ||
+        entityId.contains("cover.") ||
+        entityId.contains("lock.") ||
+        entityId.contains("fan.") ||
+        entityId.contains("climate.") ||
+//        entityId.contains("group.") ||
+        entityId.contains("media_player.") ||
+        entityId.contains("input_boolean.") ||
+        entityId.contains("binary_sensor.")) {
+      return true;
+    }
+    return false;
+  }
+
+  bool _activeDevicesShow = false;
+
+  bool get activeDevicesShow => _activeDevicesShow;
+
+  set activeDevicesShow(bool val) {
+    if (val == null) {
+      throw new ArgumentError();
+    }
+    if (_activeDevicesShow != val) {
+      _activeDevicesShow = val;
+      if (activeDevicesShow) activeDevicesOffTimer(60);
+      notifyListeners();
+    }
+  }
+
+  Timer _activeDevicesOffTimer;
+
+  void activeDevicesOffTimer(int seconds) {
+    _activeDevicesOffTimer?.cancel();
+    _activeDevicesOffTimer = null;
+
+    log.d("entitiesStatusShowTimer delay");
+
+    _activeDevicesOffTimer =
+        Timer(Duration(seconds: seconds), activeDevicesShowOff);
+  }
+
+  void activeDevicesShowOff() {
+    gd.activeDevicesShow = false;
+  }
+
+  ScrollController viewNormalController = ScrollController();
+
+  Color stringToColor(String colorString) {
+//    String valueString =
+//        colorString.split('(0x')[1].split(')')[0]; // kind of hacky..
+    try {
+      colorString = colorString.replaceAll("0x", "");
+      colorString = colorString.replaceAll("0X", "");
+      colorString = colorString.toUpperCase(); // kind of hacky..
+      colorString = colorString.replaceAll("COLOR(", "");
+      colorString = colorString.replaceAll(")", "");
+      int value = int.parse(colorString, radix: 16);
+      Color color = Color(value);
+      return color;
+    } catch (e) {
+      log.d("stringToColor $colorString ");
+      log.d("stringToColor $e");
+      return Colors.grey;
+    }
+  }
+
+  String colorToString(Color color) {
+    String colorString = color.toString();
+    colorString = colorString.toUpperCase();
+    colorString = colorString.replaceAll("COLOR(0X", "");
+    colorString = colorString.replaceAll(")", "");
+    log.d("colorToString ${color.toString()} $colorString");
+    return colorString;
+  }
+
+  List<String> webViewPresets = [
+    "https://embed.windy.com",
+    "https://www.yahoo.com/news/weather",
+    "https://livescore.com",
+  ];
+
+  int webViewSupportMax = 3;
+
+//  var localeData;
+
+  void httpApiStates() async {
+    var client = new http.Client();
+    var url = gd.currentUrl + "/api/states";
+    Map<String, String> headers = {
+      'content-type': 'application/json',
+      'Authorization': 'Bearer ${gd.loginDataCurrent.longToken}',
+    };
+
+    log.d("httpApiStates $url");
+
+    try {
+      var response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+//        log.w("httpApiStates response.statusCode ${response.statusCode}");
+        var jsonResponse = jsonDecode(response.body);
+//        log.d("httpApiStates jsonResponse $jsonResponse");
+        socketGetStates(jsonResponse);
+      } else {
+        log.e(
+            "httpApiStates Request failed with status: ${response.statusCode}.");
+      }
+    } finally {
+      client.close();
+    }
+  }
+
+  BuildContext mediaQueryContext;
+  int get layoutCameraCount {
+    if (!isTablet) return 1;
+
+    if (baseSetting.tabletLayout == 36) {
+      if (gd.mediaQueryOrientation == Orientation.portrait) {
+        return 1;
+      }
+      return 2;
+    }
+
+    if (baseSetting.tabletLayout == 69) {
+      if (gd.mediaQueryOrientation == Orientation.portrait) {
+        return 2;
+      }
+      return 3;
+    }
+    if (baseSetting.tabletLayout == 912) {
+      if (gd.mediaQueryOrientation == Orientation.portrait) {
+        return 3;
+      }
+      return 4;
+    }
+    return baseSetting.tabletLayout ~/ 3;
+  }
+
+  int get layoutButtonCount {
+    if (!isTablet) return baseSetting.phoneLayout;
+    if (baseSetting.tabletLayout == 36) {
+      if (gd.mediaQueryOrientation == Orientation.portrait) {
+        return 3;
+      }
+      return 6;
+    }
+    if (baseSetting.tabletLayout == 69) {
+      if (gd.mediaQueryOrientation == Orientation.portrait) {
+        return 6;
+      }
+      return 9;
+    }
+    if (baseSetting.tabletLayout == 912) {
+      if (gd.mediaQueryOrientation == Orientation.portrait) {
+        return 9;
+      }
+      return 12;
+    }
+    return baseSetting.tabletLayout;
+  }
+
+  /// Returns a formatted date string.
+  String dateToString(DateTime date) =>
+      date.day.toString().padLeft(2, '0') +
+      '/' +
+      date.month.toString().padLeft(2, '0') +
+      '/' +
+      date.year.toString();
+
+  double get buttonRatio {
+    if (baseSetting.shapeLayout == 2) return 8 / 5;
+    return 1;
   }
 }

@@ -1,0 +1,125 @@
+{
+    "global": {
+        "duration": "Duratie",
+        "open": "open",
+        "closed": "gesloten",
+        "on": "aan",
+        "off": "uit",
+        "error": "Fout",
+        "no_data": "heeft geen data beschikbaar",
+        "reset": "Opnieuw instellen",
+        "ok": "Ok",
+        "left": "Links",
+        "right": "Rechts",
+        "connect_hass": "Verbind aub met Home Assistant",
+        "last_update": "Nieuwste update",
+        "cancel": "Annuleren",
+        "settings": "Instellingen",
+        "rooms": "Kamers",
+        "disconnect": "Verbreken",
+        "refresh": "Verversen",
+        "last_access": "Meest recente toegang",
+        "connected": "Verbonden",
+        "disconnected": "Verbroken"
+    },
+    "edit": {
+        "select_icon": "Selecteer aangepast Pictogram",
+        "reset_icon": "Stel Pictogram opnieuw in",
+        "rbg_color": "Druk lang om kleur aan te passen",
+        "edit": "Aanpassen",
+        "arrange": "Schikken",
+        "move": "Verplaatsen",
+        "delete": "Verwijderen",
+        "devices": "Apparaten",
+        "add_room": "Voeg Nieuwe Kamer toe"
+    },
+    "alarm_panel": {
+        "arm_home":"Bewapen Thuis",
+        "arm_away": "Bewapen Weg",
+        "disarmed": "Ontwapend",
+        "pending": "In afwachting",
+        "armed_away": "Bewapend Weg",
+        "armed_home": "Bewapend Thuis",
+        "armed_night": "Bewapend Nacht",
+        "armed": "Bewapend"
+    },
+    "toggle": {
+        "require_slide_open_disabled": "Vereis Sleep om te Openen Uitgeschakeld",
+        "require_slide_open_enabled": "Vereis Sleep om te Openen Ingeschakeld",
+        "prevent_accidentally_open": "Voorkom per ongeluk openen",
+        "1_touch": "kan nu geopened worden met 1 druk op de knop"
+    },
+    "rgb": {
+        "pick_color": "Kies een kleur!"
+    },
+    "webview": {
+        "edit": "Pas Website aan",
+        "saved": "Website opgeslagen",
+        "reload": "Laad Website opnieuw",
+        "pin": "Pin Website vast - Voorkom Website scrollen",
+        "unpin": "Maak Website los - Sta Website scrollen toe",
+        "windy": "Winderig!",
+        "y_weather": "Y! Weer",
+        "live_score": "LiveScore",
+        "aspect": "Aspect"
+    },
+    "login": {
+        "connecting": "Verbinden met",
+        "correct_info": "Zorg ervoor dat de volgende informatie juist is",
+        "cancel": "Annueleer Web Login Verbinding"
+    },
+    "settings": {
+        "home_assistant": "Home Assistant Verbinding",
+        "new_connection": "Maak Nieuwe Verbinding...",
+        "use_https": "Gebruik https",
+        "connect": "Verbinden",
+        "sync": "Synchroniseeer met Google Cloud",
+        "theme_color": "Kleurthema",
+        "language": "Taal",
+        "layout": "Lay-out",
+        "about": "Over HassKit",
+        "about_info": "HassKit is een Aanraak-Vriendelijke - Nul Configuratie Applicatie welke gebruikers in staat stelt Home Assistant meteen te gebruiken.\n\nHome Assistant is een van de beste Home Automation platformen, met krachtige toepassingen en 's werelds grootste assortiment van ondersteunde apparaten. Home Assistant vereist alleen wat simpele/goedkope hardware om te starten.\n\nEchter, het is niet makkelijk om Home Assistant te configureren en het duurt een tijdje alvorens je het naar je behoeften aangepast hebt. HassKit stelt zich tot doel om de leerstappen te verlichten en de kwaliteit van het leven van Home Assistant gebruikers te verbeteren door een schitterende look te bieden alsmede een configuratieproces van 10 seconden om dit wonderlijke Home Automation platform te kunnen gebruiken.\n\nHassKit is gratis, open-source en in ontwikkeling. We hebben uw hulp nodig om de applicatietoepassingen te verbeteren om u beter van dienst te kunnen zijn. \n\nU kunt ons op Discord en Facebook vinden. Uw bijdragen worden altijd gewaardeerd.",
+        "3_buttons": "3 Knoppen",
+        "4_buttons": "4 Knoppen"
+    },
+    "google_sync": {
+        "use": "Gebruik Cloud Data Synchronisatie",
+        "info": "Synchroniseer de lay-out van uw kamers en applicatieaanpassigen tussen verschillende apparaten. HassKit zet uw aanmeldingsgegevens niet online...",
+        "sign_out": "Aanmelden",
+        "sign_in": "Afmelden",
+        "force_download": "Gedwongen download van gegevens zoals opgeslagen in de cloud",
+        "sync_problem": "ALLEEN gebruiken als u synchronisatieproblemen heeft",
+        "force_upload": "Gedwongen upload van gegevens naar de cloud",
+        "force_reset": "Dwing cloudgegevens opnieuw in te stellen"
+    },
+    "theme_selector": {
+        "dark": "Donker Thema",
+        "light": "Licht Thema"
+    },
+    "states": {
+        "on": "Aan",
+        "turning_on": "Inschakelen...",
+        "off": "Uit",
+        "turning_off": "Uitschakelen...",
+        "closed": "Gesloten",
+        "closing": "Sluiten...",
+        "open": "Open",
+        "opening": "Openen...",
+        "locked": "Afgesloten",
+        "locking": "Afsluiten...",
+        "unlocked": "Ontsloten",
+        "unlocking": "Ontsluiten...",
+        "disarmed": "Ontwapend",
+        "arm_pending": "In afwachting",
+        "armed_away": "Bewapend weg",
+        "armed_home": "Bewapend thuis",
+        "armed_night": "Bewapend nacht",
+        "armed": "Bewapend",
+        "fan_high": "Hoog",
+        "fan_high_medium": "Medium Hoog",
+        "fan_medium": "Medium",
+        "fan_medium_low": "Medium Laag",
+        "fan_low": "Laag",
+        "fan_lowest": "Laagst"
+    }
+}

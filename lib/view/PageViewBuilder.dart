@@ -67,13 +67,17 @@ class SinglePage extends StatelessWidget {
       selector: (_, generalData) =>
           "${generalData.viewMode} |" +
           "${generalData.connectionStatus} |" +
+          "${generalData.mediaQueryOrientation} |" +
+          "${generalData.baseSetting.phoneLayout} |" +
+          "${generalData.baseSetting.tabletLayout} |" +
+          "${generalData.baseSetting.shapeLayout} |" +
           "${generalData.mediaQueryHeight} |" +
           "${generalData.roomList.length} |" +
           "${generalData.entities.length} |" +
+          "${generalData.baseSetting.notificationDevices.length} |" +
           "${generalData.roomList[roomIndex].name} |" +
           "${generalData.roomList[roomIndex].tempEntityId} |" +
           "${generalData.roomList[roomIndex].imageIndex} |" +
-          "${generalData.toggleStatusMap.values.toList()} |" +
           "${generalData.roomList[roomIndex].favorites.toList()} |" +
           "${generalData.roomList[roomIndex].entities.toList()} |" +
           "${generalData.roomList[roomIndex].row3.toList()} |" +

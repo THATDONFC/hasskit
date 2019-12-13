@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hasskit/helper/GeneralData.dart';
@@ -5,7 +6,7 @@ import 'package:hasskit/helper/Logger.dart';
 import 'package:hasskit/helper/MaterialDesignIcons.dart';
 import 'package:hasskit/helper/ThemeInfo.dart';
 import 'package:hasskit/model/Entity.dart';
-import 'package:hasskit/view/CustomScrollView/DeviceTypeHeader.dart';
+import 'package:hasskit/view/slivers/SliverHeader.dart';
 import 'package:hasskit/view/CustomScrollView/TemperatureSelector.dart';
 import 'package:hasskit/view/slivers/SliverNavigationBar.dart';
 
@@ -94,6 +95,13 @@ class _ViewEditState extends State<ViewEdit> {
         BackgroundImageSelector(roomIndex: widget.roomIndex),
         TemperatureSelector(roomIndex: widget.roomIndex),
 //        HumiditySelector(roomIndex: widget.roomIndex),
+        SliverHeaderEdit(
+          title: "Embeded Website",
+          icon: Icon(MaterialDesignIcons.getIconDataFromIconName("mdi:web")),
+        ),
+        WebViewItems(
+          roomIndex: widget.roomIndex,
+        ),
         SliverList(
           delegate: SliverChildListDelegate(
             [
@@ -140,69 +148,88 @@ class _ViewEditState extends State<ViewEdit> {
             ],
           ),
         ),
-        DeviceTypeHeaderEdit(
+        SliverHeaderEdit(
+          title: "Selected devices...",
+          icon: Icon(MaterialDesignIcons.getIconDataFromIconName(
+              "mdi:checkbox-marked")),
+        ),
+        _EditItems(
+          selectedItem: true,
+          roomIndex: widget.roomIndex,
+          keyword: _controllerSearch.text.trim(),
+          types: [EntityType.lightSwitches],
+        ),
+
+        SliverHeaderEdit(
           title: "Lights, Switches...",
           icon: Icon(
               MaterialDesignIcons.getIconDataFromIconName("mdi:toggle-switch")),
         ),
         _EditItems(
+          selectedItem: false,
           roomIndex: widget.roomIndex,
           keyword: _controllerSearch.text.trim(),
           types: [EntityType.lightSwitches],
         ),
-        DeviceTypeHeaderEdit(
+        SliverHeaderEdit(
           title: "Climate, Fans...",
           icon: Icon(
               MaterialDesignIcons.getIconDataFromIconName("mdi:thermometer")),
         ),
         _EditItems(
+          selectedItem: false,
           roomIndex: widget.roomIndex,
           keyword: _controllerSearch.text.trim(),
           types: [EntityType.climateFans],
         ),
-        DeviceTypeHeaderEdit(
+        SliverHeaderEdit(
           title: "Cameras...",
           icon: Icon(MaterialDesignIcons.getIconDataFromIconName("mdi:webcam")),
         ),
         _EditItems(
+          selectedItem: false,
           roomIndex: widget.roomIndex,
           keyword: _controllerSearch.text.trim(),
           types: [EntityType.cameras],
         ),
-        DeviceTypeHeaderEdit(
+        SliverHeaderEdit(
           title: "Media Players...",
           icon:
               Icon(MaterialDesignIcons.getIconDataFromIconName("mdi:theater")),
         ),
         _EditItems(
+          selectedItem: false,
           roomIndex: widget.roomIndex,
           keyword: _controllerSearch.text.trim(),
           types: [EntityType.mediaPlayers],
         ),
-        DeviceTypeHeaderEdit(
+        SliverHeaderEdit(
           title: "Groups...",
           icon: Icon(MaterialDesignIcons.getIconDataFromIconName("mdi:blur")),
         ),
         _EditItems(
+          selectedItem: false,
           roomIndex: widget.roomIndex,
           keyword: _controllerSearch.text.trim(),
           types: [EntityType.group],
         ),
-        DeviceTypeHeaderEdit(
+        SliverHeaderEdit(
           title: "Accessories...",
           icon: Icon(MaterialDesignIcons.getIconDataFromIconName("mdi:ballot")),
         ),
         _EditItems(
+          selectedItem: false,
           roomIndex: widget.roomIndex,
           keyword: _controllerSearch.text.trim(),
           types: [EntityType.accessories],
         ),
-        DeviceTypeHeaderEdit(
+        SliverHeaderEdit(
           title: "Script, Automation...",
           icon: Icon(MaterialDesignIcons.getIconDataFromIconName(
               "mdi:home-automation")),
         ),
         _EditItems(
+          selectedItem: false,
           roomIndex: widget.roomIndex,
           keyword: _controllerSearch.text.trim(),
           types: [EntityType.scriptAutomation],
@@ -214,11 +241,15 @@ class _ViewEditState extends State<ViewEdit> {
 }
 
 class _EditItems extends StatefulWidget {
+  final bool selectedItem;
   final int roomIndex;
   final String keyword;
   final List<EntityType> types;
   const _EditItems(
-      {@required this.roomIndex, @required this.keyword, @required this.types});
+      {@required this.selectedItem,
+      this.roomIndex,
+      @required this.keyword,
+      @required this.types});
 
   @override
   __EditItemsState createState() => __EditItemsState();
@@ -227,34 +258,47 @@ class _EditItems extends StatefulWidget {
 class __EditItemsState extends State<_EditItems> {
   @override
   Widget build(BuildContext context) {
-    List<Entity> entities = gd.entities.values
-        .where((e) =>
-            widget.types.contains(e.entityType) &&
-            (widget.keyword.length < 1 ||
-                e.getOverrideName
-                    .toLowerCase()
-                    .contains(widget.keyword.toLowerCase()) ||
-                e.entityId
-                    .toLowerCase()
-                    .contains(widget.keyword.toLowerCase())))
-        .toList();
+    List<Entity> entities = [];
+
+    if (!widget.selectedItem) {
+      entities = gd.entities.values
+          .where((e) =>
+              !gd.roomList[widget.roomIndex].favorites.contains(e.entityId) &&
+              !gd.roomList[widget.roomIndex].entities.contains(e.entityId) &&
+              !gd.roomList[widget.roomIndex].row3.contains(e.entityId) &&
+              !gd.roomList[widget.roomIndex].row4.contains(e.entityId) &&
+              widget.types.contains(e.entityType) &&
+              (widget.keyword.length < 1 ||
+                  e.getOverrideName
+                      .toLowerCase()
+                      .contains(widget.keyword.toLowerCase()) ||
+                  e.entityId
+                      .toLowerCase()
+                      .contains(widget.keyword.toLowerCase())))
+          .toList();
+    } else {
+      entities = gd.entities.values
+          .where((e) =>
+              (gd.roomList[widget.roomIndex].favorites.contains(e.entityId) ||
+                  gd.roomList[widget.roomIndex].entities.contains(e.entityId) ||
+                  gd.roomList[widget.roomIndex].row3.contains(e.entityId) ||
+                  gd.roomList[widget.roomIndex].row4.contains(e.entityId)) &&
+              (widget.keyword.length < 1 ||
+                  e.getOverrideName
+                      .toLowerCase()
+                      .contains(widget.keyword.toLowerCase()) ||
+                  e.entityId
+                      .toLowerCase()
+                      .contains(widget.keyword.toLowerCase())))
+          .toList();
+    }
 
     if (entities.length < 1) {
       return gd.emptySliver;
     }
 
-    entities.sort((a, b) => a.getOverrideName.compareTo(b.getOverrideName));
-
-    void removeItemFromGroup(String entityId) {
-      if (gd.roomList[widget.roomIndex].favorites.contains(entityId))
-        gd.roomList[widget.roomIndex].favorites.remove(entityId);
-      if (gd.roomList[widget.roomIndex].entities.contains(entityId))
-        gd.roomList[widget.roomIndex].entities.remove(entityId);
-      if (gd.roomList[widget.roomIndex].row3.contains(entityId))
-        gd.roomList[widget.roomIndex].row3.remove(entityId);
-      if (gd.roomList[widget.roomIndex].row4.contains(entityId))
-        gd.roomList[widget.roomIndex].row4.remove(entityId);
-    }
+    if (!widget.selectedItem)
+      entities.sort((a, b) => a.getOverrideName.compareTo(b.getOverrideName));
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
@@ -264,11 +308,6 @@ class __EditItemsState extends State<_EditItems> {
             gd.delayCancelEditModeTimer(300);
           },
           child: Container(
-//          decoration: BoxDecoration(
-//            color: ThemeInfo.colorBottomSheet.withOpacity(0.5),
-//            borderRadius: BorderRadius.circular(8),
-//          ),
-//          margin: EdgeInsets.fromLTRB(4, 2, 4, 2),
             padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
             margin: EdgeInsets.zero,
             child: Row(
@@ -303,11 +342,11 @@ class __EditItemsState extends State<_EditItems> {
                                 .contains(entities[index].entityId))
                         ? 1
                         : 0.5,
-                    child: Text(
+                    child: AutoSizeText(
                       "${gd.textToDisplay(entities[index].getOverrideName)}",
                       style: Theme.of(context).textTheme.subhead,
                       overflow: TextOverflow.ellipsis,
-                      textScaleFactor: gd.textScaleFactor,
+                      textScaleFactor: gd.textScaleFactorFix,
                       maxLines: 1,
                     ),
                   ),
@@ -316,29 +355,19 @@ class __EditItemsState extends State<_EditItems> {
                   onTap: () {
                     if (gd.roomList[widget.roomIndex].favorites
                         .contains(entities[index].entityId)) {
-                      removeItemFromGroup(entities[index].entityId);
+                      gd.roomList[widget.roomIndex].favorites
+                          .remove(entities[index].entityId);
                     } else {
-                      removeItemFromGroup(entities[index].entityId);
                       gd.roomList[widget.roomIndex].favorites
                           .add(entities[index].entityId);
+                      removeItemFromGroup(widget.roomIndex,
+                          entities[index].entityId, "favorites");
                     }
 
                     gd.roomListSave(true);
-                    setState(() {});
                     gd.delayCancelEditModeTimer(300);
+                    setState(() {});
                   },
-//                  child: Image(
-//                    image: AssetImage("assets/images/menu-up.png"),
-//                    width: 20,
-//                    color: gd.roomList[widget.roomIndex].favorites
-//                            .contains(entities[index].entityId)
-//                        ? Theme.of(context).textTheme.title.color
-//                        : Theme.of(context)
-//                            .textTheme
-//                            .title
-//                            .color
-//                            .withOpacity(0.25),
-//                  ),
                   child: Icon(
                     Icons.looks_one,
                     size: 28,
@@ -357,28 +386,18 @@ class __EditItemsState extends State<_EditItems> {
                   onTap: () {
                     if (gd.roomList[widget.roomIndex].entities
                         .contains(entities[index].entityId)) {
-                      removeItemFromGroup(entities[index].entityId);
+                      gd.roomList[widget.roomIndex].entities
+                          .remove(entities[index].entityId);
                     } else {
-                      removeItemFromGroup(entities[index].entityId);
                       gd.roomList[widget.roomIndex].entities
                           .add(entities[index].entityId);
+                      removeItemFromGroup(widget.roomIndex,
+                          entities[index].entityId, "entities");
                     }
                     gd.roomListSave(true);
-                    setState(() {});
                     gd.delayCancelEditModeTimer(300);
+                    setState(() {});
                   },
-//                  child: Image(
-//                    image: AssetImage("assets/images/menu-mid.png"),
-//                    width: 20,
-//                    color: gd.roomList[widget.roomIndex].entities
-//                            .contains(entities[index].entityId)
-//                        ? Theme.of(context).textTheme.title.color
-//                        : Theme.of(context)
-//                            .textTheme
-//                            .title
-//                            .color
-//                            .withOpacity(0.25),
-//                  ),
                   child: Icon(
                     Icons.looks_two,
                     size: 28,
@@ -397,28 +416,18 @@ class __EditItemsState extends State<_EditItems> {
                   onTap: () {
                     if (gd.roomList[widget.roomIndex].row3
                         .contains(entities[index].entityId)) {
-                      removeItemFromGroup(entities[index].entityId);
+                      gd.roomList[widget.roomIndex].row3
+                          .remove(entities[index].entityId);
                     } else {
-                      removeItemFromGroup(entities[index].entityId);
                       gd.roomList[widget.roomIndex].row3
                           .add(entities[index].entityId);
+                      removeItemFromGroup(
+                          widget.roomIndex, entities[index].entityId, "row3");
                     }
                     gd.roomListSave(true);
-                    setState(() {});
                     gd.delayCancelEditModeTimer(300);
+                    setState(() {});
                   },
-//                  child: Image(
-//                    image: AssetImage("assets/images/menu-down.png"),
-//                    width: 20,
-//                    color: gd.roomList[widget.roomIndex].row3
-//                            .contains(entities[index].entityId)
-//                        ? Theme.of(context).textTheme.title.color
-//                        : Theme.of(context)
-//                            .textTheme
-//                            .title
-//                            .color
-//                            .withOpacity(0.25),
-//                  ),
                   child: Icon(
                     Icons.looks_3,
                     size: 28,
@@ -437,33 +446,273 @@ class __EditItemsState extends State<_EditItems> {
                   onTap: () {
                     if (gd.roomList[widget.roomIndex].row4
                         .contains(entities[index].entityId)) {
-                      removeItemFromGroup(entities[index].entityId);
+                      gd.roomList[widget.roomIndex].row4
+                          .remove(entities[index].entityId);
                     } else {
-                      removeItemFromGroup(entities[index].entityId);
                       gd.roomList[widget.roomIndex].row4
                           .add(entities[index].entityId);
+                      removeItemFromGroup(
+                          widget.roomIndex, entities[index].entityId, "row4");
                     }
                     gd.roomListSave(true);
-                    setState(() {});
                     gd.delayCancelEditModeTimer(300);
+                    setState(() {});
                   },
-//                  child: Image(
-//                    image: AssetImage("assets/images/menu-down.png"),
-//                    width: 20,
-//                    color: gd.roomList[widget.roomIndex].row3
-//                            .contains(entities[index].entityId)
-//                        ? Theme.of(context).textTheme.title.color
-//                        : Theme.of(context)
-//                            .textTheme
-//                            .title
-//                            .color
-//                            .withOpacity(0.25),
-//                  ),
                   child: Icon(
                     Icons.looks_4,
                     size: 28,
                     color: gd.roomList[widget.roomIndex].row4
                             .contains(entities[index].entityId)
+                        ? Theme.of(context).textTheme.title.color
+                        : Theme.of(context)
+                            .textTheme
+                            .title
+                            .color
+                            .withOpacity(0.25),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    if (gd.baseSetting.notificationDevices
+                        .contains(entities[index].entityId)) {
+                      gd.baseSetting.notificationDevices
+                          .remove(entities[index].entityId);
+                      gd.baseSettingSave(true);
+                      setState(() {});
+                    } else if (gd
+                        .activeDevicesSupportedType(entities[index].entityId)) {
+                      gd.baseSetting.notificationDevices
+                          .add(entities[index].entityId);
+                      gd.baseSettingSave(true);
+                      setState(() {});
+                    }
+                    gd.delayCancelEditModeTimer(300);
+                  },
+                  child: Icon(
+                    gd.baseSetting.notificationDevices
+                            .contains(entities[index].entityId)
+                        ? Icons.notifications
+                        : Icons.notifications_off,
+                    size: 28,
+                    color: gd.baseSetting.notificationDevices
+                            .contains(entities[index].entityId)
+                        ? Theme.of(context).textTheme.title.color
+                        : (gd.activeDevicesSupportedType(
+                                entities[index].entityId))
+                            ? Theme.of(context)
+                                .textTheme
+                                .title
+                                .color
+                                .withOpacity(0.25)
+                            : Theme.of(context)
+                                .textTheme
+                                .title
+                                .color
+                                .withOpacity(0.0),
+                  ),
+                ),
+                SizedBox(
+                  width: 4,
+                  height: 48,
+                ),
+              ],
+            ),
+          ),
+        ),
+        childCount: entities.length,
+      ),
+    );
+  }
+}
+
+void removeItemFromGroup(int roomIndex, String entityId, String except) {
+  if (except != "favorites" &&
+      gd.roomList[roomIndex].favorites.contains(entityId))
+    gd.roomList[roomIndex].favorites.remove(entityId);
+  if (except != "entities" &&
+      gd.roomList[roomIndex].entities.contains(entityId))
+    gd.roomList[roomIndex].entities.remove(entityId);
+  if (except != "row3" && gd.roomList[roomIndex].row3.contains(entityId))
+    gd.roomList[roomIndex].row3.remove(entityId);
+  if (except != "row4" && gd.roomList[roomIndex].row4.contains(entityId))
+    gd.roomList[roomIndex].row4.remove(entityId);
+}
+
+class WebViewItems extends StatefulWidget {
+  final int roomIndex;
+
+  const WebViewItems({@required this.roomIndex});
+
+  @override
+  _WebViewItemsState createState() => _WebViewItemsState();
+}
+
+class _WebViewItemsState extends State<WebViewItems> {
+  @override
+  Widget build(BuildContext context) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) => InkWell(
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+            gd.delayCancelEditModeTimer(300);
+          },
+          child: Container(
+            padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+            margin: EdgeInsets.zero,
+            child: Row(
+              children: <Widget>[
+                Opacity(
+                  opacity: (gd.roomList[widget.roomIndex].favorites
+                              .contains("WebView${index + 1}") ||
+                          gd.roomList[widget.roomIndex].entities
+                              .contains("WebView${index + 1}") ||
+                          gd.roomList[widget.roomIndex].row3
+                              .contains("WebView${index + 1}") ||
+                          gd.roomList[widget.roomIndex].row4
+                              .contains("WebView${index + 1}"))
+                      ? 1
+                      : 0.5,
+                  child: Icon(
+                    MaterialDesignIcons.getIconDataFromIconName("mdi:web"),
+                    size: 28,
+                    color: Theme.of(context).textTheme.title.color,
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Opacity(
+                    opacity: (gd.roomList[widget.roomIndex].favorites
+                                .contains("WebView${index + 1}") ||
+                            gd.roomList[widget.roomIndex].entities
+                                .contains("WebView${index + 1}") ||
+                            gd.roomList[widget.roomIndex].row3
+                                .contains("WebView${index + 1}") ||
+                            gd.roomList[widget.roomIndex].row4
+                                .contains("WebView${index + 1}"))
+                        ? 1
+                        : 0.5,
+                    child: AutoSizeText(
+                      "${gd.textToDisplay("Website #${index + 1}")}",
+                      style: Theme.of(context).textTheme.subhead,
+                      overflow: TextOverflow.ellipsis,
+                      textScaleFactor: gd.textScaleFactorFix,
+                      maxLines: 1,
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    if (gd.roomList[widget.roomIndex].favorites
+                        .contains("WebView${index + 1}")) {
+                      gd.roomList[widget.roomIndex].favorites
+                          .remove("WebView${index + 1}");
+                    } else {
+                      gd.roomList[widget.roomIndex].favorites
+                          .add("WebView${index + 1}");
+                      removeItemFromGroup(
+                          widget.roomIndex, "WebView${index + 1}", "favorites");
+                    }
+
+                    gd.roomListSave(true);
+                    gd.delayCancelEditModeTimer(300);
+                    setState(() {});
+                  },
+                  child: Icon(
+                    Icons.looks_one,
+                    size: 28,
+                    color: gd.roomList[widget.roomIndex].favorites
+                            .contains("WebView${index + 1}")
+                        ? Theme.of(context).textTheme.title.color
+                        : Theme.of(context)
+                            .textTheme
+                            .title
+                            .color
+                            .withOpacity(0.25),
+                  ),
+                ),
+                SizedBox(width: 0),
+                InkWell(
+                  onTap: () {
+                    if (gd.roomList[widget.roomIndex].entities
+                        .contains("WebView${index + 1}")) {
+                      gd.roomList[widget.roomIndex].entities
+                          .remove("WebView${index + 1}");
+                    } else {
+                      gd.roomList[widget.roomIndex].entities
+                          .add("WebView${index + 1}");
+                      removeItemFromGroup(
+                          widget.roomIndex, "WebView${index + 1}", "entities");
+                    }
+                    gd.roomListSave(true);
+                    gd.delayCancelEditModeTimer(300);
+                    setState(() {});
+                  },
+                  child: Icon(
+                    Icons.looks_two,
+                    size: 28,
+                    color: gd.roomList[widget.roomIndex].entities
+                            .contains("WebView${index + 1}")
+                        ? Theme.of(context).textTheme.title.color
+                        : Theme.of(context)
+                            .textTheme
+                            .title
+                            .color
+                            .withOpacity(0.25),
+                  ),
+                ),
+                SizedBox(width: 0),
+                InkWell(
+                  onTap: () {
+                    if (gd.roomList[widget.roomIndex].row3
+                        .contains("WebView${index + 1}")) {
+                      gd.roomList[widget.roomIndex].row3
+                          .remove("WebView${index + 1}");
+                    } else {
+                      gd.roomList[widget.roomIndex].row3
+                          .add("WebView${index + 1}");
+                      removeItemFromGroup(
+                          widget.roomIndex, "WebView${index + 1}", "row3");
+                    }
+                    gd.roomListSave(true);
+                    gd.delayCancelEditModeTimer(300);
+                    setState(() {});
+                  },
+                  child: Icon(
+                    Icons.looks_3,
+                    size: 28,
+                    color: gd.roomList[widget.roomIndex].row3
+                            .contains("WebView${index + 1}")
+                        ? Theme.of(context).textTheme.title.color
+                        : Theme.of(context)
+                            .textTheme
+                            .title
+                            .color
+                            .withOpacity(0.25),
+                  ),
+                ),
+                SizedBox(width: 0),
+                InkWell(
+                  onTap: () {
+                    if (gd.roomList[widget.roomIndex].row4
+                        .contains("WebView${index + 1}")) {
+                      gd.roomList[widget.roomIndex].row4
+                          .remove("WebView${index + 1}");
+                    } else {
+                      gd.roomList[widget.roomIndex].row4
+                          .add("WebView${index + 1}");
+                      removeItemFromGroup(
+                          widget.roomIndex, "WebView${index + 1}", "row4");
+                    }
+                    gd.roomListSave(true);
+                    gd.delayCancelEditModeTimer(300);
+                    setState(() {});
+                  },
+                  child: Icon(
+                    Icons.looks_4,
+                    size: 28,
+                    color: gd.roomList[widget.roomIndex].row4
+                            .contains("WebView${index + 1}")
                         ? Theme.of(context).textTheme.title.color
                         : Theme.of(context)
                             .textTheme
@@ -480,7 +729,7 @@ class __EditItemsState extends State<_EditItems> {
             ),
           ),
         ),
-        childCount: entities.length,
+        childCount: gd.webViewSupportMax,
       ),
     );
   }

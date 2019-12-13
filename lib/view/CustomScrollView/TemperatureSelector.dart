@@ -43,7 +43,7 @@ class _TemperatureSelectorState extends State<TemperatureSelector> {
               style: Theme.of(context).textTheme.subhead,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              textScaleFactor: gd.textScaleFactor,
+              textScaleFactor: gd.textScaleFactorFix,
             ),
           ),
           Text(
@@ -51,7 +51,7 @@ class _TemperatureSelectorState extends State<TemperatureSelector> {
             style: Theme.of(context).textTheme.subhead,
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
-            textScaleFactor: gd.textScaleFactor,
+            textScaleFactor: gd.textScaleFactorFix,
           ),
           SizedBox(width: 16),
         ],
@@ -76,7 +76,7 @@ class _TemperatureSelectorState extends State<TemperatureSelector> {
               style: Theme.of(context).textTheme.subhead,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              textScaleFactor: gd.textScaleFactor,
+              textScaleFactor: gd.textScaleFactorFix,
             ),
           ),
           Text(
@@ -84,7 +84,7 @@ class _TemperatureSelectorState extends State<TemperatureSelector> {
             style: Theme.of(context).textTheme.subhead,
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
-            textScaleFactor: gd.textScaleFactor,
+            textScaleFactor: gd.textScaleFactorFix,
           ),
           SizedBox(width: 16),
         ],
@@ -136,7 +136,7 @@ class _TemperatureSelectorState extends State<TemperatureSelector> {
                                   child: Text(
                                 "Temperature Sensor",
                                 overflow: TextOverflow.ellipsis,
-                                textScaleFactor: gd.textScaleFactor,
+                                textScaleFactor: gd.textScaleFactorFix,
                                 maxLines: 1,
                               )),
                               Text(
@@ -151,7 +151,7 @@ class _TemperatureSelectorState extends State<TemperatureSelector> {
                                     : "Select Sensor",
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
-                                textScaleFactor: gd.textScaleFactor,
+                                textScaleFactor: gd.textScaleFactorFix,
                                 style: ThemeInfo.pickerActivateStyle,
                               ),
                             ],

@@ -2,17 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hasskit/helper/GeneralData.dart';
 import 'package:hasskit/helper/GoogleSign.dart';
+import 'package:hasskit/helper/LocaleHelper.dart';
 import 'package:hasskit/helper/Logger.dart';
 import 'package:hasskit/helper/MaterialDesignIcons.dart';
+import 'package:hasskit/helper/RateMyApp.dart';
+import 'package:hasskit/helper/SquircleBorder.dart';
 import 'package:hasskit/helper/ThemeInfo.dart';
+import 'package:hasskit/model/LocalLanguage.dart';
 import 'package:hasskit/model/LoginData.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:validators/validators.dart';
-import 'CustomScrollView/DeviceTypeHeader.dart';
+
 import 'HomeAssistantLogin.dart';
 import 'ServerSelectPanel.dart';
+import 'slivers/SliverHeader.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -20,7 +26,6 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  final title = 'Setting';
   final _controller = TextEditingController();
   bool showConnect = false;
   bool showCancel = false;
@@ -33,6 +38,7 @@ class _SettingPageState extends State<SettingPage> {
     version: 'Unknown',
     buildNumber: 'Unknown',
   );
+
   @override
   void dispose() {
     _controller.removeListener(addressListener);
@@ -105,10 +111,11 @@ class _SettingPageState extends State<SettingPage> {
     return Selector<GeneralData, String>(
       selector: (_, generalData) => ("${generalData.useSSL} | "
           "${generalData.currentTheme} | "
-          "${generalData.loginDataList.length} | "
           "${generalData.connectionStatus} | "
-          "${generalData.itemsPerRow} | "
-          "${generalData.useSSL} | "),
+          "${generalData.baseSetting.phoneLayout} | "
+          "${generalData.baseSetting.tabletLayout} | "
+          "${generalData.baseSetting.shapeLayout} | "
+          "${generalData.loginDataList.length} | "),
       builder: (_, string, __) {
         return Container(
           decoration: BoxDecoration(
@@ -132,20 +139,20 @@ class _SettingPageState extends State<SettingPage> {
 //                  image: AssetImage(
 //                      'assets/images/icon_transparent_border_transparent.png'),
 //                ),
-                largeTitle: Text(title),
-//            trailing: IconButton(
-//              icon: Icon(Icons.palette),
-//              onPressed: () {
-//                gd.themeChange();
-//              },
-//            ),
+                backgroundColor: ThemeInfo.colorBottomSheet.withOpacity(0.5),
+                largeTitle: Text(
+                  Translate.getString("global.settings", context),
+                  style: TextStyle(color: ThemeInfo.colorBottomSheetReverse),
+                  textScaleFactor: gd.textScaleFactorFix,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              DeviceTypeHeaderEditNormal(
+              SliverHeaderNormal(
                 icon: Icon(
                   MaterialDesignIcons.getIconDataFromIconName(
                       "mdi:home-assistant"),
                 ),
-                title: "Home Assistant Connection",
+                title: Translate.getString("settings.home_assistant", context),
               ),
               SliverList(
                 delegate: SliverChildListDelegate(
@@ -161,7 +168,8 @@ class _SettingPageState extends State<SettingPage> {
                             decoration: InputDecoration(
                               prefixText: gd.useSSL ? "https://" : "http://",
                               hintText: 'sample.duckdns.org:8123',
-                              labelText: 'Create New Connection...',
+                              labelText: Translate.getString(
+                                  "settings.new_connection", context),
                               suffixIcon: Opacity(
                                 opacity: showCancel ? 1 : 0,
                                 child: IconButton(
@@ -191,7 +199,12 @@ class _SettingPageState extends State<SettingPage> {
                                   onChanged: (val) {
                                     gd.useSSL = val;
                                   }),
-                              Text("Use https"),
+                              Text(
+                                Translate.getString(
+                                    "settings.use_https", context),
+                                textScaleFactor: gd.textScaleFactorFix,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                               Expanded(child: Container()),
                               RaisedButton(
                                 onPressed: showConnect
@@ -200,38 +213,55 @@ class _SettingPageState extends State<SettingPage> {
                                           FocusScope.of(context)
                                               .requestFocus(new FocusNode());
                                         }
+
+                                        _controller.text =
+                                            _controller.text.trim();
+                                        _controller.text =
+                                            _controller.text.toLowerCase();
+                                        _controller.text = _controller.text
+                                            .replaceAll("https://", "");
+                                        _controller.text = _controller.text
+                                            .replaceAll("http://", "");
+                                        if (_controller.text.contains("/"))
+                                          _controller.text =
+                                              _controller.text.split("/")[0];
+
                                         gd.loginDataCurrent = LoginData(
                                             url: gd.useSSL
-                                                ? "https://" +
-                                                    gd.trimUrl(_controller.text)
-                                                : "http://" +
-                                                    gd.trimUrl(
-                                                        _controller.text));
+                                                ? "https://" + _controller.text
+                                                : "http://" + _controller.text);
+                                        log.w(
+                                            "gd.loginDataCurrent.url ${gd.loginDataCurrent.url}");
+                                        //prevent autoConnect hijack gd.loginDataCurrent.url
+                                        gd.autoConnect = false;
                                         gd.webViewLoading = true;
                                         showModalBottomSheet(
-                                            context: context,
-                                            elevation: 1,
-                                            backgroundColor:
-                                                ThemeInfo.colorBottomSheet,
-                                            isScrollControlled: true,
-                                            useRootNavigator: true,
-                                            builder: (context) =>
-                                                HomeAssistantLogin(
-                                                  selectedUrl: gd
-                                                          .loginDataCurrent
-                                                          .getUrl +
-                                                      '/auth/authorize?client_id=' +
-                                                      gd.loginDataCurrent
-                                                          .getUrl +
-                                                      "/hasskit"
-                                                          '&redirect_uri=' +
-                                                      gd.loginDataCurrent
-                                                          .getUrl +
-                                                      "/hasskit",
-                                                ));
+                                          context: context,
+                                          elevation: 1,
+                                          backgroundColor:
+                                              ThemeInfo.colorBottomSheet,
+                                          isScrollControlled: true,
+                                          useRootNavigator: true,
+                                          builder: (context) =>
+                                              HomeAssistantLogin(
+                                            selectedUrl: gd
+                                                    .loginDataCurrent.getUrl +
+                                                '/auth/authorize?client_id=' +
+                                                gd.loginDataCurrent.getUrl +
+                                                "/hasskit"
+                                                    '&redirect_uri=' +
+                                                gd.loginDataCurrent.getUrl +
+                                                "/hasskit",
+                                          ),
+                                        );
                                       }
                                     : null,
-                                child: Text("Connect"),
+                                child: Text(
+                                  Translate.getString(
+                                      "settings.connect", context),
+                                  textScaleFactor: gd.textScaleFactorFix,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           )
@@ -248,34 +278,101 @@ class _SettingPageState extends State<SettingPage> {
                   childCount: gd.loginDataList.length,
                 ),
               ),
-              DeviceTypeHeaderEditNormal(
+              SliverHeaderNormal(
                 icon: Icon(
                   MaterialDesignIcons.getIconDataFromIconName("mdi:cloud-sync"),
                 ),
-                title: "Google Cloud Sync",
+                title: Translate.getString("settings.sync", context),
               ),
               GoogleSign(),
-              DeviceTypeHeaderEditNormal(
+              SliverHeaderNormal(
                 icon: Icon(
                   MaterialDesignIcons.getIconDataFromIconName("mdi:palette"),
                 ),
-                title: "Theme Color",
+                title: Translate.getString("settings.theme_color", context),
               ),
               _ThemeSelector(),
-              DeviceTypeHeaderEditNormal(
+              SliverHeaderNormal(
                 icon: Icon(
                   MaterialDesignIcons.getIconDataFromIconName(
                       "mdi:view-dashboard-variant"),
                 ),
-                title: "Layout",
+                title: Translate.getString("settings.layout", context),
               ),
-              _LayoutSelector(),
-              DeviceTypeHeaderEditNormal(
+              ShapeSelector(),
+              LayoutSelector(),
+              rateMyApp.doNotOpenAgain &&
+                      Theme.of(context).platform == TargetPlatform.iOS
+                  ? gd.emptySliver
+                  : SliverList(
+                      delegate: SliverChildListDelegate([
+                      Container(
+                        child: RaisedButton(
+                          onPressed: () => rateMyApp
+                              .showRateDialog(
+                                context,
+                                title: 'Rate This App',
+                                message:
+                                    'If you like this app, please take a little bit of your time to review it!\n\nIt really helps us and it shouldn\'t take you more than one minute.',
+                                rateButton: 'Rate',
+                                noButton: 'No Thanks',
+                                laterButton: 'Maybe Later',
+                                ignoreIOS: false,
+                                dialogStyle: DialogStyle(),
+                              )
+                              .then((v) => setState(() {})),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                MaterialDesignIcons.getIconDataFromIconName(
+                                    "mdi:star-outline"),
+                              ),
+                              Icon(
+                                MaterialDesignIcons.getIconDataFromIconName(
+                                    "mdi:star-outline"),
+                              ),
+                              Icon(
+                                MaterialDesignIcons.getIconDataFromIconName(
+                                    "mdi:star-outline"),
+                              ),
+                              Text(
+                                " Rate HassKit ",
+                                style: TextStyle(color: Colors.black),
+                                textScaleFactor: gd.textScaleFactorFix,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Icon(
+                                MaterialDesignIcons.getIconDataFromIconName(
+                                    "mdi:star-outline"),
+                              ),
+                              Icon(
+                                MaterialDesignIcons.getIconDataFromIconName(
+                                    "mdi:star-outline"),
+                              ),
+                              Icon(
+                                MaterialDesignIcons.getIconDataFromIconName(
+                                    "mdi:star-outline"),
+                              ),
+                            ],
+                          ),
+                        ),
+                        padding: EdgeInsets.all(12),
+                      ),
+                    ])),
+              SliverHeaderNormal(
+                icon: Icon(
+                  MaterialDesignIcons.getIconDataFromIconName("mdi:web"),
+                ),
+                title: Translate.getString("settings.language", context),
+              ),
+              LocalLanguagePicker(),
+              SliverHeaderNormal(
                 icon: Icon(
                   MaterialDesignIcons.getIconDataFromIconName(
                       "mdi:account-circle"),
                 ),
-                title: "About HassKit",
+                title: Translate.getString("settings.about", context),
               ),
               Container(
                 child: SliverList(
@@ -290,14 +387,10 @@ class _SettingPageState extends State<SettingPage> {
                                   ThemeInfo.colorBottomSheet.withOpacity(0.5),
                               borderRadius: BorderRadius.circular(8)),
                           child: Text(
-                            "HassKit is a Touch Friendly - Zero Config to help user instantly start using  Home Assistant."
-                            "\n\nHome Assistant is a one of the best platform for Home Automation with powerful features, world widest range of devices support and only require very simple/cheap hardware (Hello \$25 Raspberry Pi)."
-                            "\n\nHowever, Home Assistant is not easy to setup and require a few months to master. HassKit aim to ease the learning steps and improve the quality of life for Home Assistant users by providing a stunning look and 10 seconds setup to start using the wonderful Home Automation platform."
-                            "\n\nHassKit is free, open-source and under development. We need your help to improve the app feature in order to better serve you."
-                            "\n\Please find us on Discord and Facebook. Your contributions are welcome.",
+                            Translate.getString("settings.about_info", context),
                             style: Theme.of(context).textTheme.body1,
                             textAlign: TextAlign.justify,
-                            textScaleFactor: gd.textScaleFactor,
+                            textScaleFactor: gd.textScaleFactorFix,
                           ),
                         ),
                       ),
@@ -311,6 +404,7 @@ class _SettingPageState extends State<SettingPage> {
                               child: RaisedButton(
                                 onPressed: _launchDiscord,
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     SizedBox(
                                       width: 32,
@@ -324,7 +418,8 @@ class _SettingPageState extends State<SettingPage> {
                                     Text(
                                       "Discord ",
                                       style: TextStyle(color: Colors.black),
-                                      textScaleFactor: gd.textScaleFactor,
+                                      textScaleFactor: gd.textScaleFactorFix,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
                                 ),
@@ -335,6 +430,7 @@ class _SettingPageState extends State<SettingPage> {
                               child: RaisedButton(
                                 onPressed: _launchFacebook,
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     SizedBox(
                                       width: 32,
@@ -348,7 +444,8 @@ class _SettingPageState extends State<SettingPage> {
                                     Text(
                                       "Facebook",
                                       style: TextStyle(color: Colors.black),
-                                      textScaleFactor: gd.textScaleFactor,
+                                      textScaleFactor: gd.textScaleFactorFix,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
                                 ),
@@ -373,7 +470,8 @@ class _SettingPageState extends State<SettingPage> {
                             "Build: ${_packageInfo.buildNumber}",
                             style: Theme.of(context).textTheme.body1,
                             textAlign: TextAlign.center,
-                            textScaleFactor: gd.textScaleFactor,
+                            textScaleFactor: gd.textScaleFactorFix,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
@@ -401,17 +499,31 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   _launchFacebook() async {
-    const url = 'https://www.facebook.com/groups/709634206223205/';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+    const fbProtocolUrl = "fb://group/709634206223205";
+    const fallbackUrl = 'https://www.facebook.com/groups/709634206223205/';
+    try {
+      bool launched = await launch(fbProtocolUrl, forceSafariVC: false);
+
+      if (!launched) {
+        await launch(fallbackUrl, forceSafariVC: false);
+      }
+    } catch (e) {
+      await launch(fallbackUrl, forceSafariVC: false);
     }
+
+//    const url = 'https://www.facebook.com/groups/709634206223205/';
+//
+//    if (await canLaunch(url)) {
+//      await launch(url);
+//    } else {
+//      throw 'Could not launch $url';
+//    }
   }
 
   Future<void> _initPackageInfo() async {
     final PackageInfo info = await PackageInfo.fromPlatform();
     setState(() {
+//      log.d("_packageInfo $_packageInfo");
       _packageInfo = info;
     });
   }
@@ -432,8 +544,8 @@ class _ThemeSelector extends StatelessWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      gd.themeIndex = 1;
-                      gd.baseSettingSave();
+                      gd.baseSetting.themeIndex = 1;
+                      gd.baseSettingSave(true);
                     },
                     child: Card(
                       elevation: 1,
@@ -443,13 +555,16 @@ class _ThemeSelector extends StatelessWidget {
                         child: Row(
                           children: <Widget>[
                             Image.asset("assets/images/icon_transparent.png"),
-                            Spacer(),
-                            Text(
-                              "Dark Theme",
-                              style: TextStyle(color: Colors.white),
-                              textScaleFactor: gd.textScaleFactor,
+                            Expanded(
+                              child: Text(
+                                Translate.getString(
+                                    "theme_selector.dark", context),
+                                style: TextStyle(color: Colors.white),
+                                textScaleFactor: gd.textScaleFactorFix,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
                             ),
-                            Spacer(),
                             Icon(
                               Icons.check_circle,
                               color: Theme.of(context).brightness ==
@@ -466,8 +581,8 @@ class _ThemeSelector extends StatelessWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      gd.themeIndex = 0;
-                      gd.baseSettingSave();
+                      gd.baseSetting.themeIndex = 0;
+                      gd.baseSettingSave(true);
                     },
                     child: Card(
                       elevation: 1,
@@ -477,13 +592,16 @@ class _ThemeSelector extends StatelessWidget {
                         child: Row(
                           children: <Widget>[
                             Image.asset("assets/images/icon_transparent.png"),
-                            Spacer(),
-                            Text(
-                              "Light Theme",
-                              style: TextStyle(color: Colors.black),
-                              textScaleFactor: gd.textScaleFactor,
+                            Expanded(
+                              child: Text(
+                                Translate.getString(
+                                    "theme_selector.light", context),
+                                style: TextStyle(color: Colors.black),
+                                textScaleFactor: gd.textScaleFactorFix,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
                             ),
-                            Spacer(),
                             Icon(
                               Icons.check_circle,
                               color: Theme.of(context).brightness ==
@@ -506,96 +624,137 @@ class _ThemeSelector extends StatelessWidget {
   }
 }
 
-class _LayoutSelector extends StatelessWidget {
+class LayoutSelector extends StatefulWidget {
+  @override
+  _LayoutSelectorState createState() => _LayoutSelectorState();
+}
+
+class _LayoutSelectorState extends State<LayoutSelector> {
+  final Map<int, Widget> phoneSegment = const <int, Widget>{
+    2: Text('2'),
+    3: Text('3'),
+    4: Text('4'),
+  };
+  final Map<int, Widget> tabletSegment = const <int, Widget>{
+    36: Text('3:6'),
+    69: Text('6:9'),
+    912: Text('9:12'),
+    3: Text('3'),
+    6: Text('6'),
+    9: Text('9'),
+    12: Text('12'),
+  };
+  int phoneValue;
+  int tabletValue;
+
   @override
   Widget build(BuildContext context) {
-    return SliverFixedExtentList(
-      itemExtent: 58,
+    phoneValue = gd.baseSetting.phoneLayout;
+    tabletValue = gd.baseSetting.tabletLayout;
+    return SliverList(
       delegate: SliverChildListDelegate(
         [
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      gd.itemsPerRow = 3;
-                      gd.baseSettingSave();
-                    },
-                    child: Card(
-                      elevation: 1,
-                      color: ThemeInfo.colorBottomSheet.withOpacity(0.8),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              MaterialDesignIcons.getIconDataFromIconName(
-                                  "mdi:view-module"),
-                              size: 32,
-                            ),
-                            Spacer(),
-                            Text(
-                              "3 Buttons",
-                              style: Theme.of(context).textTheme.body1,
-                              overflow: TextOverflow.ellipsis,
-                              textScaleFactor: gd.textScaleFactor,
-                            ),
-                            Spacer(),
-                            Icon(
-                              Icons.check_circle,
-                              color: gd.itemsPerRow == 3
-                                  ? Colors.amber
-                                  : Colors.transparent,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      gd.itemsPerRow = 4;
-                      gd.baseSettingSave();
-                    },
-                    child: Card(
-                      elevation: 1,
-                      color: ThemeInfo.colorBottomSheet.withOpacity(0.8),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              MaterialDesignIcons.getIconDataFromIconName(
-                                  "mdi:view-comfy"),
-                              size: 32,
-                            ),
-                            Spacer(),
-                            Text(
-                              "4 Buttons",
-                              style: Theme.of(context).textTheme.body1,
-                              overflow: TextOverflow.ellipsis,
-                              textScaleFactor: gd.textScaleFactor,
-                            ),
-                            Spacer(),
-                            Icon(
-                              Icons.check_circle,
-                              color: gd.itemsPerRow == 4
-                                  ? Colors.amber
-                                  : Colors.transparent,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          CupertinoSlidingSegmentedControl<int>(
+            thumbColor: ThemeInfo.colorBottomSheetReverse.withOpacity(0.5),
+//          CupertinoSegmentedControl<int>(
+            padding: EdgeInsets.all(12),
+            children: gd.isTablet ? tabletSegment : phoneSegment,
+            onValueChanged: (int val) {
+              setState(() {
+                if (gd.isTablet) {
+                  tabletValue = val;
+                  gd.baseSetting.tabletLayout = val;
+                } else {
+                  phoneValue = val;
+                  gd.baseSetting.phoneLayout = val;
+                }
+                gd.baseSettingSave(true);
+              });
+            },
+            groupValue: gd.isTablet ? tabletValue : phoneValue,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ShapeSelector extends StatefulWidget {
+  @override
+  _ShapeSelectorState createState() => _ShapeSelectorState();
+}
+
+class _ShapeSelectorState extends State<ShapeSelector> {
+  @override
+  Widget build(BuildContext context) {
+    Widget widget0 = Column(
+      children: <Widget>[
+        Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: gd.baseSetting.shapeLayout == 0
+                ? ThemeInfo.colorIconActive
+                : ThemeInfo.colorIconInActive,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          width: 30,
+          height: 30,
+        )
+      ],
+    );
+    Widget widget1 = Column(
+      children: <Widget>[
+        Material(
+          color: gd.baseSetting.shapeLayout == 1
+              ? ThemeInfo.colorIconActive
+              : ThemeInfo.colorIconInActive,
+          shape: SquircleBorder(superRadius: 5),
+          child: Container(
+            alignment: Alignment.center,
+            width: 30,
+            height: 30,
+          ),
+        ),
+      ],
+    );
+    Widget widget2 = Column(
+      children: <Widget>[
+        Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: gd.baseSetting.shapeLayout == 2
+                ? ThemeInfo.colorIconActive
+                : ThemeInfo.colorIconInActive,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          width: 48,
+          height: 30,
+        ),
+      ],
+    );
+
+    final Map<int, Widget> phoneSegment = <int, Widget>{
+      0: widget0,
+      1: widget1,
+      2: widget2,
+    };
+    return SliverList(
+      delegate: SliverChildListDelegate(
+        [
+          CupertinoSegmentedControl<int>(
+            borderColor: Colors.transparent,
+            selectedColor: Colors.transparent,
+            unselectedColor: Colors.transparent,
+            pressedColor: Colors.transparent,
+            padding: EdgeInsets.all(12),
+            children: phoneSegment,
+            onValueChanged: (int val) {
+              setState(() {
+                gd.baseSetting.shapeLayout = val;
+                gd.baseSettingSave(true);
+              });
+            },
+            groupValue: gd.baseSetting.shapeLayout,
           ),
         ],
       ),

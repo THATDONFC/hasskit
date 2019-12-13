@@ -1,6 +1,7 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:hasskit/helper/GeneralData.dart';
+import 'package:hasskit/helper/LocaleHelper.dart';
 import 'package:hasskit/helper/Logger.dart';
 import 'package:hasskit/helper/MaterialDesignIcons.dart';
 import 'package:hasskit/helper/ThemeInfo.dart';
@@ -14,20 +15,30 @@ class EntityControlToggle extends StatefulWidget {
 }
 
 class _EntityControlToggleState extends State<EntityControlToggle> {
-  double buttonValue = 150;
-  double buttonHeight = 300.0;
-  double buttonWidth = 90.0;
+  double buttonTotalHeight = 300.0;
+  double upperPartHeight = 30.0;
+  double buttonWidth = 126.0;
+  double buttonHalfHeight;
+  double buttonFullHeight;
+  double buttonValue;
   double currentPosX;
   double currentPosY;
   double startPosX;
   double startPosY;
-  double upperPartHeight = 30.0;
-  double buttonWidthInner = 82.0;
-  double buttonHeightInner = 123.5;
-  double onPos = 300.0 - 123.5 - 4.0;
-  double offPos = 4.0;
   double diffY = 0;
   double snap = 10;
+
+  @override
+  void initState() {
+    buttonFullHeight = (buttonTotalHeight - upperPartHeight);
+    buttonHalfHeight = buttonTotalHeight / 2;
+    if (gd.entities[widget.entityId].isStateOn) {
+      buttonValue = buttonFullHeight;
+    } else {
+      buttonValue = buttonHalfHeight;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,47 +58,44 @@ class _EntityControlToggleState extends State<EntityControlToggle> {
             children: <Widget>[
               Container(
                 width: buttonWidth,
-                height: buttonHeight,
+                height: buttonTotalHeight,
                 decoration: BoxDecoration(
                   color: gd.entities[widget.entityId].isStateOn
                       ? ThemeInfo.colorIconActive
                       : ThemeInfo.colorIconInActive,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                      width: 4, color: ThemeInfo.colorBottomSheetReverse),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 0.0, // has the effect of softening the shadow
+                      spreadRadius:
+                          1.0, // has the effect of extending the shadow
+                      offset: Offset(
+                        0.0, // horizontal, move right 10
+                        0.0, // vertical, move down 10
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Positioned(
-                bottom: gd.entities[widget.entityId].isStateOn
-                    ? onPos + diffY - upperPartHeight
-                    : offPos + diffY,
+                bottom: 0,
                 child: Container(
-                  width: buttonWidthInner,
-                  height: buttonHeightInner,
+                  alignment: Alignment.topCenter,
+                  width: buttonWidth,
+                  height: buttonValue,
                   padding: const EdgeInsets.all(2.0),
                   decoration: new BoxDecoration(
                     borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(12),
-                        bottomLeft: Radius.circular(12)),
+                      bottomRight: Radius.circular(16),
+                      bottomLeft: Radius.circular(16),
+                    ),
                     color: gd.entities[widget.entityId].isStateOn
                         ? Colors.white.withOpacity(1)
                         : Colors.white.withOpacity(1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black54,
-                        blurRadius:
-                            1.0, // has the effect of softening the shadow
-                        spreadRadius:
-                            0.5, // has the effect of extending the shadow
-                        offset: Offset(
-                          0.0, // horizontal, move right 10
-                          1.0, // vertical, move down 10
-                        ),
-                      ),
-                    ],
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Icon(
                           MaterialDesignIcons.getIconDataFromIconName(
@@ -96,13 +104,12 @@ class _EntityControlToggleState extends State<EntityControlToggle> {
                           color: gd.entities[widget.entityId].isStateOn
                               ? ThemeInfo.colorIconActive
                               : ThemeInfo.colorIconInActive),
-                      SizedBox(height: 8),
                       Text(
-                        gd.textToDisplay(gd.entities[widget.entityId].state),
+                        gd.textToDisplay(gd.entities[widget.entityId]
+                            .getStateDisplayTranslated(context)),
                         style: ThemeInfo.textStatusButtonActive,
                         maxLines: 1,
-                        textScaleFactor:
-                            gd.textScaleFactor * 3 / gd.itemsPerRow,
+                        textScaleFactor: gd.textScaleFactorFix,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                       ),
@@ -111,28 +118,16 @@ class _EntityControlToggleState extends State<EntityControlToggle> {
                 ),
               ),
               Positioned(
-                top: 4,
+                top: 0,
                 child: Container(
-                  width: buttonWidth - 8,
+                  width: buttonWidth,
                   height: upperPartHeight,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black54,
-                        blurRadius:
-                            0.5, // has the effect of softening the shadow
-                        spreadRadius:
-                            0.5, // has the effect of extending the shadow
-                        offset: Offset(
-                          0.0, // horizontal, move right 10
-                          -0.5, // vertical, move down 10
-                        ),
-                      ),
-                    ],
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
                   ),
                   alignment: Alignment.center,
                   child: RequireSlideToOpen(entityId: widget.entityId),
@@ -161,6 +156,11 @@ class _EntityControlToggleState extends State<EntityControlToggle> {
       () {
         log.d("_onVerticalDragEnd");
         diffY = 0;
+        if (gd.entities[widget.entityId].isStateOn) {
+          buttonValue = buttonFullHeight;
+        } else {
+          buttonValue = buttonHalfHeight;
+        }
       },
     );
   }
@@ -172,21 +172,25 @@ class _EntityControlToggleState extends State<EntityControlToggle> {
       currentPosX = localOffset.dx;
       currentPosY = localOffset.dy;
       diffY = startPosY - currentPosY;
-      if (gd.entities[widget.entityId].isStateOn && diffY > 0) diffY = 0;
-      if (gd.entities[widget.entityId].isStateOn &&
-          diffY <
-              buttonHeightInner - buttonHeight + 8 + snap + upperPartHeight) {
-        diffY = buttonHeightInner - buttonHeight + 8;
-        gd.toggleStatus(gd.entities[widget.entityId]);
+      var stateValue;
+
+      if (gd.entities[widget.entityId].isStateOn) {
+        stateValue = buttonFullHeight;
+        if (diffY > 0) diffY = 0;
+        if (stateValue + diffY < buttonHalfHeight + snap)
+          gd.toggleStatus(gd.entities[widget.entityId]);
       }
-      if (!gd.entities[widget.entityId].isStateOn && diffY < 0) diffY = 0;
-      if (!gd.entities[widget.entityId].isStateOn &&
-          diffY >
-              buttonHeight - buttonHeightInner - 8 - snap - upperPartHeight) {
-        diffY = buttonHeight - buttonHeightInner - 8;
-        gd.toggleStatus(gd.entities[widget.entityId]);
+
+      if (!gd.entities[widget.entityId].isStateOn) {
+        stateValue = buttonHalfHeight;
+        if (diffY < 0) diffY = 0;
+        if (stateValue + diffY > buttonFullHeight - snap)
+          gd.toggleStatus(gd.entities[widget.entityId]);
       }
-//      print("yDiff $diffY");
+
+      buttonValue = stateValue + diffY;
+
+      print("yDiff $diffY");
     });
   }
 }
@@ -214,11 +218,13 @@ class RequireSlideToOpen extends StatelessWidget {
         gd.requireSlideToOpenAddRemove(entityId);
         Flushbar(
           title: required
-              ? "Require Slide to Open Disabled"
-              : "Require Slide to Open Enabled",
+              ? Translate.getString(
+                  "toggle.require_slide_open_disabled", context)
+              : Translate.getString(
+                  "toggle.require_slide_open_enabled", context),
           message: required
-              ? "${gd.textToDisplay(gd.entities[entityId].getOverrideName)} now can be opened with 1 touch"
-              : "Prevent accidentally open ${gd.textToDisplay(gd.entities[entityId].getOverrideName)}",
+              ? "${gd.textToDisplay(gd.entities[entityId].getOverrideName)} ${Translate.getString('toggle.1_touch', context)}"
+              : "${Translate.getString('toggle.prevent_accidentally_open', context)} ${gd.textToDisplay(gd.entities[entityId].getOverrideName)}",
           duration: Duration(seconds: 3),
         )..show(context);
       },
