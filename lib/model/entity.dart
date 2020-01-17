@@ -778,14 +778,14 @@ class Entity {
 
     if (DateTime.tryParse(state) != null) {
       if (state.contains(":") && state.contains("-")) {
-        print("entityId $entityId.$state containt : and -");
+//        print("entityId $entityId.$state containt : and -");
         if (gd.configUnitSystem['length'].toString() == "km") {
           return DateFormat('dd/MM kk:mm').format(DateTime.parse(state));
         } else {
           return DateFormat('MM/dd kk:mm').format(DateTime.parse(state));
         }
       } else if (state.contains("-")) {
-        print("entityId $entityId.$state containt -");
+//        print("entityId $entityId.$state containt -");
         if (gd.configUnitSystem['length'].toString() == "km") {
           return DateFormat('E dd/MM').format(DateTime.parse(state));
         } else {
