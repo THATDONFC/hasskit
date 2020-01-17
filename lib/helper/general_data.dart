@@ -2625,7 +2625,7 @@ class GeneralData with ChangeNotifier {
 
   String get mobileAppState {
     if (entities[mobileAppEntityId] == null) {
-      return "Unknown State";
+      return "...";
     }
     return entities[mobileAppEntityId].state;
   }

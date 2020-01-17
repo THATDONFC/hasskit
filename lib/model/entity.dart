@@ -776,11 +776,30 @@ class Entity {
       if (speed != null && speed.length > 0 && speed != "null") return speed;
     }
 
-    if (!entityId.contains("input_datetime") &&
-        DateTime.tryParse(state) != null) {
-//      log.d("DateTime.tryParse $state");
-      return DateFormat('dd/MM kk:mm').format(DateTime.parse(state));
+    if (DateTime.tryParse(state) != null) {
+      if (state.contains(":") && state.contains("-")) {
+        print("entityId $entityId.$state containt : and -");
+
+        if (gd.configUnitSystem['length'].toString() == "km") {
+          return DateFormat('dd/MM kk:mm').format(DateTime.parse(state));
+        } else {
+          return DateFormat('MM/dd kk:mm').format(DateTime.parse(state));
+        }
+      } else if (state.contains("-")) {
+        print("entityId $entityId.$state containt -");
+        if (gd.configUnitSystem['length'].toString() == "km") {
+          return DateFormat('E dd/MM').format(DateTime.parse(state));
+        } else {
+          return DateFormat('E MM/dd').format(DateTime.parse(state));
+        }
+      }
+//      Can't parse only time
+//      else if (state.contains(":")) {
+//        print("entityId $entityId.$state containt :");
+//        return DateFormat('kk:mm').format(DateTime.parse(state));
+//      }
     }
+
     if (double.tryParse(state) != null) {
       var recVal = double.parse(state);
       if (recVal >= 100 || recVal.toStringAsFixed(1).contains(".0"))
