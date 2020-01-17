@@ -925,6 +925,62 @@ class _EditModeState extends State<EditMode> {
                 ),
                 SizedBox(height: 20),
                 //Room
+                gd.activeDevicesSupportedType(widget.entityId)
+                    ? InkWell(
+                        onTap: () {
+                          if (gd.baseSetting.notificationDevices
+                              .contains(widget.entityId)) {
+                            setState(() {
+                              gd.baseSetting.notificationDevices
+                                  .remove(widget.entityId);
+                              gd.baseSettingSave(true);
+                            });
+                          } else {
+                            setState(() {
+                              gd.baseSetting.notificationDevices
+                                  .add(widget.entityId);
+                              gd.baseSettingSave(true);
+                            });
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(width: 2),
+                              Expanded(
+                                  child: Text(
+                                "Track device state",
+                                textScaleFactor: gd.textScaleFactorFix,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              )),
+                              Icon(
+                                gd.baseSetting.notificationDevices
+                                        .contains(widget.entityId)
+                                    ? Icons.notifications
+                                    : Icons.notifications_off,
+                                color: gd.baseSetting.notificationDevices
+                                        .contains(widget.entityId)
+                                    ? Theme.of(context).textTheme.title.color
+                                    : (gd.activeDevicesSupportedType(
+                                            widget.entityId))
+                                        ? Theme.of(context)
+                                            .textTheme
+                                            .title
+                                            .color
+                                            .withOpacity(0.25)
+                                        : Theme.of(context)
+                                            .textTheme
+                                            .title
+                                            .color
+                                            .withOpacity(0.0),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: roomWidgets,
