@@ -35,7 +35,7 @@ To enable this feature, please follow these 3 easy steps
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_7.png)
 <br>Go to Home Assistant > Configuration > Integrations > Mobile App: <App Name> and click the recycle bin icon.
 
-## 5. How To Send Notification To Mobile App
+## 5. Automatically send Notification to HassKit
 
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_9.png)
 
@@ -89,7 +89,22 @@ automation:
 <br>
 <br>
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_10.png)
-
+<br>
+<br>
+Send a simple notification when the light turned on:
+```
+automation:
+  - alias: Notification Light Turned On
+    trigger:
+      - entity_id: light.light_1
+        platform: state
+        to: "on
+    action:
+      - service: notify.ALL_DEVICES
+        data:
+          title: Simple Notification 
+          message: Light Turned On
+```
 ## 6. Troubleshooting
 
 ### Error 404 during Mobile App registration:
