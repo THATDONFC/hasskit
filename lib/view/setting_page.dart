@@ -115,7 +115,7 @@ class _SettingPageState extends State<SettingPage> {
           "${generalData.settingMobileApp.deviceName} | "
           "${generalData.settingMobileApp.trackLocation} | "
           "${generalData.settingMobileApp.webHookId} | "
-          "${generalData.locationName} | "
+          "${generalData.mobileAppState} | "
           "${generalData.currentTheme} | "
           "${generalData.connectionStatus} | "
           "${generalData.deviceSetting.settingLocked} | "

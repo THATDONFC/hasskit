@@ -138,6 +138,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
         if (gd.lastLifecycleState == AppLifecycleState.resumed) {
           log.w("didChangeAppLifecycleState ${gd.lastLifecycleState}");
+          log.w("Reset gd.locationUpdateTime");
+          gd.locationUpdateTime = DateTime.now();
 
           if (gd.autoConnect) {
             {

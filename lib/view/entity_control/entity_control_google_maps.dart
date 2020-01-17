@@ -227,20 +227,26 @@ class _EntityControlGoogleMapsState extends State<EntityControlGoogleMaps> {
         },
         //Container prevent click gap that drag map
         child: Container(
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 4),
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: location.lastChanged.toString() == selected ||
-                      i == gd.locations.length - 1 && selected == ""
-                  ? Colors.red.withOpacity(0.8)
-                  : ThemeInfo.colorIconActive.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(40),
+          margin: EdgeInsets.symmetric(horizontal: 4),
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: location.lastChanged.toString() == selected ||
+                    i == gd.locations.length - 1 && selected == ""
+                ? Colors.red.withOpacity(0.8)
+                : ThemeInfo.colorIconActive.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(40),
+          ),
+          alignment: Alignment.center,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth: 10, maxWidth: 200),
+            child: Text(
+              location.state == "not_home"
+                  ? "$timeDisplay"
+                  : "$timeDisplay | ${gd.textToDisplay(location.state)}",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textScaleFactor: gd.textScaleFactorFix,
             ),
-            alignment: Alignment.center,
-            child: Text(location.state == "not_home"
-                ? "$timeDisplay"
-                : "$timeDisplay | ${gd.textToDisplay(location.state)}"),
           ),
         ),
       );

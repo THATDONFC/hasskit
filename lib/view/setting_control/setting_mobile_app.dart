@@ -8,7 +8,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:hasskit/helper/general_data.dart';
 import 'package:hasskit/helper/theme_info.dart';
-import 'package:hasskit/model/entity.dart';
 import 'package:hasskit/model/location_zone.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
@@ -354,7 +353,34 @@ class SettingMobileApp {
       return;
     }
 
+    //30 sec internal cooldown
     gd.locationUpdateTime = DateTime.now().add(Duration(seconds: 30));
+
+    if (gd.mobileAppEntityId == "") {
+      var mobileAppEntity = gd.entities.values.toList().firstWhere(
+          (e) => e.friendlyName == gd.settingMobileApp.deviceName,
+          orElse: () => null);
+
+      if (mobileAppEntity == null) {
+        gd.mobileAppEntityId = "";
+      } else {
+        gd.mobileAppEntityId = mobileAppEntity.entityId;
+      }
+    }
+
+    if (gd.mobileAppEntityId == "") {
+      if (gd.connectionStatus == "Connected") {
+        print("Case 7");
+        Fluttertoast.showToast(
+            msg: "Can not find ${gd.settingMobileApp.deviceName}",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.TOP,
+            backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
+            textColor: Theme.of(gd.mediaQueryContext).textTheme.title.color,
+            fontSize: 14.0);
+      }
+      return;
+    }
 
 //    print(".");
 //    print("latitude $latitude");
@@ -397,16 +423,7 @@ class SettingMobileApp {
           locationGeoCoderName =
               "${first.subThoroughfare}, ${first.thoroughfare}";
         } else if (first.addressLine != null) {
-          var split = first.addressLine.split(",");
-          if (split.length >= 2) {
-            if (split[0].length < 20) {
-              locationGeoCoderName = split[0] + "," + split[1];
-            } else {
-              locationGeoCoderName = split[0];
-            }
-          } else {
-            locationGeoCoderName = "${first.addressLine}";
-          }
+          locationGeoCoderName = "${first.addressLine}";
         } else {
           locationGeoCoderName = "$latitude, $longitude";
         }
@@ -416,30 +433,15 @@ class SettingMobileApp {
       locationGeoCoderName = "$latitude, $longitude";
     }
 
+    var locationName = "";
     //found a zone name
     if (locationZoneName != "") {
-      Entity deviceTracking = gd.entities.values.toList().firstWhere(
-          (e) => e.friendlyName == gd.settingMobileApp.deviceName,
-          orElse: () => null);
-      if (deviceTracking == null) {
-        print("Case 7");
-        Fluttertoast.showToast(
-            msg: "Can not find ${gd.settingMobileApp.deviceName}",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.TOP,
-            backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-            textColor: Theme.of(gd.mediaQueryContext).textTheme.title.color,
-            fontSize: 14.0);
-        return;
-      }
-      if (locationZoneName.toLowerCase() ==
-          deviceTracking.state.toLowerCase()) {
+      if (locationZoneName.toLowerCase() == gd.mobileAppState.toLowerCase()) {
         print("Case 1");
         return;
       } else {
-        gd.locationName = locationZoneName;
-        print(
-            "Case 2 ${locationZoneName.toLowerCase()} != ${deviceTracking.state.toLowerCase()}");
+        locationName = locationZoneName;
+        print("Case 2");
       }
     } else {
       if (gd.getDistanceFromLatLonInKm(
@@ -449,11 +451,11 @@ class SettingMobileApp {
             "Case 4 Distance ${gd.getDistanceFromLatLonInKm(latitude, longitude, gd.locationLatitude, gd.locationLongitude)} < ${gd.locationUpdateMinDistance}");
         return;
       } else {
-        if (locationGeoCoderName == gd.locationName) {
-          gd.locationName = locationGeoCoderName + ".";
+        if (locationGeoCoderName == gd.mobileAppState) {
+          locationName = locationGeoCoderName + ".";
           print("Case 5");
         } else {
-          gd.locationName = locationGeoCoderName;
+          locationName = locationGeoCoderName;
           print("Case 6");
         }
       }
@@ -462,7 +464,7 @@ class SettingMobileApp {
     var getLocationUpdatesData = {
       "type": "update_location",
       "data": {
-        "location_name": gd.locationName,
+        "location_name": locationName,
         "gps": [latitude, longitude],
         "gps_accuracy": accuracy,
       }
@@ -533,6 +535,8 @@ class _SettingMobileAppRegistrationState
   @override
   Widget build(BuildContext context) {
     print("SettingRegistration build ${gd.settingMobileApp.deviceName}");
+    print("gd.mobileAppEntity.state ${gd.mobileAppState}");
+
     if (gd.settingMobileApp.deviceName != "") {
       _controller.text = gd.settingMobileApp.deviceName;
     } else {
@@ -542,29 +546,31 @@ class _SettingMobileAppRegistrationState
     if (gd.settingMobileApp.trackLocation &&
         gd.settingMobileApp.webHookId != "" &&
         gd.settingMobileApp.deviceName != "") {
-      BackgroundLocation.checkPermissions().then((status) {
-        print("BackgroundLocation.checkPermissions status $status");
-        if (status.toString() != "PermissionStatus.granted") {
-          BackgroundLocation.getPermissions(
-            onGranted: () {
-              // Start location service here or do something else
-              print("onGranted");
-              if (!gd.locationServiceIsRunning) {
-                BackgroundLocation.startLocationService();
-                gd.locationServiceIsRunning = true;
-              }
-            },
-            onDenied: () {
-              // Show a message asking the user to reconsider or do something else
-              print("onDenied");
-              if (gd.locationServiceIsRunning) {
-                BackgroundLocation.stopLocationService();
-                gd.locationServiceIsRunning = false;
-              }
-            },
-          );
-        }
-      });
+      BackgroundLocation.checkPermissions().then(
+        (status) {
+          print("BackgroundLocation.checkPermissions status $status");
+          if (status.toString() != "PermissionStatus.granted") {
+            BackgroundLocation.getPermissions(
+              onGranted: () {
+                // Start location service here or do something else
+                print("onGranted");
+                if (!gd.locationServiceIsRunning) {
+                  BackgroundLocation.startLocationService();
+                  gd.locationServiceIsRunning = true;
+                }
+              },
+              onDenied: () {
+                // Show a message asking the user to reconsider or do something else
+                print("onDenied");
+                if (gd.locationServiceIsRunning) {
+                  BackgroundLocation.stopLocationService();
+                  gd.locationServiceIsRunning = false;
+                }
+              },
+            );
+          }
+        },
+      );
     }
 
     return SliverList(
@@ -681,7 +687,6 @@ class _SettingMobileAppRegistrationState
                                     if (gd.locationServiceIsRunning) {
                                       BackgroundLocation.stopLocationService();
                                       gd.locationServiceIsRunning = false;
-                                      gd.locationName = "";
                                       gd.locationLatitude = 51.48;
                                       gd.locationLongitude = 0.0;
                                     }
@@ -694,7 +699,7 @@ class _SettingMobileAppRegistrationState
                             child: Text(
                               gd.settingMobileApp.trackLocation
                                   ? "Location Tracking Enabled"
-                                      "\n${gd.locationName}"
+                                      "\n${gd.textToDisplay(gd.mobileAppState)}"
                                   : "Location Tracking Disabled",
                               style: Theme.of(context).textTheme.caption,
                               textAlign: TextAlign.justify,

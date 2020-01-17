@@ -223,7 +223,6 @@ class GeneralData with ChangeNotifier {
 
   void socketGetStates(List<dynamic> message) {
     List<String> previousEntitiesList = entities.keys.toList();
-    locationZones = [];
 
     for (dynamic mess in message) {
       Entity entity = Entity.fromJson(mess);
@@ -234,9 +233,19 @@ class GeneralData with ChangeNotifier {
 
       if (entity.entityId.contains("zone.")) {
         LocationZone locationZone = LocationZone.fromJson(mess);
-//        print(
-//            "locationZone friendly_name ${locationZone.friendly_name} latitude ${locationZone.latitude} longitude ${locationZone.longitude} radius ${locationZone.radius}");
-        locationZones.add(locationZone);
+        bool addNewLocationZone = true;
+        for (var loc in locationZones) {
+          if (loc.friendlyName == locationZone.friendlyName) {
+            addNewLocationZone = false;
+            break;
+          }
+        }
+
+        if (addNewLocationZone) {
+          print(
+              "locationZones.add locationZone friendly_name ${locationZone.friendlyName} latitude ${locationZone.latitude} longitude ${locationZone.longitude} radius ${locationZone.radius}");
+          locationZones.add(locationZone);
+        }
       }
 
 //      if (entity.entityId.contains('input_datetime')) {
@@ -2567,15 +2576,6 @@ class GeneralData with ChangeNotifier {
     }
   }
 
-  String _locationName = "";
-  String get locationName => _locationName;
-  set locationName(val) {
-    if (_locationName != val) {
-      _locationName = val;
-      notifyListeners();
-    }
-  }
-
   //Update have 5 min cooldown
   int _locationUpdateInterval = 5;
   int get locationUpdateInterval => _locationUpdateInterval;
@@ -2612,6 +2612,22 @@ class GeneralData with ChangeNotifier {
       _locationServiceIsRunning = val;
       notifyListeners();
     }
+  }
+
+  String _mobileAppEntityId = "";
+  String get mobileAppEntityId => _mobileAppEntityId;
+  set mobileAppEntityId(val) {
+    if (_mobileAppEntityId != val) {
+      _mobileAppEntityId = val;
+      notifyListeners();
+    }
+  }
+
+  String get mobileAppState {
+    if (entities[mobileAppEntityId] == null) {
+      return "Unknown State";
+    }
+    return entities[mobileAppEntityId].state;
   }
 
   List<LocationZone> locationZones = [];
