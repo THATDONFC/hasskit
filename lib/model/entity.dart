@@ -779,7 +779,6 @@ class Entity {
     if (DateTime.tryParse(state) != null) {
       if (state.contains(":") && state.contains("-")) {
         print("entityId $entityId.$state containt : and -");
-
         if (gd.configUnitSystem['length'].toString() == "km") {
           return DateFormat('dd/MM kk:mm').format(DateTime.parse(state));
         } else {
