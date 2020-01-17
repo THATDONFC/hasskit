@@ -678,50 +678,45 @@ class ShapeSelector extends StatefulWidget {
 class _ShapeSelectorState extends State<ShapeSelector> {
   @override
   Widget build(BuildContext context) {
-    Widget widget0 = Column(
-      children: <Widget>[
-        Container(
+    Widget widget0 = Container(
+      padding: EdgeInsets.all(4),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: gd.deviceSetting.shapeLayout == 0
+            ? Colors.white.withOpacity(0.5)
+            : Colors.grey.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      width: 30,
+      height: 30,
+    );
+    Widget widget1 = Container(
+      padding: EdgeInsets.all(4),
+      child: Material(
+        color: gd.deviceSetting.shapeLayout == 1
+            ? Colors.white.withOpacity(0.5)
+            : Colors.grey.withOpacity(0.5),
+        shape: SquircleBorder(superRadius: 5),
+        child: Container(
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: gd.deviceSetting.shapeLayout == 0
-                ? ThemeInfo.colorIconActive
-                : ThemeInfo.colorIconInActive,
-            borderRadius: BorderRadius.circular(4),
-          ),
           width: 30,
           height: 30,
-        )
-      ],
-    );
-    Widget widget1 = Column(
-      children: <Widget>[
-        Material(
-          color: gd.deviceSetting.shapeLayout == 1
-              ? ThemeInfo.colorIconActive
-              : ThemeInfo.colorIconInActive,
-          shape: SquircleBorder(superRadius: 5),
-          child: Container(
-            alignment: Alignment.center,
-            width: 30,
-            height: 30,
-          ),
         ),
-      ],
+      ),
     );
-    Widget widget2 = Column(
-      children: <Widget>[
-        Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: gd.deviceSetting.shapeLayout == 2
-                ? ThemeInfo.colorIconActive
-                : ThemeInfo.colorIconInActive,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          width: 48,
-          height: 30,
+    Widget widget2 = Container(
+      padding: EdgeInsets.all(4),
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: gd.deviceSetting.shapeLayout == 2
+              ? Colors.white.withOpacity(0.5)
+              : Colors.grey.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(4),
         ),
-      ],
+        width: 48,
+        height: 30,
+      ),
     );
 
     final Map<int, Widget> phoneSegment = <int, Widget>{
@@ -739,7 +734,7 @@ class _ShapeSelectorState extends State<ShapeSelector> {
                 color: ThemeInfo.colorBottomSheet.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(8)),
             child: CupertinoSlidingSegmentedControl<int>(
-              thumbColor: Colors.transparent,
+              thumbColor: ThemeInfo.colorIconActive,
               backgroundColor: Colors.transparent,
               children: phoneSegment,
               onValueChanged: (int val) {
