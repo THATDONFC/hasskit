@@ -55,5 +55,13 @@ Use Developer Tools to send test notification:
 
 For people use Node-Red instead of Home Assistant automation:
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Notification/node_red.png "Notification Node Red")
-
+```
+{ 
+  "title":"Hello",
+  "message":"World",
+  "data":{ 
+    "image":"https://hasskit.duckdns.org/local/camera_1.jpg"
+  }
+}
+```
 And this is the sample using Node-Red (Thank side on Discord channel)
