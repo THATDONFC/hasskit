@@ -42,7 +42,7 @@ To enable this feature, please follow these 3 easy steps
 First, we need to edit ***configuration.yaml*** by adding the following line:
 
 Allow Home Assistant write file into www folder:
-<br>
+
 ```
 homeassistant:
   whitelist_external_dirs:
@@ -50,9 +50,8 @@ homeassistant:
 ```
 
 Add notify.ALL_DEVICES service:
-<br>
 (Replace mobile_app_hasskit_mobile_app_1 with your registered device name)
-<br>
+
 ```
 notify:
   - name: ALL_DEVICES
@@ -65,7 +64,7 @@ notify:
 <br>
 <br>
 Send a simple notification when the light turned on
-<br>
+
 ```
 automation:
   - alias: Notification Light Turned On
@@ -82,7 +81,6 @@ automation:
 <br>
 <br>
 Send a notification with image whenever garage door is opened
-<br>
 (Replace http://hasskit.duckdns.org:8123/local/camera_1.jpg with your own data)
 
 ```
