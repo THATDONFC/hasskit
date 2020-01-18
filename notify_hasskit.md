@@ -60,8 +60,8 @@ For people use Node-Red instead of Home Assistant automation:
   "title":"Hello",
   "message":"World",
   "data":{ 
-    "image":"https://hasskit.duckdns.org/local/camera_1.jpg"
-  }
+    "image":"https://yoururl.duckdns.org/local/camera.jpg"
+    }
 }
 ```
 And this is the sample using Node-Red (Thank side on Discord channel)
