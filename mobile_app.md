@@ -64,7 +64,7 @@ notify:
 ```
 <br>
 <br>
-Send a simple notification when the light turned on:
+Send a simple notification when the light turned on
 <br>
 ```
 automation:
@@ -81,7 +81,7 @@ automation:
 ```
 <br>
 <br>
-Send a notification with image whenever garage door is opened:
+Send a notification with image whenever garage door is opened
 <br>
 (Replace http://hasskit.duckdns.org:8123/local/camera_1.jpg with your own data)
 
