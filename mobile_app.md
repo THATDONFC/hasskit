@@ -42,6 +42,7 @@ To enable this feature, please follow these 3 easy steps
 First, we need to edit ***configuration.yaml*** by adding the following line:
 
 Allow Home Assistant write file into www folder:
+
 ```
 homeassistant:
   whitelist_external_dirs:
@@ -49,8 +50,8 @@ homeassistant:
 ```
 
 Add notify.ALL_DEVICES service:
-<br>
 (Replace mobile_app_hasskit_mobile_app_1 with your registered device name)
+
 ```
 notify:
   - name: ALL_DEVICES
@@ -58,12 +59,30 @@ notify:
     services:
       - service: mobile_app_hasskit_mobile_app_1
       - service: mobile_app_hasskit_mobile_app_2
-      - service: mobile_app_hasskit_mobile_app_3
+      - service: mobile_app_hasskit_mobile_app_3      
 ```
-
-Send a notification whenever garage door is opened:
 <br>
+<br>
+Send a simple notification when the light turned on
+
+```
+automation:
+  - alias: Notification Light Turned On
+    trigger:
+      - entity_id: light.light_1
+        platform: state
+        to: "on
+    action:
+      - service: notify.ALL_DEVICES
+        data:
+          title: Simple Notification 
+          message: Light Turned On
+```
+<br>
+<br>
+Send a notification with image whenever garage door is opened
 (Replace http://hasskit.duckdns.org:8123/local/camera_1.jpg with your own data)
+
 ```
 automation:
   - alias: 'Notify when garage door opened'
@@ -89,22 +108,7 @@ automation:
 <br>
 <br>
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_10.png)
-<br>
-<br>
-Send a simple notification when the light turned on:
-```
-automation:
-  - alias: Notification Light Turned On
-    trigger:
-      - entity_id: light.light_1
-        platform: state
-        to: "on
-    action:
-      - service: notify.ALL_DEVICES
-        data:
-          title: Simple Notification 
-          message: Light Turned On
-```
+
 ## 6. Troubleshooting
 
 ### Error 404 during Mobile App registration:
