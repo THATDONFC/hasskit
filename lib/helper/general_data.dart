@@ -2655,4 +2655,14 @@ class GeneralData with ChangeNotifier {
   String configVersion = "";
   String configLocationName = "";
   List<String> configComponent = [];
+
+  String _connectivityStatus = "Unknown";
+  String get connectivityStatus => _connectivityStatus;
+  set connectivityStatus(val) {
+    if (_connectivityStatus != val) {
+      print("_connectivityStatus $_connectivityStatus val $val");
+      _connectivityStatus = val;
+      notifyListeners();
+    }
+  }
 }
