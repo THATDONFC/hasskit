@@ -55,7 +55,7 @@ Future<void> main() async {
         providers: [
           ChangeNotifierProvider(
             create: (_) => GeneralData(),
-            builder: (context) => GeneralData(),
+//            builder: (context) => GeneralData(),
           ),
         ],
         child: MyApp(),
