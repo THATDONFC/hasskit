@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:background_location/background_location.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hasskit/helper/geolocator_helper.dart';
 import 'package:hasskit/helper/locale_helper.dart';
 import 'package:hasskit/helper/theme_info.dart';
 import 'package:hasskit/helper/web_socket.dart';
@@ -271,27 +271,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
 //    await Future.delayed(const Duration(milliseconds: 500));
     gd.loginDataListString = await gd.getString('loginDataList');
-
     await gd.getSettings("mainInitState");
-
     deviceInfo.getDeviceInfo();
-
-//hook a location update here ready whenever it fire
-    BackgroundLocation.getLocationUpdates((location) {
-//      print("BackgroundLocation.getLocationUpdates");
-      gd.settingMobileApp.updateLocation(
-        location.latitude,
-        location.longitude,
-        location.accuracy,
-      );
-//      gd.settingMobileApp.updateLocation(
-//        location.latitude,
-//        location.longitude,
-//        location.accuracy,
-//        location.speed,
-//        location.altitude,
-//      );
-    });
   }
 
   timer200Callback() {}
@@ -303,8 +284,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   }
 
   timer5Callback() {
-    //in case websocket fail for no reason.
-//    gd.httpApiStates();
+    GeoLocatorHelper.updateLocation("timer5Callback");
   }
 
   timer10Callback() {

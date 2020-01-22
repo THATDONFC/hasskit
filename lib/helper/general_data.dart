@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hasskit/helper/geolocator_helper.dart';
 import 'package:hasskit/helper/theme_info.dart';
 import 'package:hasskit/helper/web_socket.dart';
 import 'package:hasskit/model/location_zone.dart';
@@ -2041,7 +2042,9 @@ class GeneralData with ChangeNotifier {
         "force the trigger reset settingMobileAppString load settingMobileApp $url");
     gd.settingMobileAppString = "";
     gd.settingMobileAppString = await gd.getString('settingMobileApp $url');
-    settingMobileApp.startStopLocationService("getSettings $reason");
+    gd.locationZones.clear();
+    gd.locationUpdateTime = DateTime.now().subtract(Duration(days: 1));
+    gd.mobileAppEntityId = "";
 
     //force the trigger reset
     log.w(
@@ -2620,15 +2623,6 @@ class GeneralData with ChangeNotifier {
     }
   }
 
-  bool _locationServiceIsRunning = false;
-  bool get locationServiceIsRunning => _locationServiceIsRunning;
-  set locationServiceIsRunning(val) {
-    if (_locationServiceIsRunning != val) {
-      _locationServiceIsRunning = val;
-      notifyListeners();
-    }
-  }
-
   String _mobileAppEntityId = "";
   String get mobileAppEntityId => _mobileAppEntityId;
   set mobileAppEntityId(val) {
@@ -2677,6 +2671,12 @@ class GeneralData with ChangeNotifier {
     if (_connectivityStatus != val) {
       print("_connectivityStatus $_connectivityStatus val $val");
       _connectivityStatus = val;
+      if (_connectivityStatus == "ConnectivityResult.wifi" ||
+          _connectivityStatus == "ConnectivityResult.mobile") {
+        gd.locationUpdateTime = DateTime.now().subtract(Duration(days: 1));
+        GeoLocatorHelper.updateLocation(
+            "connectivityStatus $_connectivityStatus");
+      }
       notifyListeners();
     }
   }

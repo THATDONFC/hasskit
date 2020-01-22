@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:background_location/background_location.dart';
 import 'package:device_info/device_info.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:hasskit/helper/general_data.dart';
+import 'package:hasskit/helper/geolocator_helper.dart';
 import 'package:hasskit/helper/theme_info.dart';
-import 'package:hasskit/model/location_zone.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -322,177 +320,158 @@ class SettingMobileApp {
     });
   }
 
-  void startStopLocationService(String debug) {
-    if (gd.settingMobileApp.trackLocation &&
-        gd.settingMobileApp.webHookId != "") {
-      if (!gd.locationServiceIsRunning) {
-        print(
-            "startStopLocationService $debug BackgroundLocation.startLocationService");
-        BackgroundLocation.startLocationService();
-        gd.locationServiceIsRunning = true;
-      }
-    } else {
-      if (gd.locationServiceIsRunning) {
-        print(
-            "startStopLocationService $debug BackgroundLocation.stopLocationService");
-        BackgroundLocation.stopLocationService();
-        gd.locationServiceIsRunning = false;
-      }
-    }
-  }
-
-  Future<void> updateLocation(
-      double latitude, double longitude, double accuracy) async {
-//    print("updateLocation called");
-
-    bool timeInterval = DateTime.now().isAfter(gd.locationUpdateTime);
-
-    if (!timeInterval) {
-//      print(
-//          "updateLocation timeInterval ${(gd.locationUpdateTime.difference(DateTime.now())).inSeconds} seconds left");
-      return;
-    }
-
-    //30 sec internal cooldown
-    gd.locationUpdateTime = DateTime.now().add(Duration(seconds: 30));
-
-    if (gd.mobileAppEntityId == "") {
-      var mobileAppEntity = gd.entities.values.toList().firstWhere(
-          (e) => e.friendlyName == gd.settingMobileApp.deviceName,
-          orElse: () => null);
-
-      if (mobileAppEntity == null) {
-        gd.mobileAppEntityId = "";
-      } else {
-        gd.mobileAppEntityId = mobileAppEntity.entityId;
-      }
-    }
-
-    if (gd.mobileAppEntityId == "") {
-      if (gd.webSocketConnectionStatus == "Connected") {
-        print("Case 7");
-        Fluttertoast.showToast(
-            msg: "Can not find ${gd.settingMobileApp.deviceName}",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.TOP,
-            backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-            textColor: Theme.of(gd.mediaQueryContext).textTheme.title.color,
-            fontSize: 14.0);
-      }
-      return;
-    }
-
-//    print(".");
-//    print("latitude $latitude");
-//    print("longitude $longitude");
-//    print("accuracy $accuracy");
-//    print(".");
-
-    String locationZoneName = "";
-    String locationGeoCoderName = "";
-    var shortestDistance = double.infinity;
-    var shortestName = "";
-    final coordinates = new Coordinates(latitude, longitude);
-
-    try {
-      for (LocationZone locationZone in gd.locationZones) {
-        var distance = gd.getDistanceFromLatLonInKm(
-            latitude, longitude, locationZone.latitude, locationZone.longitude);
+//  Future<void> updateLocation(
+//      double latitude, double longitude, double accuracy) async {
+////    print("updateLocation called");
+//
+//    bool timeInterval = DateTime.now().isAfter(gd.locationUpdateTime);
+//
+//    if (!timeInterval) {
+////      print(
+////          "updateLocation timeInterval ${(gd.locationUpdateTime.difference(DateTime.now())).inSeconds} seconds left");
+//      return;
+//    }
+//
+//    //30 sec internal cooldown
+//    gd.locationUpdateTime = DateTime.now().add(Duration(seconds: 30));
+//
+//    if (gd.mobileAppEntityId == "") {
+//      var mobileAppEntity = gd.entities.values.toList().firstWhere(
+//          (e) => e.friendlyName == gd.settingMobileApp.deviceName,
+//          orElse: () => null);
+//
+//      if (mobileAppEntity == null) {
+//        gd.mobileAppEntityId = "";
+//      } else {
+//        gd.mobileAppEntityId = mobileAppEntity.entityId;
+//      }
+//    }
+//
+//    if (gd.mobileAppEntityId == "") {
+//      if (gd.webSocketConnectionStatus == "Connected") {
+//        print("Case 7");
+//        Fluttertoast.showToast(
+//            msg: "Can not find ${gd.settingMobileApp.deviceName}",
+//            toastLength: Toast.LENGTH_LONG,
+//            gravity: ToastGravity.TOP,
+//            backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
+//            textColor: Theme.of(gd.mediaQueryContext).textTheme.title.color,
+//            fontSize: 14.0);
+//      }
+//      return;
+//    }
+//
+////    print(".");
+////    print("latitude $latitude");
+////    print("longitude $longitude");
+////    print("accuracy $accuracy");
+////    print(".");
+//
+//    String locationZoneName = "";
+//    String locationGeoCoderName = "";
+//    var shortestDistance = double.infinity;
+//    var shortestName = "";
+//    final coordinates = new Coordinates(latitude, longitude);
+//
+//    try {
+//      for (LocationZone locationZone in gd.locationZones) {
+//        var distance = gd.getDistanceFromLatLonInKm(
+//            latitude, longitude, locationZone.latitude, locationZone.longitude);
+////        print(
+////            "distance ${locationZone.friendlyName} $distance locationZone.radius ${locationZone.radius} ${locationZone.radius * 0.001}");
+//        if (distance < locationZone.radius * 0.001) {
+//          if (shortestDistance > distance) {
+//            shortestDistance = distance;
+//            shortestName = locationZone.friendlyName;
+////            print(
+////                "shortestName $shortestName shortestDistance $shortestDistance radius ${locationZone.radius * 0.001}");
+//          }
+//        }
+//      }
+//
+//      if (shortestName != "") {
+//        locationZoneName = shortestName;
+//      } else {
+//        var addresses =
+//            await Geocoder.local.findAddressesFromCoordinates(coordinates);
+//        var first = addresses.first;
+////        print(
+////            "addressLine ${first.addressLine} adminArea ${first.adminArea} coordinates ${first.coordinates} countryCode ${first.countryCode} featureName ${first.featureName} locality ${first.locality} postalCode ${first.postalCode} subAdminArea ${first.subAdminArea} subLocality ${first.subLocality} subThoroughfare ${first.subThoroughfare} thoroughfare ${first.thoroughfare}");
+//
+//        if (first.subThoroughfare != null && first.thoroughfare != null) {
+//          locationGeoCoderName =
+//              "${first.subThoroughfare}, ${first.thoroughfare}";
+//        } else if (first.addressLine != null) {
+//          locationGeoCoderName = "${first.addressLine}";
+//        } else {
+//          locationGeoCoderName = "$latitude, $longitude";
+//        }
+//      }
+//    } catch (e) {
+//      print("Geocoder.local.findAddressesFromCoordinates Error $e");
+//      locationGeoCoderName = "$latitude, $longitude";
+//    }
+//
+//    var locationName = "";
+//    //found a zone name
+//    if (locationZoneName != "") {
+//      if (locationZoneName.toLowerCase() == gd.mobileAppState.toLowerCase()) {
+//        print("Case 1");
+//        return;
+//      } else {
+//        locationName = locationZoneName;
+//        print("Case 2");
+//      }
+//    } else {
+//      if (gd.getDistanceFromLatLonInKm(
+//              latitude, longitude, gd.locationLatitude, gd.locationLongitude) <
+//          gd.locationUpdateMinDistance) {
 //        print(
-//            "distance ${locationZone.friendlyName} $distance locationZone.radius ${locationZone.radius} ${locationZone.radius * 0.001}");
-        if (distance < locationZone.radius * 0.001) {
-          if (shortestDistance > distance) {
-            shortestDistance = distance;
-            shortestName = locationZone.friendlyName;
-//            print(
-//                "shortestName $shortestName shortestDistance $shortestDistance radius ${locationZone.radius * 0.001}");
-          }
-        }
-      }
-
-      if (shortestName != "") {
-        locationZoneName = shortestName;
-      } else {
-        var addresses =
-            await Geocoder.local.findAddressesFromCoordinates(coordinates);
-        var first = addresses.first;
+//            "Case 4 Distance ${gd.getDistanceFromLatLonInKm(latitude, longitude, gd.locationLatitude, gd.locationLongitude)} < ${gd.locationUpdateMinDistance}");
+//        return;
+//      } else {
+//        if (locationGeoCoderName == gd.mobileAppState) {
+//          locationName = locationGeoCoderName + ".";
+//          print("Case 5");
+//        } else {
+//          locationName = locationGeoCoderName;
+//          print("Case 6");
+//        }
+//      }
+//    }
+//
+//    var getLocationUpdatesData = {
+//      "type": "update_location",
+//      "data": {
+//        "location_name": locationName,
+//        "gps": [latitude, longitude],
+//        "gps_accuracy": accuracy,
+//      }
+//    };
+//    String body = jsonEncode(getLocationUpdatesData);
+//    print("getLocationUpdates.body $body");
+//
+//    String url =
+//        gd.currentUrl + "/api/webhook/${gd.settingMobileApp.webHookId}";
+//
+//    print("getLocationUpdates.url $url");
+//
+//    http.post(url, body: body).then((response) {
+//      if (response.statusCode >= 200 && response.statusCode < 300) {
 //        print(
-//            "addressLine ${first.addressLine} adminArea ${first.adminArea} coordinates ${first.coordinates} countryCode ${first.countryCode} featureName ${first.featureName} locality ${first.locality} postalCode ${first.postalCode} subAdminArea ${first.subAdminArea} subLocality ${first.subLocality} subThoroughfare ${first.subThoroughfare} thoroughfare ${first.thoroughfare}");
-
-        if (first.subThoroughfare != null && first.thoroughfare != null) {
-          locationGeoCoderName =
-              "${first.subThoroughfare}, ${first.thoroughfare}";
-        } else if (first.addressLine != null) {
-          locationGeoCoderName = "${first.addressLine}";
-        } else {
-          locationGeoCoderName = "$latitude, $longitude";
-        }
-      }
-    } catch (e) {
-      print("Geocoder.local.findAddressesFromCoordinates Error $e");
-      locationGeoCoderName = "$latitude, $longitude";
-    }
-
-    var locationName = "";
-    //found a zone name
-    if (locationZoneName != "") {
-      if (locationZoneName.toLowerCase() == gd.mobileAppState.toLowerCase()) {
-        print("Case 1");
-        return;
-      } else {
-        locationName = locationZoneName;
-        print("Case 2");
-      }
-    } else {
-      if (gd.getDistanceFromLatLonInKm(
-              latitude, longitude, gd.locationLatitude, gd.locationLongitude) <
-          gd.locationUpdateMinDistance) {
-        print(
-            "Case 4 Distance ${gd.getDistanceFromLatLonInKm(latitude, longitude, gd.locationLatitude, gd.locationLongitude)} < ${gd.locationUpdateMinDistance}");
-        return;
-      } else {
-        if (locationGeoCoderName == gd.mobileAppState) {
-          locationName = locationGeoCoderName + ".";
-          print("Case 5");
-        } else {
-          locationName = locationGeoCoderName;
-          print("Case 6");
-        }
-      }
-    }
-
-    var getLocationUpdatesData = {
-      "type": "update_location",
-      "data": {
-        "location_name": locationName,
-        "gps": [latitude, longitude],
-        "gps_accuracy": accuracy,
-      }
-    };
-    String body = jsonEncode(getLocationUpdatesData);
-    print("getLocationUpdates.body $body");
-
-    String url =
-        gd.currentUrl + "/api/webhook/${gd.settingMobileApp.webHookId}";
-
-    print("getLocationUpdates.url $url");
-
-    http.post(url, body: body).then((response) {
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        print(
-            "updateLocation Response From Server With Code ${response.statusCode}");
-        gd.locationRecordTime = DateTime.now();
-        gd.locationLatitude = latitude;
-        gd.locationLongitude = longitude;
-        gd.locationUpdateTime =
-            DateTime.now().add(Duration(minutes: gd.locationUpdateInterval));
-      } else {
-        print("updateLocation Response Error Code ${response.statusCode}");
-      }
-    }).catchError((e) {
-      print("updateLocation Response Error $e");
-    });
-  }
+//            "updateLocation Response From Server With Code ${response.statusCode}");
+//        gd.locationRecordTime = DateTime.now();
+//        gd.locationLatitude = latitude;
+//        gd.locationLongitude = longitude;
+//        gd.locationUpdateTime =
+//            DateTime.now().add(Duration(minutes: gd.locationUpdateInterval));
+//      } else {
+//        print("updateLocation Response Error Code ${response.statusCode}");
+//      }
+//    }).catchError((e) {
+//      print("updateLocation Response Error $e");
+//    });
+//  }
 }
 
 class SettingMobileAppRegistration extends StatefulWidget {
@@ -541,36 +520,6 @@ class _SettingMobileAppRegistrationState
       _controller.text = gd.settingMobileApp.deviceName;
     } else {
       getDeviceInfo();
-    }
-
-    if (gd.settingMobileApp.trackLocation &&
-        gd.settingMobileApp.webHookId != "" &&
-        gd.settingMobileApp.deviceName != "") {
-      BackgroundLocation.checkPermissions().then(
-        (status) {
-          print("BackgroundLocation.checkPermissions status $status");
-          if (status.toString() != "PermissionStatus.granted") {
-            BackgroundLocation.getPermissions(
-              onGranted: () {
-                // Start location service here or do something else
-                print("onGranted");
-                if (!gd.locationServiceIsRunning) {
-                  BackgroundLocation.startLocationService();
-                  gd.locationServiceIsRunning = true;
-                }
-              },
-              onDenied: () {
-                // Show a message asking the user to reconsider or do something else
-                print("onDenied");
-                if (gd.locationServiceIsRunning) {
-                  BackgroundLocation.stopLocationService();
-                  gd.locationServiceIsRunning = false;
-                }
-              },
-            );
-          }
-        },
-      );
     }
 
     return SliverList(
@@ -647,49 +596,19 @@ class _SettingMobileAppRegistrationState
                               value: gd.settingMobileApp.trackLocation,
                               onChanged: (val) {
                                 setState(() {
-                                  gd.locationUpdateTime = DateTime.now()
-                                      .subtract(Duration(hours: 24));
                                   gd.settingMobileApp.trackLocation = val;
                                   print(
                                       "onChanged $val gd.deviceIntegration.trackLocation ${gd.settingMobileApp.trackLocation}");
                                   if (val == true) {
                                     if (gd.settingMobileApp.webHookId != "") {
-                                      print(
-                                          "Switch.adaptive BackgroundLocation.startLocationService");
-                                      if (!gd.locationServiceIsRunning) {
-                                        BackgroundLocation
-                                            .startLocationService();
-                                        gd.locationServiceIsRunning = true;
-                                      }
+                                      gd.locationUpdateTime = DateTime.now()
+                                          .subtract(Duration(days: 1));
+                                      GeoLocatorHelper.updateLocation(
+                                          "Switch.adaptive");
                                     }
-
-                                    BackgroundLocation.checkPermissions()
-                                        .then((status) {
-                                      print(
-                                          "BackgroundLocation.checkPermissions status $status");
-                                      if (status.toString() !=
-                                          "PermissionStatus.granted") {
-                                        BackgroundLocation.getPermissions(
-                                          onGranted: () {
-                                            // Start location service here or do something else
-                                            print("onGranted");
-                                          },
-                                          onDenied: () {
-                                            // Show a message asking the user to reconsider or do something else
-                                            print("onDenied");
-                                          },
-                                        );
-                                      }
-                                    });
                                   } else {
-                                    print(
-                                        "Switch.adaptive BackgroundLocation.stopLocationService");
-                                    if (gd.locationServiceIsRunning) {
-                                      BackgroundLocation.stopLocationService();
-                                      gd.locationServiceIsRunning = false;
-                                      gd.locationLatitude = 51.48;
-                                      gd.locationLongitude = 0.0;
-                                    }
+                                    gd.locationLatitude = 51.48;
+                                    gd.locationLongitude = 0.0;
                                   }
                                   gd.settingMobileAppSave();
                                 });
@@ -790,22 +709,14 @@ class _SettingMobileAppRegistrationState
                             divisions: 45,
                           ),
                         ),
-//                        Expandable(
-//                          collapsed: null,
-//                          expanded: Text("locationName ${gd.locationName}\n"
-//                              "locationUpdateTime ${DateFormat("dd-MM-yyyy HH:mm").format(gd.locationUpdateTime.toLocal())}\n"
-//                              "locationServiceIsRunning ${gd.locationServiceIsRunning}\n"
-//                              "locationRecordName ${gd.locationRecordName}\n"
-//                              "locationRecordTime ${DateFormat("dd-MM-yyyy HH:mm").format(gd.locationRecordTime.toLocal())}"),
-//                        ),
                       ],
                     ),
                   ),
                 ),
-//                Text(
-//                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n"
-//                    "deviceName ${gd.settingMobileApp.deviceName}\n"
-//                    "webHookId ${gd.settingMobileApp.webHookId}"),
+                Text(
+                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n"
+                    "deviceName ${gd.settingMobileApp.deviceName}\n"
+                    "webHookId ${gd.settingMobileApp.webHookId}"),
               ],
             ),
           ),
