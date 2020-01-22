@@ -67,7 +67,7 @@ class ServerSelectPanel extends StatelessWidget {
           print("print OnTap");
           debugPrint("debugPrint OnTap");
           if (gd.loginDataCurrent.getUrl == loginData.getUrl &&
-              gd.connectionStatus == "Connected") {
+              gd.webSocketConnectionStatus == "Connected") {
             Fluttertoast.showToast(
                 msg: "Swipe Right to Refresh, Left to Disconnect/Delete Server",
                 toastLength: Toast.LENGTH_SHORT,
@@ -94,7 +94,7 @@ class ServerSelectPanel extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 gd.loginDataCurrent.getUrl == loginData.getUrl &&
-                        gd.connectionStatus == "Connected"
+                        gd.webSocketConnectionStatus == "Connected"
                     ? Icon(
                         MaterialDesignIcons.getIconDataFromIconName(
                             "mdi:server-network"),
@@ -120,7 +120,7 @@ class ServerSelectPanel extends StatelessWidget {
                       Text(
                           gd.loginDataCurrent.getUrl == loginData.getUrl
                               ? "Status: " +
-                                  (gd.connectionStatus == "Connected"
+                                  (gd.webSocketConnectionStatus == "Connected"
                                       ? Translate.getString(
                                           "global.connected", context)
                                       : Translate.getString(
@@ -142,7 +142,7 @@ class ServerSelectPanel extends StatelessWidget {
       ),
       actions: <Widget>[
         (gd.loginDataCurrent.getUrl == loginData.getUrl &&
-                gd.connectionStatus == "Connected")
+                gd.webSocketConnectionStatus == "Connected")
             ? IconSlideAction(
                 caption: Translate.getString("global.refresh", context),
                 color: Colors.transparent,

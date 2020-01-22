@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hasskit/helper/general_data.dart';
+import 'package:hasskit/helper/material_design_icons.dart';
+import 'package:hasskit/helper/theme_info.dart';
 import 'roomview/view_normal.dart';
 import 'roomview/view_sort.dart';
 import 'default_page.dart';
@@ -16,7 +19,7 @@ class PageViewBuilder extends StatelessWidget {
 //    log.w("Widget build RoomsPage");
     return Selector<GeneralData, String>(
       selector: (_, generalData) =>
-          "${generalData.connectionStatus} |" +
+          "${generalData.webSocketConnectionStatus} |" +
           "${generalData.lastLifecycleState} |" +
           "${generalData.roomList.length} |",
       builder: (context, data, child) {
@@ -65,8 +68,11 @@ class SinglePage extends StatelessWidget {
 
     return Selector<GeneralData, String>(
       selector: (_, generalData) =>
+          "${generalData.connectivityStatus} |" +
+          "${generalData.autoConnect} |" +
+          "${generalData.showSpin} |" +
+          "${generalData.loginDataCurrent.url} |" +
           "${generalData.viewMode} |" +
-          "${generalData.connectionStatus} |" +
           "${generalData.mediaQueryOrientation} |" +
           "${generalData.deviceSetting.settingLocked} |" +
           "${generalData.deviceSetting.phoneLayout} |" +
@@ -89,7 +95,94 @@ class SinglePage extends StatelessWidget {
           "${generalData.roomList[roomIndex].row4.toList()} |",
       builder: (context, data, child) {
         Widget widget;
-        if (gd.viewMode == ViewMode.edit) {
+
+        if (gd.connectivityStatus == "ConnectivityResult.none") {
+          widget = Container(
+            constraints: BoxConstraints.expand(),
+            color: ThemeInfo.colorBackgroundDark,
+            child: Opacity(
+              opacity: 0.5,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    MaterialDesignIcons.getIconDataFromIconName(
+                        "mdi:home-assistant"),
+                    size: 150,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "No Internet Access",
+                    style: Theme.of(context).textTheme.title,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Make sure you have Wifi",
+//                    style: Theme.of(context).textTheme.title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    "or Mobile Data turned on",
+//                    style: Theme.of(context).textTheme.title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else if (gd.autoConnect && gd.showSpin) {
+          widget = Container(
+            constraints: BoxConstraints.expand(),
+            color: ThemeInfo.colorBackgroundDark,
+            child: Opacity(
+              opacity: 0.5,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    MaterialDesignIcons.getIconDataFromIconName(
+                        "mdi:home-assistant"),
+                    size: 150,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "Connecting...",
+                    style: Theme.of(context).textTheme.title,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "${gd.loginDataCurrent.url}",
+//                    style: Theme.of(context).textTheme.title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "${gd.webSocketConnectionStatus}",
+//                    style: Theme.of(context).textTheme.title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 10),
+                  SpinKitThreeBounce(
+                    size: 40,
+                    color: ThemeInfo.colorIconActive.withOpacity(0.5),
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else if (gd.viewMode == ViewMode.edit) {
           widget = ViewEdit(roomIndex: roomIndex);
         } else if (gd.viewMode == ViewMode.sort) {
           widget = ViewSort(roomIndex: roomIndex);

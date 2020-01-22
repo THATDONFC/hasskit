@@ -144,7 +144,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
           if (gd.autoConnect) {
             {
-              if (gd.connectionStatus != "Connected") {
+              if (gd.webSocketConnectionStatus != "Connected") {
                 webSocket.initCommunication();
                 log.w(
                     "didChangeAppLifecycleState webSocket.initCommunication()");
@@ -308,13 +308,13 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   }
 
   timer10Callback() {
-    if (gd.connectionStatus != "Connected" && gd.autoConnect) {
+    if (gd.webSocketConnectionStatus != "Connected" && gd.autoConnect) {
       webSocket.initCommunication();
     }
   }
 
   timer30Callback() {
-    if (gd.connectionStatus == "Connected") {
+    if (gd.webSocketConnectionStatus == "Connected") {
       gd.delayGetStatesTimer(5);
 //      use http
 //      var outMsg = {"id": gd.socketId, "type": "get_states"};
@@ -359,7 +359,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           "${generalData.deviceSetting.tabletLayout} | " +
           "${generalData.deviceSetting.shapeLayout} | " +
           "${generalData.mediaQueryHeight} | " +
-          "${generalData.connectionStatus} | " +
+          "${generalData.webSocketConnectionStatus} | " +
           "${generalData.roomList.length} | ",
       builder: (context, data, child) {
         return Scaffold(

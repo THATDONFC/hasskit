@@ -369,7 +369,7 @@ class SettingMobileApp {
     }
 
     if (gd.mobileAppEntityId == "") {
-      if (gd.connectionStatus == "Connected") {
+      if (gd.webSocketConnectionStatus == "Connected") {
         print("Case 7");
         Fluttertoast.showToast(
             msg: "Can not find ${gd.settingMobileApp.deviceName}",
@@ -611,7 +611,7 @@ class _SettingMobileAppRegistrationState
                     Expanded(
                       child: RaisedButton(
                         onPressed: _controller.text.trim().length > 0 &&
-                                gd.connectionStatus == "Connected"
+                                gd.webSocketConnectionStatus == "Connected"
                             ? () {
                                 if (gd.settingMobileApp.webHookId == "") {
                                   gd.settingMobileApp

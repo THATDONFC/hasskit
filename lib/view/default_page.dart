@@ -25,7 +25,7 @@ class DefaultPage extends StatelessWidget {
                 size: 150,
               ),
               SizedBox(height: 20),
-              gd.connectionStatus == "" && gd.autoConnect
+              gd.webSocketConnectionStatus == "" && gd.autoConnect
                   ? Text(
                       Translate.getString("global.connect_demo", context),
                       style: Theme.of(context).textTheme.title,
@@ -55,7 +55,7 @@ class DefaultPage extends StatelessWidget {
 //                textScaleFactor: gd.textScaleFactorFix,
 //                overflow: TextOverflow.ellipsis,
 //              ),
-              gd.connectionStatus == ""
+              gd.webSocketConnectionStatus == ""
                   ? SpinKitThreeBounce(
                       size: 40,
                       color: ThemeInfo.colorIconActive.withOpacity(0.5),

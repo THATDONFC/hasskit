@@ -24,7 +24,7 @@ class EntityButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<GeneralData, String>(
       selector: (_, generalData) =>
-          "${generalData.connectionStatus} " +
+          "${generalData.webSocketConnectionStatus} " +
           "${generalData.eventEntity(entityId)} " +
           "${generalData.entities[entityId].getStateDisplay} " +
           "${generalData.entities[entityId].getOverrideName} " +

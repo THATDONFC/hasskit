@@ -117,34 +117,47 @@ class GeneralData with ChangeNotifier {
     }
   }
 
-  String _connectionStatus = '';
+  String _webSocketConnectionStatus = '';
 
-  String get connectionStatus => _connectionStatus;
+  String get webSocketConnectionStatus => _webSocketConnectionStatus;
 
-  set connectionStatus(String val) {
+  set webSocketConnectionStatus(String val) {
     if (val == null) {
       throw new ArgumentError();
     }
-    if (_connectionStatus != val) {
-      _connectionStatus = val;
-//      if (val == "Connected") {
-//        gd.getSettings("val == Connected");
-//      }
+    if (_webSocketConnectionStatus != val) {
+      _webSocketConnectionStatus = val;
+      notifyListeners();
+    }
+  }
+
+  bool _webSocketConnected = false;
+
+  bool get webSocketConnected => _webSocketConnected;
+
+  set webSocketConnected(bool val) {
+    if (_webSocketConnected != val) {
+      _webSocketConnected = val;
+      if (!val) {
+        webSocketDisconnectedTime = DateTime.now();
+      }
       notifyListeners();
     }
   }
 
   bool get showSpin {
-    if (connectionStatus != 'Connected' &&
-        gd.connectionOnDataTime
-            .add(Duration(seconds: 10))
-            .isBefore(DateTime.now())) {
+    if (gd.webSocketConnected == false &&
+        gd.webSocketDisconnectedTime
+            .isBefore(DateTime.now().subtract(Duration(seconds: 15)))) {
       return true;
     }
     return false;
   }
 
-  DateTime connectionOnDataTime;
+//  DateTime webSocketOnDoneTime = DateTime.now();
+
+  DateTime webSocketOnDataTime = DateTime.now();
+  DateTime webSocketDisconnectedTime = DateTime.now();
 
   String _urlTextField = '';
 
@@ -172,7 +185,7 @@ class GeneralData with ChangeNotifier {
         .post(url + '/auth/token', headers: headers, body: body)
         .then((response) {
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        gd.connectionStatus =
+        gd.webSocketConnectionStatus =
             'Got response from server with code ${response.statusCode}';
 
         var bodyDecode = json.decode(response.body);
@@ -199,18 +212,18 @@ class GeneralData with ChangeNotifier {
         gd.loginDataListAdd(loginData, "sendHttpPost");
         loginDataListSortAndSave("sendHttpPost");
         webSocket.initCommunication();
-        gd.connectionStatus =
+        gd.webSocketConnectionStatus =
             'Init Websocket Communication to ${loginDataCurrent.getUrl}';
-        log.w(gd.connectionStatus);
-        Navigator.pop(context, gd.connectionStatus);
+        log.w(gd.webSocketConnectionStatus);
+        Navigator.pop(context, gd.webSocketConnectionStatus);
       } else {
-        gd.connectionStatus =
+        gd.webSocketConnectionStatus =
             'Error response from server with code ${response.statusCode}';
-        Navigator.pop(context, gd.connectionStatus);
+        Navigator.pop(context, gd.webSocketConnectionStatus);
       }
     }).catchError((e) {
-      gd.connectionStatus = 'Error response from server with code $e';
-      Navigator.pop(context, gd.connectionStatus);
+      gd.webSocketConnectionStatus = 'Error response from server with code $e';
+      Navigator.pop(context, gd.webSocketConnectionStatus);
     });
   }
 
@@ -490,7 +503,7 @@ class GeneralData with ChangeNotifier {
 
     if (gd.loginDataList.length > 0) {
       loginDataCurrent = gd.loginDataList[0];
-      if (gd.autoConnect && gd.connectionStatus != "Connected") {
+      if (gd.autoConnect && gd.webSocketConnectionStatus != "Connected") {
         log.w('Auto connect to ${loginDataCurrent.getUrl}');
         webSocket.initCommunication();
       }
@@ -1244,7 +1257,7 @@ class GeneralData with ChangeNotifier {
     var outMsg = {'id': gd.socketId, 'type': 'get_states'};
     var message = jsonEncode(outMsg);
     webSocket.send(message);
-    gd.connectionStatus = 'Sending get_states';
+    gd.webSocketConnectionStatus = 'Sending get_states';
     log.w('delayGetStates!');
   }
 
@@ -2369,6 +2382,8 @@ class GeneralData with ChangeNotifier {
         log.e(
             "httpApiStates Request $url ailed with status: ${response.statusCode}");
       }
+    } catch (e) {
+      print("httpApiStates e $e");
     } finally {
       client.close();
     }

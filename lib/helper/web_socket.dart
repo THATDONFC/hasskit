@@ -35,7 +35,7 @@ class WebSocket {
   ///
   /// Is the connection established?
   ///
-  bool connected = false;
+  /// bool connected = false;
 
   ///
   /// Listeners
@@ -52,7 +52,7 @@ class WebSocket {
       return;
     }
     log.d(
-        'initCommunication socketUrl ${gd.socketUrl} autoConnect ${gd.autoConnect} connectionStatus ${gd.connectionStatus}');
+        'initCommunication socketUrl ${gd.socketUrl} autoConnect ${gd.autoConnect} connectionStatus ${gd.webSocketConnectionStatus}');
 
     ///
     /// Just in case, close any previous communication
@@ -80,9 +80,9 @@ class WebSocket {
       ///
       /// General error handling
       log.e('initCommunication catch $e');
-      gd.connectionStatus = 'Error:\n' + e.toString();
+      gd.webSocketConnectionStatus = 'Error:\n' + e.toString();
 
-      connected = false;
+      gd.webSocketConnected = false;
       _channel.sink.close(status.abnormalClosure);
 
       ///
@@ -96,8 +96,8 @@ class WebSocket {
     if (_channel != null) {
       if (_channel.sink != null) {
         _channel.sink.close();
-        connected = false;
-        gd.connectionStatus = "reset";
+        gd.webSocketConnected = false;
+        gd.webSocketConnectionStatus = "Reset";
         gd.socketId = 0;
         gd.subscribeEventsId = 0;
         gd.longTokenId = 0;
@@ -116,7 +116,7 @@ class WebSocket {
     log.w("send BEFORE $message");
 //    log.d("gd.firebaseCurrentUser==null ${gd.firebaseCurrentUser == null}");
     if (_channel != null) {
-      if (_channel.sink != null && connected) {
+      if (_channel.sink != null && gd.webSocketConnected) {
         var decode = json.decode(message);
         int id = decode['id'];
         String type = decode['type'];
@@ -161,9 +161,10 @@ class WebSocket {
   /// ----------------------------------------------------------
   _onData(message) {
 //    log.d("_onData $message");
-    connected = true;
-    gd.connectionStatus = "Connected";
-    gd.connectionOnDataTime = DateTime.now();
+    gd.webSocketConnected = true;
+    gd.webSocketConnectionStatus = "Connected";
+    gd.webSocketOnDataTime = DateTime.now();
+//    print("gd.webSocketOnDataTime ${gd.webSocketOnDataTime}");
 
     var decode = json.decode(message);
 
@@ -178,7 +179,7 @@ class WebSocket {
             if (gd.loginDataList[0] != null) {
               gd.loginDataCurrent = gd.loginDataList[0];
             } else {
-              gd.connectionStatus =
+              gd.webSocketConnectionStatus =
                   "Error getting token, please delete old connection data";
               return;
             }
@@ -189,14 +190,14 @@ class WebSocket {
               "type": "auth",
               "access_token": "${gd.loginDataCurrent.longToken}"
             };
-            gd.connectionStatus = "Sending longToken";
+            gd.webSocketConnectionStatus = "Sending longToken";
             log.e("1. auth longToken");
           } else {
             outMsg = {
               "type": "auth",
               "access_token": "${gd.loginDataCurrent.accessToken}"
             };
-            gd.connectionStatus = "Sending accessToken";
+            gd.webSocketConnectionStatus = "Sending accessToken";
             log.e("2. auth accessToken");
           }
           send(json.encode(outMsg));
@@ -214,7 +215,8 @@ class WebSocket {
               "lifespan": 365
             };
             log.e("3. auth/long_lived_access_token");
-            gd.connectionStatus = "Sending auth/long_lived_access_token";
+            gd.webSocketConnectionStatus =
+                "Sending auth/long_lived_access_token";
           } else {
             outMsg = {
               "id": gd.socketId,
@@ -222,7 +224,7 @@ class WebSocket {
               "event_type": "state_changed"
             };
             log.e("4. subscribe_events");
-            gd.connectionStatus = "Sending subscribe_events";
+            gd.webSocketConnectionStatus = "Sending subscribe_events";
           }
 
           gd.loginDataCurrent.lastAccess =
@@ -251,7 +253,7 @@ class WebSocket {
           };
           log.e('6. auth/long_lived_access_token');
           send(json.encode(outMsg));
-          gd.connectionStatus = "Sending subscribe_events";
+          gd.webSocketConnectionStatus = "Sending subscribe_events";
         }
         break;
       case 'result':
@@ -303,12 +305,12 @@ class WebSocket {
         break;
       case 'auth_invalid':
         {
-          gd.connectionStatus = 'auth_invalid';
+          gd.webSocketConnectionStatus = 'auth_invalid';
         }
         break;
       case 'event':
         {
-          gd.connectionStatus = 'Connected';
+          gd.webSocketConnectionStatus = 'Connected';
           gd.socketSubscribeEvents(decode);
         }
         break;
@@ -320,14 +322,19 @@ class WebSocket {
   }
 
   void _onDone() {
-    gd.connectionStatus = 'Disconnected';
-    connected = false;
-    log.d('_onDone');
+    gd.webSocketConnectionStatus = 'Disconnected';
+//    gd.webSocketOnDoneTime = DateTime.now();
+    gd.webSocketConnected = false;
+    log.d(
+        '_onDone autoConnect ${gd.autoConnect} webSocketConnected ${gd.webSocketConnected} loginDataCurrent.url ${gd.loginDataCurrent.url} webSocketOnDataTime ${gd.webSocketOnDataTime.isBefore(DateTime.now().subtract(Duration(seconds: 15)))}');
   }
 
   _onError(error, StackTrace stackTrace) {
-    gd.connectionStatus = 'On Error\n' + error.toString();
-    connected = false;
+    gd.webSocketConnectionStatus = 'On Error\n' + error.toString();
+//    gd.webSocketOnDoneTime = DateTime.now();
+    gd.webSocketConnected = false;
     log.d('_onError error: $error stackTrace: $stackTrace');
+    log.d(
+        '_onError autoConnect ${gd.autoConnect} webSocketConnected ${gd.webSocketConnected} loginDataCurrent.url ${gd.loginDataCurrent.url} webSocketOnDataTime ${gd.webSocketOnDataTime.isBefore(DateTime.now().subtract(Duration(seconds: 15)))}');
   }
 }
