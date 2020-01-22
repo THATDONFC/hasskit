@@ -300,12 +300,14 @@ class _EntityControlBinarySensorState extends State<EntityControlBinarySensor> {
       inAsyncCall = false;
       log.e("getHistory $e");
     } finally {
-      setState(() {
+      if (mounted) {
+        setState(() {
 //        log.d("getHistory finally");
-        inAsyncCall = false;
-        lastState = gd.entities[widget.entityId].state;
-        client.close();
-      });
+          inAsyncCall = false;
+          lastState = gd.entities[widget.entityId].state;
+        });
+      }
+      client.close();
     }
   }
 }

@@ -12,7 +12,7 @@
         "left": "Vänster",
         "right": "Höger",
         "connect_hass": "Var vänlig anslut till\nHome Assistant",
-        "connect_demo": "Ansluter till\nDemo House",
+        "connect_demo": "Ställa in\nHassKit Demo",
         "last_update": "Senast uppdaterad",
         "cancel": "Avbryt",
         "settings": "Inställningar",

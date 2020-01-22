@@ -12,7 +12,7 @@
         "left": "Trái",
         "right": "Phải",
         "connect_hass": "Vui lòng kết nối với\nHome Assistant",
-        "connect_demo": "Đang kết nối tới\nNhà Mẫu",
+        "connect_demo": "Đang cài đặt\nHassKit Demo",
         "last_update": "Cập nhật lần cuối",
         "cancel": "Hủy",
         "settings": "Cài đặt",

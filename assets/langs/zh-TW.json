@@ -12,7 +12,7 @@
         "left": "左",
         "right": "右",
         "connect_hass": "請連線至\nHome Assistant",
-        "connect_demo": "連接到\n演示屋",
+        "connect_demo": "配置\nHassKit Demo",
         "last_update": "最後更新",
         "cancel": "取消",
         "settings": "設定",
