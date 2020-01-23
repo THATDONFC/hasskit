@@ -31,7 +31,10 @@ class SliverNavigationBar extends StatelessWidget {
       selector: (_, generalData) => "${generalData.roomList.length} "
           "${generalData.roomList[roomIndex].imageIndex} "
           "${generalData.roomList[roomIndex].tempEntityId} "
+          "${generalData.roomList[roomIndex].row1.length} "
           "${generalData.roomList[roomIndex].row2.length} "
+          "${generalData.roomList[roomIndex].row3.length} "
+          "${generalData.roomList[roomIndex].row4.length} "
           "${generalData.eventsEntities} "
           "${generalData.activeDevicesShow} "
           "${generalData.activeDevicesOn.length} "
@@ -99,16 +102,14 @@ class SliverNavigationBar extends StatelessWidget {
                 Icon(
                   MaterialDesignIcons.getIconDataFromIconName(
                       "mdi:thermometer"),
-                  size: 24,
+                  size: 18,
                   color: iconColor,
                 ),
-                Expanded(
-                  child: Text(
-                    "${tempState.toStringAsFixed(1)} ${gd.entities[gd.roomList[roomIndex].tempEntityId].unitOfMeasurement.trim()}",
-                    textScaleFactor: gd.textScaleFactorFix,
-                    style: TextStyle(color: ThemeInfo.colorBottomSheetReverse),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  "${tempState.toStringAsFixed(1)} ${gd.entities[gd.roomList[roomIndex].tempEntityId].unitOfMeasurement.trim()}",
+                  textScaleFactor: gd.textScaleFactorFix,
+                  style: Theme.of(context).textTheme.body1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -127,6 +128,7 @@ class SliverNavigationBar extends StatelessWidget {
               }
             },
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 AutoSizeText(
                   gd.getRoomName(roomIndex),
