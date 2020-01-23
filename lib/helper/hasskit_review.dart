@@ -15,7 +15,7 @@ class _HassKitReviewState extends State<HassKitReview> {
       setState(() {
         appID = onValue;
       });
-      print("App ID" + appID);
+      print("App ID " + appID);
     });
   }
 

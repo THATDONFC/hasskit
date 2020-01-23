@@ -67,9 +67,9 @@ class GeoLocatorHelper {
     if (gd.locationUpdateTime
         .add(Duration(minutes: gd.locationUpdateInterval))
         .isAfter(DateTime.now())) {
-      var inSeconds = DateTime.now()
-          .difference(gd.locationUpdateTime
-              .add(Duration(minutes: gd.locationUpdateInterval)))
+      var inSeconds = gd.locationUpdateTime
+          .add(Duration(minutes: gd.locationUpdateInterval))
+          .difference(DateTime.now())
           .inSeconds;
       print("GeoLocatorHelper isAfter $inSeconds inSeconds reason $reason");
       return;

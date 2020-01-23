@@ -514,9 +514,6 @@ class _SettingMobileAppRegistrationState
 
   @override
   Widget build(BuildContext context) {
-    print("SettingRegistration build ${gd.settingMobileApp.deviceName}");
-    print("gd.mobileAppEntity.state ${gd.mobileAppState}");
-
     if (gd.settingMobileApp.deviceName != "") {
       _controller.text = gd.settingMobileApp.deviceName;
     } else {

@@ -306,6 +306,12 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     }).catchError((e) {
       print('[BackgroundFetch] configure ERROR: $e');
     });
+
+    BackgroundFetch.start().then((int status) {
+      print('[BackgroundFetch] start success: $status');
+    }).catchError((e) {
+      print('[BackgroundFetch] start FAILURE: $e');
+    });
   }
 
   timer200Callback() {}

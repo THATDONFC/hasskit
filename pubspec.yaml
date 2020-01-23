@@ -11,7 +11,7 @@ description: A new Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 4.3.0+430
+version: 4.3.1+431
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
@@ -37,7 +37,10 @@ dependencies:
   flutter_spinkit: ^4.1.1+1
   sleek_circular_slider: ^1.0.7
   url_launcher: ^5.4.1
-  reorderables: ^0.2.12
+#  reorderables: ^0.2.12
+  reorderables:
+    git:
+      url: git://github.com/hanshengchiu/reorderables.git
   package_info: ^0.4.0+13
   flutter_widgets: ^0.1.9
   modal_progress_hud: ^0.1.3
