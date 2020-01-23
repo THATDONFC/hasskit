@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:background_fetch/background_fetch.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -28,6 +29,7 @@ import 'helper/material_design_icons.dart';
 Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
+
   // NOTE: if you want to find out if the app was launched via notification then you could use the following call and then do something like
   // change the default route of the app
   // var notificationAppLaunchDetails =
@@ -262,6 +264,15 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     mainInitState();
   }
 
+  void _onBackgroundFetch() async {
+    // This is the fetch-event callback.
+    print('[BackgroundFetch] Event received');
+    GeoLocatorHelper.updateLocation("_onBackgroundFetch");
+    // IMPORTANT:  You must signal completion of your fetch task or the OS can punish your app
+    // for taking too long in the background.
+    BackgroundFetch.finish();
+  }
+
   mainInitState() async {
     log.w("mainInitState showLoading $showLoading");
     log.w("mainInitState...");
@@ -273,6 +284,25 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     gd.loginDataListString = await gd.getString('loginDataList');
     await gd.getSettings("mainInitState");
     deviceInfo.getDeviceInfo();
+
+    // Configure BackgroundFetch.
+    BackgroundFetch.configure(
+            BackgroundFetchConfig(
+                minimumFetchInterval: 15,
+                stopOnTerminate: false,
+                startOnBoot: true,
+                enableHeadless: true,
+                requiresBatteryNotLow: false,
+                requiresCharging: false,
+                requiresStorageNotLow: false,
+                requiresDeviceIdle: false,
+                requiredNetworkType: BackgroundFetchConfig.NETWORK_TYPE_NONE),
+            _onBackgroundFetch)
+        .then((int status) {
+      print('[BackgroundFetch] configure success: $status');
+    }).catchError((e) {
+      print('[BackgroundFetch] configure ERROR: $e');
+    });
   }
 
   timer200Callback() {}

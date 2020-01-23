@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:hasskit/helper/general_data.dart';
 import 'package:hasskit/model/location_zone.dart';
-import 'package:intl/intl.dart';
 import 'package:location_permissions/location_permissions.dart';
 
 class GeoLocatorHelper {
@@ -38,7 +37,7 @@ class GeoLocatorHelper {
   static Future<Placemark> placeMarks(Position position) async {
     List<Placemark> placeMarks =
         await Geolocator().placemarkFromPosition(position);
-    print("GeoLocatorHelper placeMarks ${placeMarks.first.name}");
+//    print("GeoLocatorHelper placeMarks ${placeMarks.first.name}");
     return placeMarks.first;
   }
 
@@ -66,9 +65,13 @@ class GeoLocatorHelper {
     }
 
     if (gd.locationUpdateTime
-        .add(Duration(seconds: gd.locationUpdateInterval))
+        .add(Duration(minutes: gd.locationUpdateInterval))
         .isAfter(DateTime.now())) {
-      print("GeoLocatorHelper isAfter reason $reason");
+      var inSeconds = DateTime.now()
+          .difference(gd.locationUpdateTime
+              .add(Duration(minutes: gd.locationUpdateInterval)))
+          .inSeconds;
+      print("GeoLocatorHelper isAfter $inSeconds inSeconds reason $reason");
       return;
     }
     gd.locationUpdateTime = DateTime.now();

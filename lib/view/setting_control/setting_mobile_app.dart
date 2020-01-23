@@ -8,6 +8,7 @@ import 'package:hasskit/helper/general_data.dart';
 import 'package:hasskit/helper/geolocator_helper.dart';
 import 'package:hasskit/helper/theme_info.dart';
 import 'package:http/http.dart' as http;
+import 'package:location_permissions/location_permissions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingMobileApp {
@@ -709,14 +710,39 @@ class _SettingMobileAppRegistrationState
                             divisions: 45,
                           ),
                         ),
+                        Expandable(
+                          collapsed: null,
+                          expanded: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Builder(
+                                builder: (context) {
+                                  return FlatButton(
+                                    child: Text(
+                                      "  Open App Settings",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .button
+                                          .copyWith(
+                                              color: ThemeInfo.colorIconActive),
+                                    ),
+                                    onPressed: () {
+                                      LocationPermissions().openAppSettings();
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
-                Text(
-                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n"
-                    "deviceName ${gd.settingMobileApp.deviceName}\n"
-                    "webHookId ${gd.settingMobileApp.webHookId}"),
+//                Text(
+//                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n"
+//                    "deviceName ${gd.settingMobileApp.deviceName}\n"
+//                    "webHookId ${gd.settingMobileApp.webHookId}"),
               ],
             ),
           ),
