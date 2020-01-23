@@ -128,9 +128,10 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   bool showLoading = true;
   Timer timer0;
   Timer timer1;
-  Timer timer10;
-  Timer timer30;
   Timer timer5;
+  Timer timer10;
+  Timer timer15;
+  Timer timer30;
   Timer timer60;
 
   @override
@@ -256,6 +257,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         Timer.periodic(Duration(seconds: 5), (Timer t) => timer5Callback());
     timer10 =
         Timer.periodic(Duration(seconds: 10), (Timer t) => timer10Callback());
+    timer15 =
+        Timer.periodic(Duration(seconds: 15), (Timer t) => timer15Callback());
     timer30 =
         Timer.periodic(Duration(seconds: 30), (Timer t) => timer30Callback());
     timer60 =
@@ -313,14 +316,16 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     }
   }
 
-  timer5Callback() {
-    GeoLocatorHelper.updateLocation("timer5Callback");
-  }
+  timer5Callback() {}
 
   timer10Callback() {
     if (gd.webSocketConnectionStatus != "Connected" && gd.autoConnect) {
       webSocket.initCommunication();
     }
+  }
+
+  timer15Callback() {
+    GeoLocatorHelper.updateLocation("timer15Callback");
   }
 
   timer30Callback() {
