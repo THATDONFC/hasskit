@@ -587,13 +587,15 @@ class _SettingMobileAppRegistrationState
                     ),
                   ],
                 ),
-                gd.settingMobileApp.webHookId != ""
-                    ? Row(
-                        children: <Widget>[
-                          Switch.adaptive(
-                              value: gd.settingMobileApp.trackLocation,
-                              onChanged: (val) {
-                                setState(() {
+
+                Row(
+                  children: <Widget>[
+                    Switch.adaptive(
+                      value: gd.settingMobileApp.trackLocation,
+                      onChanged: gd.settingMobileApp.webHookId != ""
+                          ? (val) {
+                              setState(
+                                () {
                                   gd.settingMobileApp.trackLocation = val;
                                   print(
                                       "onChanged $val gd.deviceIntegration.trackLocation ${gd.settingMobileApp.trackLocation}");
@@ -609,23 +611,25 @@ class _SettingMobileAppRegistrationState
                                     gd.locationLongitude = 0.0;
                                   }
                                   gd.settingMobileAppSave();
-                                });
-                              }),
-                          SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              gd.settingMobileApp.trackLocation
-                                  ? "Location Tracking Enabled"
-                                      "\n${gd.textToDisplay(gd.mobileAppState)}"
-                                  : "Location Tracking Disabled",
-                              style: Theme.of(context).textTheme.caption,
-                              textAlign: TextAlign.justify,
-                              textScaleFactor: gd.textScaleFactorFix,
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container(),
+                                },
+                              );
+                            }
+                          : null,
+                    ),
+                    SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        gd.settingMobileApp.trackLocation
+                            ? "Location Tracking Enabled"
+                                "\n${gd.textToDisplay(gd.mobileAppState)}"
+                            : "Location Tracking Disabled",
+                        style: Theme.of(context).textTheme.caption,
+                        textAlign: TextAlign.justify,
+                        textScaleFactor: gd.textScaleFactorFix,
+                      ),
+                    ),
+                  ],
+                ),
                 ExpandableNotifier(
                   child: ScrollOnExpand(
                     child: Column(
@@ -707,30 +711,30 @@ class _SettingMobileAppRegistrationState
                             divisions: 45,
                           ),
                         ),
-                        Expandable(
-                          collapsed: null,
-                          expanded: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Builder(
-                                builder: (context) {
-                                  return FlatButton(
-                                    child: Text(
-                                      "  Open App Settings",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .button
-                                          .copyWith(
-                                              color: ThemeInfo.colorIconActive),
-                                    ),
-                                    onPressed: () {
-                                      LocationPermissions().openAppSettings();
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                        Divider(
+                          height: 1,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Builder(
+                              builder: (context) {
+                                return FlatButton(
+                                  child: Text(
+                                    "  Open App Settings",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .button
+                                        .copyWith(
+                                            color: ThemeInfo.colorIconActive),
+                                  ),
+                                  onPressed: () {
+                                    LocationPermissions().openAppSettings();
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
