@@ -76,8 +76,8 @@ dependencies:
   flutter_cupertino_date_picker: ^1.0.12
   geolocator: ^5.2.0
   location_permissions: ^2.0.4+1
-  background_fetch: ^0.4.0
   connectivity: ^0.4.6+2
+  workmanager: ^0.2.0
 
 flutter_icons:
   android: false
