@@ -587,7 +587,6 @@ class _SettingMobileAppRegistrationState
                     ),
                   ],
                 ),
-
                 Row(
                   children: <Widget>[
                     Switch.adaptive(
@@ -742,10 +741,12 @@ class _SettingMobileAppRegistrationState
                     ),
                   ),
                 ),
-//                Text(
-//                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n"
-//                    "deviceName ${gd.settingMobileApp.deviceName}\n"
-//                    "webHookId ${gd.settingMobileApp.webHookId}"),
+                Text(
+                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n\n"
+                    "deviceName ${gd.settingMobileApp.deviceName}\n\n"
+                    "webHookId ${gd.settingMobileApp.webHookId}\n\n"
+                    "${gd.locationUpdateFail}\n\n"
+                    "${gd.locationUpdateSuccess}"),
               ],
             ),
           ),

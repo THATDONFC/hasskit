@@ -111,6 +111,8 @@ class _SettingPageState extends State<SettingPage> {
 //      builder: (context, gd, child) {
     return Selector<GeneralData, String>(
       selector: (_, generalData) => ("${generalData.useSSL} | "
+          "${generalData.locationUpdateFail} | "
+          "${generalData.locationUpdateSuccess} | "
           "${generalData.loginDataCurrent.url} | "
           "${generalData.settingMobileApp.deviceName} | "
           "${generalData.settingMobileApp.trackLocation} | "

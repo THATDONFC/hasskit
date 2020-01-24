@@ -2623,6 +2623,24 @@ class GeneralData with ChangeNotifier {
     }
   }
 
+  String _locationUpdateFail = "";
+  String get locationUpdateFail => _locationUpdateFail;
+  set locationUpdateFail(val) {
+    if (_locationUpdateFail != val) {
+      _locationUpdateFail = val;
+      notifyListeners();
+    }
+  }
+
+  String _locationUpdateSuccess = "";
+  String get locationUpdateSuccess => _locationUpdateSuccess;
+  set locationUpdateSuccess(val) {
+    if (_locationUpdateSuccess != val) {
+      _locationUpdateSuccess = val;
+      notifyListeners();
+    }
+  }
+
   String _mobileAppEntityId = "";
   String get mobileAppEntityId => _mobileAppEntityId;
   set mobileAppEntityId(val) {

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:hasskit/helper/general_data.dart';
 import 'package:hasskit/model/location_zone.dart';
+import 'package:intl/intl.dart';
 import 'package:location_permissions/location_permissions.dart';
 
 class GeoLocatorHelper {
@@ -42,24 +43,31 @@ class GeoLocatorHelper {
   }
 
   static Future<void> updateLocation(String reason) async {
+    String hourFormat = DateFormat("HH:mm:ss").format(DateTime.now());
     if (!gd.settingMobileApp.trackLocation) {
       print("GeoLocatorHelper trackLocation");
+      gd.locationUpdateFail =
+          "$hourFormat FAIL: GeoLocatorHelper trackLocation";
       return;
     }
 
     if (gd.settingMobileApp.webHookId == "") {
       print("GeoLocatorHelper webHookId");
+      gd.locationUpdateFail = "$hourFormat FAIL: GeoLocatorHelper webHookId";
       return;
     }
 
     if (gd.settingMobileApp.deviceName == "") {
       print("GeoLocatorHelper deviceName");
+      gd.locationUpdateFail = "$hourFormat FAIL: GeoLocatorHelper deviceName";
       return;
     }
 
     if (gd.locationZones.length < 1) {
       print(
           "GeoLocatorHelper gd.locationZones.length ${gd.locationZones.length}");
+      gd.locationUpdateFail =
+          "$hourFormat FAIL: GeoLocatorHelper gd.locationZones.length";
       gd.httpApiStates();
       return;
     }
@@ -72,11 +80,13 @@ class GeoLocatorHelper {
           .difference(DateTime.now())
           .inSeconds;
       print("GeoLocatorHelper isAfter $inSeconds inSeconds reason $reason");
+      gd.locationUpdateFail =
+          "$hourFormat FAIL: GeoLocatorHelper locationUpdateTime $inSeconds";
       return;
     }
     gd.locationUpdateTime = DateTime.now();
 
-    if (gd.mobileAppEntityId == "") {
+    if (gd.mobileAppState == "...") {
       var mobileAppEntity = gd.entities.values.toList().firstWhere(
           (e) => e.friendlyName == gd.settingMobileApp.deviceName,
           orElse: () => null);
@@ -86,10 +96,10 @@ class GeoLocatorHelper {
       } else {
         gd.mobileAppEntityId = mobileAppEntity.entityId;
       }
-    }
 
-    if (gd.mobileAppState == "...") {
       print("GeoLocatorHelper mobileAppState ...");
+      gd.locationUpdateFail =
+          "$hourFormat FAIL: GeoLocatorHelper mobileAppState ... gd.mobileAppEntityId ${gd.mobileAppEntityId}";
       return;
     }
 
@@ -101,25 +111,35 @@ class GeoLocatorHelper {
       PermissionStatus permission =
           await LocationPermissions().requestPermissions();
       print("GeoLocatorHelper permission 2 $permission");
+      gd.locationUpdateFail =
+          "$hourFormat FAIL: GeoLocatorHelper permission 2 $permission";
     }
 
     if (permission == PermissionStatus.granted) {
       Position position = await currentPosition;
       String zoneName = await getZoneName(position);
       if (zoneName == gd.mobileAppState) {
-        print("return zoneName == gd.mobileAppState");
+        print("GeoLocatorHelper zoneName == gd.mobileAppState $zoneName");
+        gd.locationUpdateFail =
+            "$hourFormat FAIL: GeoLocatorHelper zoneName == gd.mobileAppState $zoneName";
         return;
       }
       if (zoneName != null) {
+        gd.locationUpdateSuccess =
+            "$hourFormat SUCCESS: GeoLocatorHelper zoneName != null $zoneName";
         writeLocation(position, zoneName);
         return;
       }
 
       String locationName = await getLocationName(position);
       if (locationName != null) {
+        gd.locationUpdateSuccess =
+            "$hourFormat SUCCESS: GeoLocatorHelper locationName != null $locationName";
         writeLocation(position, locationName);
         return;
       }
+      gd.locationUpdateFail =
+          "$hourFormat FAIL: zoneName == null locationName == null";
     }
   }
 
@@ -127,6 +147,10 @@ class GeoLocatorHelper {
     double shortestDistance = double.infinity;
     String retVal;
     for (LocationZone locationZone in gd.locationZones) {
+//      if ((position.latitude - locationZone.latitude).abs() > 0.01 ||
+//          (position.longitude - locationZone.longitude).abs() > 0.01) {
+//        continue;
+//      }
       var distance = await Geolocator().distanceBetween(position.latitude,
           position.longitude, locationZone.latitude, locationZone.longitude);
 //      print(
