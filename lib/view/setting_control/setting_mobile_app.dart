@@ -591,7 +591,9 @@ class _SettingMobileAppRegistrationState
                 Row(
                   children: <Widget>[
                     Switch.adaptive(
-                      value: gd.settingMobileApp.trackLocation,
+                      value: gd.settingMobileApp.webHookId != ""
+                          ? gd.settingMobileApp.trackLocation
+                          : false,
                       onChanged: gd.settingMobileApp.webHookId != ""
                           ? (val) {
                               setState(
