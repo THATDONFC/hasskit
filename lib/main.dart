@@ -20,10 +20,33 @@ import 'package:hasskit/view/page_view_builder.dart';
 import 'package:hasskit/view/setting_page.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 import 'helper/general_data.dart';
 import 'helper/google_sign.dart';
 import 'helper/logger.dart';
 import 'helper/material_design_icons.dart';
+
+const simplePeriodicTask = "simplePeriodicTask";
+
+void callbackDispatcher() {
+  Workmanager.executeTask((task, inputData) async {
+    switch (task) {
+      case simplePeriodicTask:
+        GeoLocatorHelper.updateLocation("simplePeriodicTask");
+        print("$simplePeriodicTask was executed");
+        print("ANDROID gd.locationUpdateSuccess ${gd.locationUpdateSuccess} ");
+        print("ANDROID gd.locationUpdateFail ${gd.locationUpdateFail} ");
+        break;
+      case Workmanager.iOSBackgroundTask:
+        GeoLocatorHelper.updateLocation("Workmanager.iOSBackgroundTask");
+        print("The iOS background fetch was triggered");
+        print("iOS gd.locationUpdateSuccess ${gd.locationUpdateSuccess} ");
+        print("iOS gd.locationUpdateFail ${gd.locationUpdateFail} ");
+        break;
+    }
+    return Future.value(true);
+  });
+}
 
 Future<void> main() async {
   // needed if you intend to initialize in the `main` function
@@ -50,6 +73,17 @@ Future<void> main() async {
 //    }
 //    selectNotificationSubject.add(payload);
 //  });
+
+  Workmanager.initialize(
+    callbackDispatcher,
+    isInDebugMode: true,
+  );
+
+  Workmanager.registerPeriodicTask(
+    "3",
+    simplePeriodicTask,
+    initialDelay: Duration(seconds: 10),
+  );
 
   runApp(
     EasyLocalization(
@@ -477,75 +511,12 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     print("_updateConnectionStatus $result");
+    gd.connectivityStatus = result;
     switch (result) {
       case ConnectivityResult.wifi:
-        String wifiName, wifiBSSID, wifiIP;
-
-        try {
-          if (Platform.isIOS) {
-            LocationAuthorizationStatus status =
-                await _connectivity.getLocationServiceAuthorization();
-            if (status == LocationAuthorizationStatus.notDetermined) {
-              status =
-                  await _connectivity.requestLocationServiceAuthorization();
-            }
-            if (status == LocationAuthorizationStatus.authorizedAlways ||
-                status == LocationAuthorizationStatus.authorizedWhenInUse) {
-              wifiName = await _connectivity.getWifiName();
-            } else {
-              wifiName = await _connectivity.getWifiName();
-            }
-          } else {
-            wifiName = await _connectivity.getWifiName();
-          }
-        } on PlatformException catch (e) {
-          print(e.toString());
-          wifiName = "Failed to get Wifi Name";
-        }
-
-        try {
-          if (Platform.isIOS) {
-            LocationAuthorizationStatus status =
-                await _connectivity.getLocationServiceAuthorization();
-            if (status == LocationAuthorizationStatus.notDetermined) {
-              status =
-                  await _connectivity.requestLocationServiceAuthorization();
-            }
-            if (status == LocationAuthorizationStatus.authorizedAlways ||
-                status == LocationAuthorizationStatus.authorizedWhenInUse) {
-              wifiBSSID = await _connectivity.getWifiBSSID();
-            } else {
-              wifiBSSID = await _connectivity.getWifiBSSID();
-            }
-          } else {
-            wifiBSSID = await _connectivity.getWifiBSSID();
-          }
-        } on PlatformException catch (e) {
-          print(e.toString());
-          wifiBSSID = "Failed to get Wifi BSSID";
-        }
-
-        try {
-          wifiIP = await _connectivity.getWifiIP();
-        } on PlatformException catch (e) {
-          print(e.toString());
-          wifiIP = "Failed to get Wifi IP";
-        }
-
-        setState(() {
-          gd.connectivityStatus = '$result\n'
-              'Wifi Name: $wifiName\n'
-              'Wifi BSSID: $wifiBSSID\n'
-              'Wifi IP: $wifiIP\n';
-        });
-        break;
       case ConnectivityResult.mobile:
       case ConnectivityResult.none:
-        setState(() => gd.connectivityStatus = result.toString());
-        break;
       default:
-        setState(() => gd.connectivityStatus = 'Failed to get connectivity.');
-        break;
     }
   }
 }

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hasskit/helper/geolocator_helper.dart';
+import 'package:hasskit/helper/mobile_app_helper.dart';
 import 'package:hasskit/helper/theme_info.dart';
 import 'package:hasskit/helper/web_socket.dart';
 import 'package:hasskit/model/location_zone.dart';
@@ -2044,7 +2046,6 @@ class GeneralData with ChangeNotifier {
     gd.settingMobileAppString = await gd.getString('settingMobileApp $url');
     gd.locationZones.clear();
     gd.locationUpdateTime = DateTime.now().subtract(Duration(days: 1));
-    gd.mobileAppEntityId = "";
 
     //force the trigger reset
     log.w(
@@ -2414,6 +2415,8 @@ class GeneralData with ChangeNotifier {
         print(
             "configUnitSystem['temperature'] ${configUnitSystem['temperature']}");
         print("configVersion $configVersion");
+        MobileAppHelper mobileAppHelper = MobileAppHelper();
+        mobileAppHelper.check("httpApiStates api/config $url");
       } else {
         log.e(
             "httpApiStates Request $url failed with status: ${response.statusCode}");
@@ -2641,20 +2644,11 @@ class GeneralData with ChangeNotifier {
     }
   }
 
-  String _mobileAppEntityId = "";
-  String get mobileAppEntityId => _mobileAppEntityId;
-  set mobileAppEntityId(val) {
-    if (_mobileAppEntityId != val) {
-      _mobileAppEntityId = val;
-      notifyListeners();
-    }
-  }
-
   String get mobileAppState {
-    if (entities[mobileAppEntityId] == null) {
+    if (entities["device_tracker.${gd.settingMobileApp.deviceName}"] == null) {
       return "...";
     }
-    return entities[mobileAppEntityId].state;
+    return entities["device_tracker.${gd.settingMobileApp.deviceName}"].state;
   }
 
   List<LocationZone> locationZones = [];
@@ -2683,14 +2677,14 @@ class GeneralData with ChangeNotifier {
   String configLocationName = "";
   List<String> configComponent = [];
 
-  String _connectivityStatus = "Unknown";
-  String get connectivityStatus => _connectivityStatus;
+  ConnectivityResult _connectivityStatus = ConnectivityResult.none;
+  ConnectivityResult get connectivityStatus => _connectivityStatus;
   set connectivityStatus(val) {
     if (_connectivityStatus != val) {
       print("_connectivityStatus $_connectivityStatus val $val");
       _connectivityStatus = val;
-      if (_connectivityStatus == "ConnectivityResult.wifi" ||
-          _connectivityStatus == "ConnectivityResult.mobile") {
+      if (_connectivityStatus == ConnectivityResult.mobile ||
+          _connectivityStatus == ConnectivityResult.wifi) {
         gd.locationUpdateTime = DateTime.now().subtract(Duration(days: 1));
         GeoLocatorHelper.updateLocation(
             "connectivityStatus $_connectivityStatus");

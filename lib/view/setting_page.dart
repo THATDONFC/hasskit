@@ -328,7 +328,7 @@ class _SettingPageState extends State<SettingPage> {
                       title: "Mobile App",
                     ),
               gd.deviceSetting.settingLocked ||
-                      gd.currentUrl.contains("hasskit.duckdns.org")
+                      gd.currentUrl.contains("http://hasskit.duckdns.org")
                   ? gd.emptySliver
                   : SettingMobileAppRegistration(),
               gd.deviceSetting.settingLocked

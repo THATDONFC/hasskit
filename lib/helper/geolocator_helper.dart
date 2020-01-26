@@ -43,32 +43,38 @@ class GeoLocatorHelper {
   }
 
   static Future<void> updateLocation(String reason) async {
-    String hourFormat = DateFormat("HH:mm:ss").format(DateTime.now());
+    String prefix =
+        DateFormat("HH:mm:ss").format(DateTime.now()) + " " + reason;
     if (!gd.settingMobileApp.trackLocation) {
-      print("GeoLocatorHelper trackLocation");
-      gd.locationUpdateFail =
-          "$hourFormat FAIL: GeoLocatorHelper trackLocation";
+      print("$prefix FAIL: GeoLocatorHelper trackLocation");
+      gd.locationUpdateFail = "$prefix FAIL: GeoLocatorHelper trackLocation";
       return;
     }
 
     if (gd.settingMobileApp.webHookId == "") {
-      print("GeoLocatorHelper webHookId");
-      gd.locationUpdateFail = "$hourFormat FAIL: GeoLocatorHelper webHookId";
+      print("$prefix FAIL: GeoLocatorHelper webHookId");
+      gd.locationUpdateFail = "$prefix FAIL: GeoLocatorHelper webHookId";
       return;
     }
 
     if (gd.settingMobileApp.deviceName == "") {
-      print("GeoLocatorHelper deviceName");
-      gd.locationUpdateFail = "$hourFormat FAIL: GeoLocatorHelper deviceName";
+      print("$prefix FAIL: GeoLocatorHelper deviceName");
+      gd.locationUpdateFail = "$prefix FAIL: GeoLocatorHelper deviceName";
       return;
     }
 
     if (gd.locationZones.length < 1) {
-      print(
-          "GeoLocatorHelper gd.locationZones.length ${gd.locationZones.length}");
+      print("$prefix FAIL: GeoLocatorHelper gd.locationZones.length");
       gd.locationUpdateFail =
-          "$hourFormat FAIL: GeoLocatorHelper gd.locationZones.length";
+          "$prefix FAIL: GeoLocatorHelper gd.locationZones.length";
       gd.httpApiStates();
+      return;
+    }
+
+    if (gd.mobileAppState == "...") {
+      print("$prefix FAIL: GeoLocatorHelper gd.mobileAppState == ...");
+      gd.locationUpdateFail =
+          "$prefix FAIL: GeoLocatorHelper gd.mobileAppState == ...";
       return;
     }
 
@@ -79,29 +85,12 @@ class GeoLocatorHelper {
           .add(Duration(minutes: gd.locationUpdateInterval))
           .difference(DateTime.now())
           .inSeconds;
-      print("GeoLocatorHelper isAfter $inSeconds inSeconds reason $reason");
+      print("$prefix FAIL: GeoLocatorHelper locationUpdateTime $inSeconds");
       gd.locationUpdateFail =
-          "$hourFormat FAIL: GeoLocatorHelper locationUpdateTime $inSeconds";
+          "$prefix FAIL: GeoLocatorHelper locationUpdateTime $inSeconds";
       return;
     }
     gd.locationUpdateTime = DateTime.now();
-
-    if (gd.mobileAppState == "...") {
-      var mobileAppEntity = gd.entities.values.toList().firstWhere(
-          (e) => e.friendlyName == gd.settingMobileApp.deviceName,
-          orElse: () => null);
-
-      if (mobileAppEntity == null) {
-        gd.mobileAppEntityId = "";
-      } else {
-        gd.mobileAppEntityId = mobileAppEntity.entityId;
-      }
-
-      print("GeoLocatorHelper mobileAppState ...");
-      gd.locationUpdateFail =
-          "$hourFormat FAIL: GeoLocatorHelper mobileAppState ... gd.mobileAppEntityId ${gd.mobileAppEntityId}";
-      return;
-    }
 
     PermissionStatus permission =
         await LocationPermissions().checkPermissionStatus();
@@ -110,36 +99,41 @@ class GeoLocatorHelper {
     if (permission != PermissionStatus.granted) {
       PermissionStatus permission =
           await LocationPermissions().requestPermissions();
-      print("GeoLocatorHelper permission 2 $permission");
+      print("$prefix FAIL: GeoLocatorHelper permission 2 $permission");
       gd.locationUpdateFail =
-          "$hourFormat FAIL: GeoLocatorHelper permission 2 $permission";
+          "$prefix FAIL: GeoLocatorHelper permission 2 $permission";
     }
 
     if (permission == PermissionStatus.granted) {
       Position position = await currentPosition;
       String zoneName = await getZoneName(position);
       if (zoneName == gd.mobileAppState) {
-        print("GeoLocatorHelper zoneName == gd.mobileAppState $zoneName");
+        print(
+            "$prefix FAIL: GeoLocatorHelper zoneName == gd.mobileAppState $zoneName");
         gd.locationUpdateFail =
-            "$hourFormat FAIL: GeoLocatorHelper zoneName == gd.mobileAppState $zoneName";
+            "$prefix FAIL: GeoLocatorHelper zoneName == gd.mobileAppState $zoneName";
         return;
       }
       if (zoneName != null) {
+        print("$prefix SUCCESS: GeoLocatorHelper zoneName != null $zoneName");
         gd.locationUpdateSuccess =
-            "$hourFormat SUCCESS: GeoLocatorHelper zoneName != null $zoneName";
+            "$prefix SUCCESS: GeoLocatorHelper zoneName != null $zoneName";
         writeLocation(position, zoneName);
         return;
       }
 
       String locationName = await getLocationName(position);
       if (locationName != null) {
+        print(
+            "$prefix SUCCESS: GeoLocatorHelper locationName != null $locationName");
         gd.locationUpdateSuccess =
-            "$hourFormat SUCCESS: GeoLocatorHelper locationName != null $locationName";
+            "$prefix SUCCESS: GeoLocatorHelper locationName != null $locationName";
         writeLocation(position, locationName);
         return;
       }
+      print("$prefix FAIL: zoneName == null locationName == null");
       gd.locationUpdateFail =
-          "$hourFormat FAIL: zoneName == null locationName == null";
+          "$prefix FAIL: zoneName == null locationName == null";
     }
   }
 

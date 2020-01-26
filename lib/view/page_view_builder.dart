@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -96,7 +97,7 @@ class SinglePage extends StatelessWidget {
       builder: (context, data, child) {
         Widget widget;
 
-        if (gd.connectivityStatus == "ConnectivityResult.none") {
+        if (gd.connectivityStatus == ConnectivityResult.none) {
           widget = Container(
             constraints: BoxConstraints.expand(),
             color: ThemeInfo.colorBackgroundDark,
