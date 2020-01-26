@@ -78,6 +78,18 @@ class GeoLocatorHelper {
       return;
     }
 
+    PermissionStatus permission =
+        await LocationPermissions().checkPermissionStatus();
+//    print("GeoLocatorHelper permission $permission");
+
+    if (permission != PermissionStatus.granted) {
+      PermissionStatus permission =
+          await LocationPermissions().requestPermissions();
+      print("$prefix FAIL: GeoLocatorHelper permission 2 $permission");
+      gd.locationUpdateFail =
+          "$prefix FAIL: GeoLocatorHelper permission 2 $permission";
+    }
+
     if (gd.locationUpdateTime
         .add(Duration(minutes: gd.locationUpdateInterval))
         .isAfter(DateTime.now())) {
@@ -91,18 +103,6 @@ class GeoLocatorHelper {
       return;
     }
     gd.locationUpdateTime = DateTime.now();
-
-    PermissionStatus permission =
-        await LocationPermissions().checkPermissionStatus();
-//    print("GeoLocatorHelper permission $permission");
-
-    if (permission != PermissionStatus.granted) {
-      PermissionStatus permission =
-          await LocationPermissions().requestPermissions();
-      print("$prefix FAIL: GeoLocatorHelper permission 2 $permission");
-      gd.locationUpdateFail =
-          "$prefix FAIL: GeoLocatorHelper permission 2 $permission";
-    }
 
     if (permission == PermissionStatus.granted) {
       Position position = await currentPosition;
