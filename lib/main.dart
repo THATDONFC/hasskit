@@ -76,7 +76,7 @@ Future<void> main() async {
 
   Workmanager.initialize(
     callbackDispatcher,
-    isInDebugMode: true,
+    isInDebugMode: false,
   );
 
   Workmanager.registerPeriodicTask(
@@ -511,7 +511,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     print("_updateConnectionStatus $result");
-    gd.connectivityStatus = result;
+    gd.connectivityStatus = result.toString();
     switch (result) {
       case ConnectivityResult.wifi:
       case ConnectivityResult.mobile:

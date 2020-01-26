@@ -5,7 +5,6 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -2677,14 +2676,14 @@ class GeneralData with ChangeNotifier {
   String configLocationName = "";
   List<String> configComponent = [];
 
-  ConnectivityResult _connectivityStatus = ConnectivityResult.none;
-  ConnectivityResult get connectivityStatus => _connectivityStatus;
+  String _connectivityStatus = "";
+  String get connectivityStatus => _connectivityStatus;
   set connectivityStatus(val) {
     if (_connectivityStatus != val) {
       print("_connectivityStatus $_connectivityStatus val $val");
       _connectivityStatus = val;
-      if (_connectivityStatus == ConnectivityResult.mobile ||
-          _connectivityStatus == ConnectivityResult.wifi) {
+      if (_connectivityStatus == "ConnectivityResult.mobile" ||
+          _connectivityStatus == "ConnectivityResult.wifi") {
         gd.locationUpdateTime = DateTime.now().subtract(Duration(days: 1));
         GeoLocatorHelper.updateLocation(
             "connectivityStatus $_connectivityStatus");
