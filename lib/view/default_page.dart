@@ -25,11 +25,17 @@ class DefaultPage extends StatelessWidget {
                 size: 150,
               ),
               SizedBox(height: 20),
-              Text(
-                Translate.getString("global.connect_hass", context),
-                style: Theme.of(context).textTheme.title,
-                textAlign: TextAlign.center,
-              ),
+              gd.webSocketConnectionStatus == "" && gd.autoConnect
+                  ? Text(
+                      Translate.getString("global.connect_demo", context),
+                      style: Theme.of(context).textTheme.title,
+                      textAlign: TextAlign.center,
+                    )
+                  : Text(
+                      Translate.getString("global.connect_hass", context),
+                      style: Theme.of(context).textTheme.title,
+                      textAlign: TextAlign.center,
+                    ),
               SizedBox(height: 10),
               Text(
                 error,
@@ -39,10 +45,22 @@ class DefaultPage extends StatelessWidget {
                 textScaleFactor: gd.textScaleFactorFix,
                 overflow: TextOverflow.ellipsis,
               ),
-              SpinKitThreeBounce(
-                size: 40,
-                color: ThemeInfo.colorIconActive.withOpacity(0.5),
-              ),
+//              Text(
+//                "gd.connectionStatus ${gd.connectionStatus} "
+//                "gd.autoConnect ${gd.autoConnect} "
+//                "gd.loginDataList.length ${gd.loginDataList.length} ",
+//                style: Theme.of(context).textTheme.caption,
+//                textAlign: TextAlign.justify,
+//                maxLines: 3,
+//                textScaleFactor: gd.textScaleFactorFix,
+//                overflow: TextOverflow.ellipsis,
+//              ),
+              gd.webSocketConnectionStatus == ""
+                  ? SpinKitThreeBounce(
+                      size: 40,
+                      color: ThemeInfo.colorIconActive.withOpacity(0.5),
+                    )
+                  : Container(),
             ],
           ),
         ));

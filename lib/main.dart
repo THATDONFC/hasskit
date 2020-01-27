@@ -1,52 +1,106 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hasskit/helper/geolocator_helper.dart';
 import 'package:hasskit/helper/locale_helper.dart';
 import 'package:hasskit/helper/theme_info.dart';
 import 'package:hasskit/helper/web_socket.dart';
-import 'package:hasskit/integration/device_info.dart';
+import 'package:hasskit/helper/device_info.dart';
 import 'package:hasskit/view/page_view_builder.dart';
 import 'package:hasskit/view/setting_page.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 import 'helper/general_data.dart';
 import 'helper/google_sign.dart';
 import 'helper/logger.dart';
 import 'helper/material_design_icons.dart';
+import 'package:rxdart/subjects.dart';
+
+const simplePeriodicTask = "simplePeriodicTask";
+
+void callbackDispatcher() {
+  Workmanager.executeTask((task, inputData) async {
+    switch (task) {
+      case simplePeriodicTask:
+        GeoLocatorHelper.updateLocation("simplePeriodicTask");
+        print("ANDROID gd.locationUpdateSuccess ${gd.locationUpdateSuccess} ");
+        print("ANDROID gd.locationUpdateFail ${gd.locationUpdateFail} ");
+        print("$simplePeriodicTask was executed");
+        break;
+      case Workmanager.iOSBackgroundTask:
+        GeoLocatorHelper.updateLocation("Workmanager.iOSBackgroundTask");
+        print("iOS gd.locationUpdateSuccess ${gd.locationUpdateSuccess} ");
+        print("iOS gd.locationUpdateFail ${gd.locationUpdateFail} ");
+        print("The iOS background fetch was triggered");
+        break;
+    }
+    return Future.value(true);
+  });
+}
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+// Streams are created so that app can respond to notification-related events since the plugin is initialised in the `main` function
+final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
+    BehaviorSubject<ReceivedNotification>();
+
+final BehaviorSubject<String> selectNotificationSubject =
+    BehaviorSubject<String>();
+
+class ReceivedNotification {
+  final int id;
+  final String title;
+  final String body;
+  final String payload;
+
+  ReceivedNotification(
+      {@required this.id,
+      @required this.title,
+      @required this.body,
+      @required this.payload});
+}
 
 Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
-  // NOTE: if you want to find out if the app was launched via notification then you could use the following call and then do something like
-  // change the default route of the app
-  // var notificationAppLaunchDetails =
-  //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+  var initializationSettingsIOS = IOSInitializationSettings(
+      onDidReceiveLocalNotification:
+          (int id, String title, String body, String payload) async {
+    didReceiveLocalNotificationSubject.add(ReceivedNotification(
+        id: id, title: title, body: body, payload: payload));
+  });
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+    selectNotificationSubject.add(payload);
+  });
 
-//  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-//  var initializationSettingsIOS = IOSInitializationSettings(
-//      onDidReceiveLocalNotification:
-//          (int id, String title, String body, String payload) async {
-//    didReceiveLocalNotificationSubject.add(ReceivedNotification(
-//        id: id, title: title, body: body, payload: payload));
-//  });
-//  var initializationSettings = InitializationSettings(
-//      initializationSettingsAndroid, initializationSettingsIOS);
-//  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-//      onSelectNotification: (String payload) async {
-//    if (payload != null) {
-//      debugPrint('notification payload: ' + payload);
-//    }
-//    selectNotificationSubject.add(payload);
-//  });
+  Workmanager.initialize(
+    callbackDispatcher,
+    isInDebugMode: true,
+  );
+
+  Workmanager.registerPeriodicTask(
+    "3",
+    simplePeriodicTask,
+    initialDelay: Duration(seconds: 10),
+  );
 
   runApp(
     EasyLocalization(
@@ -54,7 +108,7 @@ Future<void> main() async {
         providers: [
           ChangeNotifierProvider(
             create: (_) => GeneralData(),
-            builder: (context) => GeneralData(),
+//            builder: (context) => GeneralData(),
           ),
         ],
         child: MyApp(),
@@ -99,6 +153,7 @@ class MyApp extends StatelessWidget {
               Locale('pt', 'PT'),
               Locale('ru', 'RU'),
               Locale('sv', 'SE'),
+              Locale('uk', 'UA'),
               Locale('vi', 'VN'),
               Locale('zh', 'CN'),
               Locale('zh', 'TW'),
@@ -123,9 +178,10 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   bool showLoading = true;
   Timer timer0;
   Timer timer1;
-  Timer timer10;
-  Timer timer30;
   Timer timer5;
+  Timer timer10;
+  Timer timer15;
+  Timer timer30;
   Timer timer60;
 
   @override
@@ -136,10 +192,12 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
         if (gd.lastLifecycleState == AppLifecycleState.resumed) {
           log.w("didChangeAppLifecycleState ${gd.lastLifecycleState}");
+          log.w("Reset gd.locationUpdateTime");
+          gd.locationUpdateTime = DateTime.now();
 
           if (gd.autoConnect) {
             {
-              if (gd.connectionStatus != "Connected") {
+              if (gd.webSocketConnectionStatus != "Connected") {
                 webSocket.initCommunication();
                 log.w(
                     "didChangeAppLifecycleState webSocket.initCommunication()");
@@ -155,6 +213,18 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         }
       },
     );
+  }
+
+  Future<void> _showNotification(String title, String body) async {
+    print("_showNotification");
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin
+        .show(0, title, body, platformChannelSpecifics, payload: 'item x');
   }
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
@@ -179,13 +249,21 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           gd.firebaseMessagingTitle = message["notification"]["title"];
           gd.firebaseMessagingBody = message["notification"]["body"];
         }
-        Fluttertoast.showToast(
-            msg: "${gd.firebaseMessagingTitle}\n${gd.firebaseMessagingBody}",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.TOP,
-            backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-            textColor: Theme.of(context).textTheme.title.color,
-            fontSize: 14.0);
+        _showNotification(gd.firebaseMessagingTitle, gd.firebaseMessagingBody);
+//        String spacer = "";
+//        if (gd.firebaseMessagingTitle == null) gd.firebaseMessagingTitle = "";
+//        if (gd.firebaseMessagingBody == null) gd.firebaseMessagingBody = "";
+//        if (gd.firebaseMessagingTitle != "" && gd.firebaseMessagingBody != "")
+//          spacer = "\n";
+
+//        Fluttertoast.showToast(
+//            msg:
+//                "${gd.firebaseMessagingTitle}$spacer${gd.firebaseMessagingBody}",
+//            toastLength: Toast.LENGTH_LONG,
+//            gravity: ToastGravity.TOP,
+//            backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
+//            textColor: Theme.of(context).textTheme.title.color,
+//            fontSize: 14.0);
       },
       onResume: (Map<String, dynamic> message) async {
         print('on resume $message');
@@ -212,6 +290,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _connectivitySubscription.cancel();
+    didReceiveLocalNotificationSubject.close();
+    selectNotificationSubject.close();
     super.dispose();
   }
 
@@ -228,6 +309,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       });
     });
     googleSignIn.signInSilently();
+    initConnectivity();
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
 
     timer0 = Timer.periodic(
         Duration(milliseconds: 200), (Timer t) => timer200Callback());
@@ -237,6 +321,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         Timer.periodic(Duration(seconds: 5), (Timer t) => timer5Callback());
     timer10 =
         Timer.periodic(Duration(seconds: 10), (Timer t) => timer10Callback());
+    timer15 =
+        Timer.periodic(Duration(seconds: 15), (Timer t) => timer15Callback());
     timer30 =
         Timer.periodic(Duration(seconds: 30), (Timer t) => timer30Callback());
     timer60 =
@@ -254,10 +340,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
 //    await Future.delayed(const Duration(milliseconds: 500));
     gd.loginDataListString = await gd.getString('loginDataList');
-
     await gd.getSettings("mainInitState");
-
-    deviceInfo.initPlatformState();
+    deviceInfo.getDeviceInfo();
   }
 
   timer200Callback() {}
@@ -268,19 +352,20 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     }
   }
 
-  timer5Callback() {
-    //in case websocket fail for no reason.
-//    gd.httpApiStates();
-  }
+  timer5Callback() {}
 
   timer10Callback() {
-    if (gd.connectionStatus != "Connected" && gd.autoConnect) {
+    if (gd.webSocketConnectionStatus != "Connected" && gd.autoConnect) {
       webSocket.initCommunication();
     }
   }
 
+  timer15Callback() {
+    GeoLocatorHelper.updateLocation("timer15Callback");
+  }
+
   timer30Callback() {
-    if (gd.connectionStatus == "Connected") {
+    if (gd.webSocketConnectionStatus == "Connected") {
       gd.delayGetStatesTimer(5);
 //      use http
 //      var outMsg = {"id": gd.socketId, "type": "get_states"};
@@ -325,7 +410,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           "${generalData.deviceSetting.tabletLayout} | " +
           "${generalData.deviceSetting.shapeLayout} | " +
           "${generalData.mediaQueryHeight} | " +
-          "${generalData.connectionStatus} | " +
+          "${generalData.webSocketConnectionStatus} | " +
           "${generalData.roomList.length} | ",
       builder: (context, data, child) {
         return Scaffold(
@@ -343,11 +428,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                 onTap: (int) {
                   log.d("CupertinoTabBar onTap $int");
                   gd.viewMode = ViewMode.normal;
-                  if (gd.entityControlPageParentShow) {
-                    print(
-                        "CupertinoTabBar Navigator.pop(context) ${gd.entityControlPageParentShow}");
-//                    Navigator.pop(context);
-                  }
                 },
                 currentIndex: 0,
                 items: [
@@ -377,7 +457,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                       style:
                           TextStyle(color: ThemeInfo.colorBottomSheetReverse),
                     ),
-//                title: TestWidget(),
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(MaterialDesignIcons.getIconDataFromIconName(
@@ -436,5 +515,39 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         );
       },
     );
+  }
+
+  final Connectivity _connectivity = Connectivity();
+  StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initConnectivity() async {
+    ConnectivityResult result;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      print(e.toString());
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    print("_updateConnectionStatus $result");
+    gd.connectivityStatus = result.toString();
+    switch (result) {
+      case ConnectivityResult.wifi:
+      case ConnectivityResult.mobile:
+      case ConnectivityResult.none:
+      default:
+    }
   }
 }

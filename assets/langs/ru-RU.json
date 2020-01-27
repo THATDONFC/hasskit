@@ -12,6 +12,7 @@
         "left": "Лево",
         "right": "Право",
         "connect_hass": "Пожалуйста, подключитесь к \nHome Assistant",
+        "connect_demo": "Настройка\nHassKit Demo",
         "last_update": "Последнее обновление",
         "cancel": "Отменить",
         "settings": "Настройки",

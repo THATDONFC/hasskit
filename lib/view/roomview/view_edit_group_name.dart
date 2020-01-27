@@ -59,7 +59,10 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                   SizedBox(width: 6),
                   Expanded(
                     child: TextFormField(
-                      decoration: InputDecoration(suffixIcon: Icon(Icons.edit)),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        suffixIcon: Icon(Icons.edit),
+                      ),
                       controller: _controller1,
                       autocorrect: false,
                       textAlign: TextAlign.left,
@@ -96,7 +99,10 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                   SizedBox(width: 6),
                   Expanded(
                     child: TextFormField(
-                      decoration: InputDecoration(suffixIcon: Icon(Icons.edit)),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        suffixIcon: Icon(Icons.edit),
+                      ),
                       controller: _controller2,
                       autocorrect: false,
                       textAlign: TextAlign.left,
@@ -133,7 +139,10 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                   SizedBox(width: 6),
                   Expanded(
                     child: TextFormField(
-                      decoration: InputDecoration(suffixIcon: Icon(Icons.edit)),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        suffixIcon: Icon(Icons.edit),
+                      ),
                       controller: _controller3,
                       autocorrect: false,
                       textAlign: TextAlign.left,
@@ -170,7 +179,10 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                   SizedBox(width: 6),
                   Expanded(
                     child: TextFormField(
-                      decoration: InputDecoration(suffixIcon: Icon(Icons.edit)),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        suffixIcon: Icon(Icons.edit),
+                      ),
                       controller: _controller4,
                       autocorrect: false,
                       textAlign: TextAlign.left,

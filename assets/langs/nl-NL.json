@@ -12,6 +12,7 @@
         "left": "Links",
         "right": "Rechts",
         "connect_hass": "Verbind aub met Home Assistant",
+        "connect_demo": "Opzetten\nHassKit Demo",
         "last_update": "Nieuwste update",
         "cancel": "Annuleren",
         "settings": "Instellingen",

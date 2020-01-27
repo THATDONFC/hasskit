@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hasskit/helper/general_data.dart';
 import 'package:hasskit/helper/material_design_icons.dart';
 import 'package:hasskit/helper/theme_info.dart';
-import 'package:hasskit/view/custom_popup_menu.dart';
-import 'package:hasskit/view/entitycontrol/entity_control_parent.dart';
+import 'package:hasskit/view/bottom_sheet_menu.dart';
+import 'package:hasskit/view/entity_control/entity_control_parent.dart';
 import 'package:provider/provider.dart';
 
 class SliverNavigationBar extends StatelessWidget {
@@ -31,7 +31,10 @@ class SliverNavigationBar extends StatelessWidget {
       selector: (_, generalData) => "${generalData.roomList.length} "
           "${generalData.roomList[roomIndex].imageIndex} "
           "${generalData.roomList[roomIndex].tempEntityId} "
+          "${generalData.roomList[roomIndex].row1.length} "
           "${generalData.roomList[roomIndex].row2.length} "
+          "${generalData.roomList[roomIndex].row3.length} "
+          "${generalData.roomList[roomIndex].row4.length} "
           "${generalData.eventsEntities} "
           "${generalData.activeDevicesShow} "
           "${generalData.activeDevicesOn.length} "
@@ -99,16 +102,14 @@ class SliverNavigationBar extends StatelessWidget {
                 Icon(
                   MaterialDesignIcons.getIconDataFromIconName(
                       "mdi:thermometer"),
-                  size: 24,
+                  size: 18,
                   color: iconColor,
                 ),
-                Expanded(
-                  child: Text(
-                    "${tempState.toStringAsFixed(1)} ${gd.entities[gd.roomList[roomIndex].tempEntityId].unitOfMeasurement.trim()}",
-                    textScaleFactor: gd.textScaleFactorFix,
-                    style: TextStyle(color: ThemeInfo.colorBottomSheetReverse),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  "${tempState.toStringAsFixed(1)} ${gd.entities[gd.roomList[roomIndex].tempEntityId].unitOfMeasurement.trim()}",
+                  textScaleFactor: gd.textScaleFactorFix,
+                  style: Theme.of(context).textTheme.body1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -118,10 +119,27 @@ class SliverNavigationBar extends StatelessWidget {
         return CupertinoSliverNavigationBar(
           leading: temperatureWidget,
           backgroundColor: ThemeInfo.colorBottomSheet.withOpacity(0.5),
-          largeTitle: AutoSizeText(
-            gd.getRoomName(roomIndex),
-            style: TextStyle(color: ThemeInfo.colorBottomSheetReverse),
-            overflow: TextOverflow.ellipsis,
+          largeTitle: InkWell(
+            onTap: () {
+              if (this.roomIndex > 0 && gd.roomList.length > 2) {
+                print(
+                    "CupertinoSliverNavigationBar ${this.roomIndex} ${gd.roomList.length}");
+                roomShortCut(context);
+              }
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                AutoSizeText(
+                  gd.getRoomName(roomIndex),
+                  style: TextStyle(color: ThemeInfo.colorBottomSheetReverse),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                this.roomIndex > 0 && gd.roomList.length > 2
+                    ? Icon(Icons.view_carousel)
+                    : Container(),
+              ],
+            ),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -185,6 +203,62 @@ class SliverNavigationBar extends StatelessWidget {
                     )
                   : Container(),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  void roomShortCut(context) {
+    List<Widget> roomShortCuts = [];
+
+    for (int i = 1; i < gd.roomList.length; i++) {
+      var rsc = ListTile(
+        leading: Icon(Icons.view_carousel),
+        title: Text(
+          gd.roomList[i].name,
+          overflow: TextOverflow.ellipsis,
+          textScaleFactor: gd.textScaleFactorFix,
+        ),
+        contentPadding: EdgeInsets.zero,
+        onTap: () {
+          Navigator.pop(context);
+          gd.pageController.animateToPage(
+            i - 1,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeOut,
+          );
+        },
+      );
+      roomShortCuts.add(rsc);
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: false,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: ThemeInfo.colorBottomSheet,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              ),
+            ),
+            child: CustomScrollView(
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: roomShortCuts,
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

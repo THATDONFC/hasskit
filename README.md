@@ -57,6 +57,9 @@ https://apps.apple.com/us/app/hasskit/id1485362169
 Download on the Google Playstore
 https://play.google.com/store/apps/details?id=com.thhkstudio.hasskit
 
-## How can I send notification to #HassKit?
-You can send notification directly from Home Assistant to #HassKit using this guide.
-https://github.com/tuanha2000vn/hasskit/blob/master/notify_hasskit.md
+## How can I track location and send notification to #HassKit?
+
+![untitled](https://user-images.githubusercontent.com/2765517/72196631-4354a100-344c-11ea-87d9-47c9ad2dbbba.gif)
+<br>
+You can track location and send notification directly from Home Assistant to #HassKit using this guide.
+https://github.com/tuanha2000vn/hasskit/blob/master/mobile_app.md

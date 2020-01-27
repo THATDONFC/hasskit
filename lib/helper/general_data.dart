@@ -11,9 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hasskit/helper/geolocator_helper.dart';
+import 'package:hasskit/helper/mobile_app_helper.dart';
 import 'package:hasskit/helper/theme_info.dart';
 import 'package:hasskit/helper/web_socket.dart';
-import 'package:hasskit/integration/device_integration.dart';
+import 'package:hasskit/model/location_zone.dart';
+import 'package:hasskit/view/setting_control/setting_mobile_app.dart';
 import 'package:hasskit/model/base_setting.dart';
 import 'package:hasskit/model/camera_info.dart';
 import 'package:hasskit/model/device_setting.dart';
@@ -26,7 +29,7 @@ import 'package:hasskit/model/sensor.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validators/validators.dart';
-
+import 'dart:math' as Math;
 import 'logger.dart';
 import 'material_design_icons.dart';
 
@@ -116,34 +119,47 @@ class GeneralData with ChangeNotifier {
     }
   }
 
-  String _connectionStatus = '';
+  String _webSocketConnectionStatus = '';
 
-  String get connectionStatus => _connectionStatus;
+  String get webSocketConnectionStatus => _webSocketConnectionStatus;
 
-  set connectionStatus(String val) {
+  set webSocketConnectionStatus(String val) {
     if (val == null) {
       throw new ArgumentError();
     }
-    if (_connectionStatus != val) {
-      _connectionStatus = val;
-//      if (val == "Connected") {
-//        gd.getSettings("val == Connected");
-//      }
+    if (_webSocketConnectionStatus != val) {
+      _webSocketConnectionStatus = val;
+      notifyListeners();
+    }
+  }
+
+  bool _webSocketConnected = false;
+
+  bool get webSocketConnected => _webSocketConnected;
+
+  set webSocketConnected(bool val) {
+    if (_webSocketConnected != val) {
+      _webSocketConnected = val;
+      if (!val) {
+        webSocketDisconnectedTime = DateTime.now();
+      }
       notifyListeners();
     }
   }
 
   bool get showSpin {
-    if (connectionStatus != 'Connected' &&
-        gd.connectionOnDataTime
-            .add(Duration(seconds: 10))
-            .isBefore(DateTime.now())) {
+    if (gd.webSocketConnected == false &&
+        gd.webSocketDisconnectedTime
+            .isBefore(DateTime.now().subtract(Duration(seconds: 15)))) {
       return true;
     }
     return false;
   }
 
-  DateTime connectionOnDataTime;
+//  DateTime webSocketOnDoneTime = DateTime.now();
+
+  DateTime webSocketOnDataTime = DateTime.now();
+  DateTime webSocketDisconnectedTime = DateTime.now();
 
   String _urlTextField = '';
 
@@ -171,7 +187,7 @@ class GeneralData with ChangeNotifier {
         .post(url + '/auth/token', headers: headers, body: body)
         .then((response) {
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        gd.connectionStatus =
+        gd.webSocketConnectionStatus =
             'Got response from server with code ${response.statusCode}';
 
         var bodyDecode = json.decode(response.body);
@@ -198,18 +214,18 @@ class GeneralData with ChangeNotifier {
         gd.loginDataListAdd(loginData, "sendHttpPost");
         loginDataListSortAndSave("sendHttpPost");
         webSocket.initCommunication();
-        gd.connectionStatus =
+        gd.webSocketConnectionStatus =
             'Init Websocket Communication to ${loginDataCurrent.getUrl}';
-        log.w(gd.connectionStatus);
-        Navigator.pop(context, gd.connectionStatus);
+        log.w(gd.webSocketConnectionStatus);
+        Navigator.pop(context, gd.webSocketConnectionStatus);
       } else {
-        gd.connectionStatus =
+        gd.webSocketConnectionStatus =
             'Error response from server with code ${response.statusCode}';
-        Navigator.pop(context, gd.connectionStatus);
+        Navigator.pop(context, gd.webSocketConnectionStatus);
       }
     }).catchError((e) {
-      gd.connectionStatus = 'Error response from server with code $e';
-      Navigator.pop(context, gd.connectionStatus);
+      gd.webSocketConnectionStatus = 'Error response from server with code $e';
+      Navigator.pop(context, gd.webSocketConnectionStatus);
     });
   }
 
@@ -230,13 +246,30 @@ class GeneralData with ChangeNotifier {
         continue;
       }
 
-//      if (entity.entityId.contains("input_select.")) {
-//        log.w("socketGetStates ${entity.entityId}");
-//        print("mess $mess");
-//      }
+      if (entity.entityId.contains("zone.")) {
+        LocationZone locationZone = LocationZone.fromJson(mess);
+        bool addNewLocationZone = true;
+        for (var loc in locationZones) {
+          if (loc.friendlyName == locationZone.friendlyName) {
+            addNewLocationZone = false;
+            break;
+          }
+        }
 
-      if (previousEntitiesList.contains(entity.entityId))
+        if (addNewLocationZone) {
+          print(
+              "locationZones.add locationZone friendly_name ${locationZone.friendlyName} latitude ${locationZone.latitude} longitude ${locationZone.longitude} radius ${locationZone.radius}");
+          locationZones.add(locationZone);
+        }
+      }
+
+      if (entity.entityId.contains("water_heater.")) {
+        print("\nsocketGetStates water_heater $mess\n");
+      }
+
+      if (previousEntitiesList.contains(entity.entityId)) {
         previousEntitiesList.remove(entity.entityId);
+      }
 
       entities[entity.entityId] = entity;
     }
@@ -430,13 +463,11 @@ class GeneralData with ChangeNotifier {
 
   LoginData loginDataHassKit = LoginData(
     url: "http://hasskit.duckdns.org:8123",
-    accessToken:
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI4NWRlNWM4MmE4OGQ0YmYxOTk4ZjgxZGE3YzY3ZWFkNSIsImlhdCI6MTU3MzY5Mzg2NiwiZXhwIjoxNTczNjk1NjY2fQ.GDWWYGshuxPOrv3GMOjqlxKUtPVh5sADzgTUutDp508",
+    accessToken: "",
     longToken:
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjZmNkOTk4ZjJiOTE0NjAwOThhNzJlYmQzZTk4NmFhYyIsImlhdCI6MTU3MzY5Mzg2NywiZXhwIjoxNjA1MjI5ODY3fQ.iUOXvErg3B6FyNqIpBZptXzzJSb4ib6E35PJ7XPrtJ4",
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIyMDVhM2M3N2JjYjg0ZjBlYjI3MzZmNGJiNGUyZWI3OSIsImlhdCI6MTU3ODk4MzQxNCwiZXhwIjoxNjEwNTE5NDE0fQ.jkw-hk8UG0yK_6UHKdkY6kUkIfK4702FqKfRa5JsCk4",
     expiresIn: 1800,
-    refreshToken:
-        "72b2bb75f7363a657031cb3389f1c66a22826154f95fbcd7a6b606a02e797d391898f87b0fef8eff107f35b0f8cc2ad995f3c70d3f609e82ff5f2eec9b0cba3b",
+    refreshToken: "",
     tokenType: "Bearer",
     lastAccess: 1573693868837,
   );
@@ -448,8 +479,6 @@ class GeneralData with ChangeNotifier {
   String get loginDataListString => _loginDataListString;
 
   set loginDataListString(val) {
-    if (val == _loginDataListString) return;
-
     _loginDataListString = val;
 
     if (_loginDataListString != null && _loginDataListString.length > 0) {
@@ -476,7 +505,7 @@ class GeneralData with ChangeNotifier {
 
     if (gd.loginDataList.length > 0) {
       loginDataCurrent = gd.loginDataList[0];
-      if (gd.autoConnect && gd.connectionStatus != "Connected") {
+      if (gd.autoConnect && gd.webSocketConnectionStatus != "Connected") {
         log.w('Auto connect to ${loginDataCurrent.getUrl}');
         webSocket.initCommunication();
       }
@@ -518,8 +547,17 @@ class GeneralData with ChangeNotifier {
     }
   }
 
-  void loginDataListDelete(LoginData loginData) {
+  Future<void> loginDataListDelete(LoginData loginData) async {
     log.d('LoginData.loginDataListDelete ${loginData.url}');
+    var url = loginData.url.replaceAll(".", "-");
+    url = url.replaceAll("/", "-");
+    url = url.replaceAll(":", "-");
+    var _preferences = await SharedPreferences.getInstance();
+    print("_preferences.remove deviceSetting $url");
+    _preferences.remove("deviceSetting $url");
+    print("_preferences.remove settingMobileApp $url");
+    _preferences.remove("settingMobileApp $url");
+
     if (loginData != null) {
       loginDataList.remove(loginData);
       log.d('loginDataList.remove ${loginData.url}');
@@ -680,7 +718,18 @@ class GeneralData with ChangeNotifier {
 
   List<Room> roomList = [];
   List<Room> roomListDefault = [
-    Room(name: 'Home', imageIndex: 17, row1: [], row2: [], row3: [], row4: []),
+    Room(
+      name: 'Home',
+      imageIndex: 17,
+      row1: [],
+      row1Name: "Group 1",
+      row2: [],
+      row2Name: "Group 2",
+      row3: [],
+      row3Name: "Group 3",
+      row4: [],
+      row4Name: "Group 4",
+    ),
     Room(
       name: 'Living Room',
       imageIndex: 18,
@@ -806,6 +855,7 @@ class GeneralData with ChangeNotifier {
         "fan.super_fan",
         "cover.cover_09",
       ],
+      row1Name: "Group 1",
       row2: [],
       row2Name: "Group 2",
       row3: [],
@@ -825,6 +875,7 @@ class GeneralData with ChangeNotifier {
         "switch.tuya_neo_coolcam_10a",
         "WebView1",
       ],
+      row1Name: "Group 1",
       row2: [],
       row2Name: "Group 2",
       row3: [],
@@ -1057,49 +1108,41 @@ class GeneralData with ChangeNotifier {
   String get roomListString => _roomListString;
 
   set roomListString(val) {
-    if (_roomListString != val) {
-      _roomListString = val;
+    _roomListString = val;
 
-      if (_roomListString != null && _roomListString.length > 0) {
-        log.w('FOUND _roomListString $_roomListString');
+    if (_roomListString != null && _roomListString.length > 0) {
+      log.w('FOUND _roomListString $_roomListString');
 //        List<dynamic> roomListJson = jsonDecode(_roomListString);
 
-        roomList.clear();
-        roomList = [];
+      roomList.clear();
+      roomList = [];
 
-        var roomListJson = jsonDecode(_roomListString);
+      var roomListJson = jsonDecode(_roomListString);
 
-        log.w("roomListJson $roomListJson");
+      log.w("roomListJson $roomListJson");
 
-        for (var roomJson in roomListJson) {
-          Room room = Room.fromJson(roomJson);
-          log.d('addRoom ${room.name}');
-          roomList.add(room);
-        }
-        log.d('loginDataList.length ${roomList.length}');
+      for (var roomJson in roomListJson) {
+        Room room = Room.fromJson(roomJson);
+        log.d('addRoom ${room.name}');
+        roomList.add(room);
       }
+      log.d('loginDataList.length ${roomList.length}');
+    }
 //      else if(currentUrl)
 //        {
 //
 //        }
-      else {
-        log.w('CAN NOT FIND roomList adding default data');
-        roomList.clear();
-        roomList = [];
-        gd.roomListString = "";
-        for (var room in roomListDefault) {
-          roomList.add(room);
-        }
+    else {
+      log.w('CAN NOT FIND roomList adding default data');
+      roomList.clear();
+      roomList = [];
+      for (var room in roomListDefault) {
+        roomList.add(room);
       }
 
       notifyListeners();
     }
   }
-
-//  loadRoomListAsync(String url) async {
-//    url = base64Url.encode(utf8.encode(url));
-//    roomListString = await gd.getString('roomList $url');
-//  }
 
   var emptySliver = SliverFixedExtentList(
     itemExtent: 0,
@@ -1216,7 +1259,7 @@ class GeneralData with ChangeNotifier {
     var outMsg = {'id': gd.socketId, 'type': 'get_states'};
     var message = jsonEncode(outMsg);
     webSocket.send(message);
-    gd.connectionStatus = 'Sending get_states';
+    gd.webSocketConnectionStatus = 'Sending get_states';
     log.w('delayGetStates!');
   }
 
@@ -1433,33 +1476,28 @@ class GeneralData with ChangeNotifier {
   String get deviceSettingString => _deviceSettingString;
 
   set deviceSettingString(val) {
-    if (_deviceSettingString != val) {
-      _deviceSettingString = val;
+    _deviceSettingString = val;
 
-      if (_deviceSettingString != null && _deviceSettingString.length > 0) {
-        log.w('FOUND deviceSetting _deviceSettingString $_deviceSettingString');
+    if (_deviceSettingString != null && _deviceSettingString.length > 0) {
+      log.w('FOUND deviceSetting _deviceSettingString $_deviceSettingString');
 
-        val = jsonDecode(val);
-        deviceSetting = DeviceSetting.fromJson(val);
-      } else {
-        log.w('CAN NOT FIND deviceSetting adding default data');
-        deviceSetting.phoneLayout = 3;
-        deviceSetting.tabletLayout = 69;
-        deviceSetting.shapeLayout = 1;
-        deviceSetting.themeIndex = 1;
-        deviceSetting.lastArmType = "arm_away";
-        deviceSetting.settingLocked = false;
-        deviceSetting.settingPin = "0000";
-        deviceSetting.lockOut = "";
-        deviceSetting.failAttempt = 0;
-        deviceSetting.backgroundPhoto = [];
-      }
-
-      log.d("deviceSetting.phoneLayout 1 ${gd.deviceSetting.phoneLayout}");
-      log.d("deviceSetting.shapeLayout 1 ${gd.deviceSetting.shapeLayout}");
-
-      notifyListeners();
+      val = jsonDecode(val);
+      deviceSetting = DeviceSetting.fromJson(val);
+    } else {
+      log.w('CAN NOT FIND deviceSetting adding default data');
+      deviceSetting.phoneLayout = 3;
+      deviceSetting.tabletLayout = 69;
+      deviceSetting.shapeLayout = 1;
+      deviceSetting.themeIndex = 1;
+      deviceSetting.lastArmType = "arm_away";
+      deviceSetting.settingLocked = false;
+      deviceSetting.settingPin = "0000";
+      deviceSetting.lockOut = "";
+      deviceSetting.failAttempt = 0;
+      deviceSetting.backgroundPhoto = [];
     }
+
+    notifyListeners();
   }
 
   void deviceSettingSave() {
@@ -1505,28 +1543,26 @@ class GeneralData with ChangeNotifier {
   String get baseSettingString => _baseSettingString;
 
   set baseSettingString(val) {
-    if (_baseSettingString != val) {
-      _baseSettingString = val;
+    _baseSettingString = val;
 
-      if (_baseSettingString != null && _baseSettingString.length > 0) {
-        log.w('FOUND _baseSettingString $_baseSettingString');
+    if (_baseSettingString != null && _baseSettingString.length > 0) {
+      log.w('FOUND _baseSettingString $_baseSettingString');
 
-        val = jsonDecode(val);
-        baseSetting = BaseSetting.fromJson(val);
-      } else {
-        log.w('CAN NOT FIND baseSetting adding default data');
-        baseSetting.notificationDevices = [];
-        baseSetting.colorPicker = [
-          "0xffEEEEEE",
-          "0xffEF5350",
-          "0xffFFCA28",
-          "0xff66BB6A",
-          "0xff42A5F5",
-          "0xffAB47BC",
-        ];
-      }
-      notifyListeners();
+      val = jsonDecode(val);
+      baseSetting = BaseSetting.fromJson(val);
+    } else {
+      log.w('CAN NOT FIND baseSetting adding default data');
+      baseSetting.notificationDevices = [];
+      baseSetting.colorPicker = [
+        "0xffEEEEEE",
+        "0xffEF5350",
+        "0xffFFCA28",
+        "0xff66BB6A",
+        "0xff42A5F5",
+        "0xffAB47BC",
+      ];
     }
+    notifyListeners();
   }
 
   Timer _baseSettingSaveTimer;
@@ -1703,119 +1739,119 @@ class GeneralData with ChangeNotifier {
   }
 
   List<String> iconsOverride = [
-    "",
-    "mdi:account",
-    "mdi:air-conditioner",
-    "mdi:air-filter",
-    "mdi:air-horn",
-    "mdi:air-purifier",
-    "mdi:airplay",
-    "mdi:alert",
-    "mdi:alert-outline",
-    "mdi:battery-80",
-    "mdi:balloon",
-    "mdi:bed-empty",
-    "mdi:bed-king",
-    "mdi:bed-queen",
-    "mdi:blinds",
-    "mdi:blur",
-    "mdi:blur-linear",
-    "mdi:blur-off",
-    "mdi:blur-radial",
-    "mdi:brightness-5",
-    "mdi:brightness-7",
-    "mdi:camera",
-    "mdi:candle",
-    "mdi:candycane",
-    "mdi:cast",
-    "mdi:ceiling-light",
-    "mdi:check-outline",
-    "mdi:checkbox-blank-circle-outline",
-    "mdi:checkbox-marked-circle",
-    "mdi:desk-lamp",
-    "mdi:dip-switch",
-    "mdi:doorbell-video",
-    "mdi:door-closed",
-    "mdi:fan",
-    "mdi:fire",
-    "mdi:flash",
-    "mdi:floor-lamp",
-    "mdi:flower",
-    "mdi:food-fork-drink",
-    "mdi:garage",
-    "mdi:gauge",
-    "mdi:group",
-    "mdi:home",
-    "mdi:home-automation",
-    "mdi:home-outline",
-    "mdi:hotel",
-    "mdi:lamp",
-    "mdi:lava-lamp",
-    "mdi:leaf",
-    "mdi:light-switch",
-    "mdi:lightbulb",
-    "mdi:lightbulb-off",
-    "mdi:lightbulb-off-outline",
-    "mdi:lightbulb-outline",
-    "mdi:lighthouse",
-    "mdi:lighthouse-on",
-    "mdi:lock",
-    "mdi:music-note",
-    "mdi:music-note-off",
-    "mdi:page-layout-sidebar-right",
-    "mdi:pine-tree",
-    "mdi:power",
-    "mdi:power-cycle",
-    "mdi:power-off",
-    "mdi:power-on",
-    "mdi:power-plug",
-    "mdi:power-plug-off",
-    "mdi:power-settings",
-    "mdi:power-sleep",
-    "mdi:power-socket",
-    "mdi:power-socket-au",
-    "mdi:power-socket-eu",
-    "mdi:power-socket-uk",
-    "mdi:power-socket-us",
-    "mdi:power-standby",
-    "mdi:radiator",
-    "mdi:robot-vacuum",
-    "mdi:script-text",
-    "mdi:server-network",
-    "mdi:server-network-off",
-    "mdi:shield-check",
-    "mdi:silverware-fork-knife",
-    "mdi:snowflake",
-    "mdi:speaker",
-    "mdi:square",
-    "mdi:square-outline",
-    "mdi:stairs",
-    "mdi:theater",
-    "mdi:thermometer",
-    "mdi:thermostat",
-    "mdi:timer",
-    "mdi:toggle-switch",
-    "mdi:toggle-switch-off",
-    "mdi:toggle-switch-off-outline",
-    "mdi:toggle-switch-outline",
-    "mdi:toilet",
-    "mdi:track-light",
-    "mdi:vibrate",
-    "mdi:video-switch",
-    "mdi:walk",
-    "mdi:wall-sconce",
-    "mdi:wall-sconce-flat",
-    "mdi:wall-sconce-variant",
-    "mdi:water",
-    "mdi:water-off",
-    "mdi:water-percent",
-    "mdi:weather-partly-cloudy",
-    "mdi:webcam",
-    "mdi:white-balance-incandescent",
-    "mdi:white-balance-iridescent",
-    "mdi:white-balance-sunny",
-    "mdi:window-closed",
-    "mdi:window-shutter",
+//    "",
+//    "mdi:account",
+//    "mdi:air-conditioner",
+//    "mdi:air-filter",
+//    "mdi:air-horn",
+//    "mdi:air-purifier",
+//    "mdi:airplay",
+//    "mdi:alert",
+//    "mdi:alert-outline",
+//    "mdi:battery-80",
+//    "mdi:balloon",
+//    "mdi:bed-empty",
+//    "mdi:bed-king",
+//    "mdi:bed-queen",
+//    "mdi:blinds",
+//    "mdi:blur",
+//    "mdi:blur-linear",
+//    "mdi:blur-off",
+//    "mdi:blur-radial",
+//    "mdi:brightness-5",
+//    "mdi:brightness-7",
+//    "mdi:camera",
+//    "mdi:candle",
+//    "mdi:candycane",
+//    "mdi:cast",
+//    "mdi:ceiling-light",
+//    "mdi:check-outline",
+//    "mdi:checkbox-blank-circle-outline",
+//    "mdi:checkbox-marked-circle",
+//    "mdi:desk-lamp",
+//    "mdi:dip-switch",
+//    "mdi:doorbell-video",
+//    "mdi:door-closed",
+//    "mdi:fan",
+//    "mdi:fire",
+//    "mdi:flash",
+//    "mdi:floor-lamp",
+//    "mdi:flower",
+//    "mdi:food-fork-drink",
+//    "mdi:garage",
+//    "mdi:gauge",
+//    "mdi:group",
+//    "mdi:home",
+//    "mdi:home-automation",
+//    "mdi:home-outline",
+//    "mdi:hotel",
+//    "mdi:lamp",
+//    "mdi:lava-lamp",
+//    "mdi:leaf",
+//    "mdi:light-switch",
+//    "mdi:lightbulb",
+//    "mdi:lightbulb-off",
+//    "mdi:lightbulb-off-outline",
+//    "mdi:lightbulb-outline",
+//    "mdi:lighthouse",
+//    "mdi:lighthouse-on",
+//    "mdi:lock",
+//    "mdi:music-note",
+//    "mdi:music-note-off",
+//    "mdi:page-layout-sidebar-right",
+//    "mdi:pine-tree",
+//    "mdi:power",
+//    "mdi:power-cycle",
+//    "mdi:power-off",
+//    "mdi:power-on",
+//    "mdi:power-plug",
+//    "mdi:power-plug-off",
+//    "mdi:power-settings",
+//    "mdi:power-sleep",
+//    "mdi:power-socket",
+//    "mdi:power-socket-au",
+//    "mdi:power-socket-eu",
+//    "mdi:power-socket-uk",
+//    "mdi:power-socket-us",
+//    "mdi:power-standby",
+//    "mdi:radiator",
+//    "mdi:robot-vacuum",
+//    "mdi:script-text",
+//    "mdi:server-network",
+//    "mdi:server-network-off",
+//    "mdi:shield-check",
+//    "mdi:silverware-fork-knife",
+//    "mdi:snowflake",
+//    "mdi:speaker",
+//    "mdi:square",
+//    "mdi:square-outline",
+//    "mdi:stairs",
+//    "mdi:theater",
+//    "mdi:thermometer",
+//    "mdi:thermostat",
+//    "mdi:timer",
+//    "mdi:toggle-switch",
+//    "mdi:toggle-switch-off",
+//    "mdi:toggle-switch-off-outline",
+//    "mdi:toggle-switch-outline",
+//    "mdi:toilet",
+//    "mdi:track-light",
+//    "mdi:vibrate",
+//    "mdi:video-switch",
+//    "mdi:walk",
+//    "mdi:wall-sconce",
+//    "mdi:wall-sconce-flat",
+//    "mdi:wall-sconce-variant",
+//    "mdi:water",
+//    "mdi:water-off",
+//    "mdi:water-percent",
+//    "mdi:weather-partly-cloudy",
+//    "mdi:webcam",
+//    "mdi:white-balance-incandescent",
+//    "mdi:white-balance-iridescent",
+//    "mdi:white-balance-sunny",
+//    "mdi:window-closed",
+//    "mdi:window-shutter",
   ];
 
   IconData mdiIcon(String iconString) {
@@ -1998,28 +2034,34 @@ class GeneralData with ChangeNotifier {
       return;
     }
 
+    var url = gd.loginDataCurrent.getUrl.replaceAll(".", "-");
+    url = url.replaceAll("/", "-");
+    url = url.replaceAll(":", "-");
+
+    //force the trigger reset
+    log.w(
+        "force the trigger reset settingMobileAppString load settingMobileApp $url");
+    gd.settingMobileAppString = "";
+    gd.settingMobileAppString = await gd.getString('settingMobileApp $url');
+    gd.locationZones.clear();
+    gd.locationUpdateTime = DateTime.now().subtract(Duration(days: 1));
+
+    //force the trigger reset
+    log.w(
+        "force the trigger reset deviceSettingString load deviceSetting $url");
+    gd.deviceSettingString = "";
+    gd.deviceSettingString = await gd.getString('deviceSetting $url');
+
     //no firebase return load disk data
     if (gd.firebaseUser == null) {
       log.e("gd.firebaseUser == null");
-      var url = gd.loginDataCurrent.getUrl.replaceAll(".", "-");
-      url = url.replaceAll("/", "-");
-      url = url.replaceAll(":", "-");
 
       //force the trigger reset
       log.w(
           "force the trigger reset entitiesOverrideString load entitiesOverride");
       gd.entitiesOverrideString = "";
       gd.entitiesOverrideString = await gd.getString('entitiesOverride');
-      //force the trigger reset
-      log.w(
-          "force the trigger reset deviceIntegrationString load deviceIntegrationString");
-      gd.deviceIntegrationString = "";
-      gd.deviceIntegrationString = await gd.getString('deviceIntegration');
-      //force the trigger reset
-      log.w(
-          "force the trigger reset deviceSettingString load deviceSetting $url");
-      gd.deviceSettingString = "";
-      gd.deviceSettingString = await gd.getString('deviceSetting $url');
+
       //force the trigger reset
       log.w("force the trigger reset baseSettingString load baseSetting $url");
       gd.baseSettingString = "";
@@ -2323,6 +2365,7 @@ class GeneralData with ChangeNotifier {
 
   void httpApiStates() async {
     var client = new http.Client();
+
     var url = gd.currentUrl + "/api/states";
     Map<String, String> headers = {
       'content-type': 'application/json',
@@ -2340,7 +2383,42 @@ class GeneralData with ChangeNotifier {
         socketGetStates(jsonResponse);
       } else {
         log.e(
-            "httpApiStates Request failed with status: ${response.statusCode}.");
+            "httpApiStates Request $url ailed with status: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("httpApiStates e $e");
+    } finally {
+      client.close();
+    }
+
+    if (configVersion != "") return;
+
+    client = new http.Client();
+    url = gd.currentUrl + "/api/config";
+    log.d("httpApiStates api/config $url");
+
+    try {
+      var response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        print("jsonResponse $url $jsonResponse");
+        configVersion = jsonResponse['version'];
+        configLocationName = jsonResponse['location_name'];
+        configUnitSystem =
+            Map<String, dynamic>.from(jsonResponse['unit_system']);
+        configComponent = List<String>.from(jsonResponse['components']);
+
+        print("configComponent $configComponent");
+        print("configLocationName $configLocationName");
+        print("configUnitSystem $configUnitSystem");
+        print(
+            "configUnitSystem['temperature'] ${configUnitSystem['temperature']}");
+        print("configVersion $configVersion");
+        MobileAppHelper mobileAppHelper = MobileAppHelper();
+        mobileAppHelper.check("httpApiStates api/config $url");
+      } else {
+        log.e(
+            "httpApiStates Request $url failed with status: ${response.statusCode}");
       }
     } finally {
       client.close();
@@ -2442,59 +2520,175 @@ class GeneralData with ChangeNotifier {
     return inputToInt.toDouble();
   }
 
-  bool entityControlPageParentShow = false;
-
   String firebaseMessagingToken = "";
   String firebaseMessagingTitle = "";
   String firebaseMessagingBody = "";
 
-  DeviceIntegration deviceIntegration = DeviceIntegration(
+  SettingMobileApp settingMobileApp = SettingMobileApp(
     deviceName: "",
     cloudHookUrl: "",
     remoteUiUrl: "",
     secret: "",
     webHookId: "",
+    trackLocation: false,
   );
 
-  String _deviceIntegrationString;
+  String _settingMobileAppString;
 
-  String get deviceIntegrationString => _deviceIntegrationString;
+  String get settingMobileAppString => _settingMobileAppString;
 
-  set deviceIntegrationString(val) {
-    if (_deviceIntegrationString != val) {
-      _deviceIntegrationString = val;
+  set settingMobileAppString(val) {
+    _settingMobileAppString = val;
 
-      if (_deviceIntegrationString != null &&
-          _deviceIntegrationString.length > 0) {
-        log.w(
-            'FOUND deviceIntegration _deviceIntegrationString $_deviceIntegrationString');
+    if (_settingMobileAppString != null && _settingMobileAppString.length > 0) {
+      log.w(
+          'FOUND settingMobileApp _settingMobileAppString $_settingMobileAppString');
 
-        val = jsonDecode(val);
-        deviceIntegration = DeviceIntegration.fromJson(val);
-      } else {
-        log.w('CAN NOT FIND deviceIntegration adding default data');
-        deviceIntegration.deviceName = "";
-        deviceIntegration.cloudHookUrl = "";
-        deviceIntegration.remoteUiUrl = "";
-        deviceIntegration.secret = "";
-        deviceIntegration.webHookId = "";
-      }
+      val = jsonDecode(val);
+      settingMobileApp = SettingMobileApp.fromJson(val);
+    } else {
+      log.w('CAN NOT FIND settingMobileApp adding default data');
+      settingMobileApp.deviceName = "";
+      settingMobileApp.cloudHookUrl = "";
+      settingMobileApp.remoteUiUrl = "";
+      settingMobileApp.secret = "";
+      settingMobileApp.webHookId = "";
+      settingMobileApp.trackLocation = false;
+    }
 
+    notifyListeners();
+  }
+
+  void settingMobileAppSave() {
+    log.d("settingMobileAppSave");
+
+    try {
+      String settingMobileAppEncoded = jsonEncode(settingMobileApp.toJson());
+      var url = gd.loginDataCurrent.getUrl.replaceAll(".", "-");
+      url = url.replaceAll("/", "-");
+      url = url.replaceAll(":", "-");
+
+      gd.saveString('settingMobileApp $url', settingMobileAppEncoded);
+      log.w('save settingMobileApp $settingMobileAppEncoded');
+    } catch (e) {
+      log.w("settingMobileAppSave $e");
+    }
+    notifyListeners();
+  }
+
+  DateTime locationUpdateTime = DateTime.parse("2020-01-01 00:00:00");
+
+  double _locationLatitude = 51.48;
+  double get locationLatitude => _locationLatitude;
+  set locationLatitude(val) {
+    if (_locationLatitude != val) {
+      _locationLatitude = val;
       notifyListeners();
     }
   }
 
-  void deviceIntegrationSave() {
-    log.d("deviceIntegrationSave");
-
-    try {
-      String deviceIntegrationEncoded = jsonEncode(deviceIntegration.toJson());
-
-      gd.saveString('deviceIntegration', deviceIntegrationEncoded);
-      log.w('save deviceIntegration $deviceIntegrationEncoded');
-    } catch (e) {
-      log.w("deviceIntegrationSave $e");
+  double _locationLongitude = 0;
+  double get locationLongitude => _locationLongitude;
+  set locationLongitude(val) {
+    if (_locationLongitude != val) {
+      _locationLongitude = val;
+      notifyListeners();
     }
-    notifyListeners();
+  }
+
+  //Update have 5 min cooldown
+  int _locationUpdateInterval = 5;
+  int get locationUpdateInterval => _locationUpdateInterval;
+  set locationUpdateInterval(val) {
+    if (_locationUpdateInterval != val) {
+      _locationUpdateInterval = val;
+      notifyListeners();
+    }
+  }
+
+//  0.05 = 50 meter default to 0.1 = 100 meter
+  double _locationUpdateMinDistance = 0.1;
+  double get locationUpdateMinDistance => _locationUpdateMinDistance;
+  set locationUpdateMinDistance(val) {
+    if (_locationUpdateMinDistance != val) {
+      _locationUpdateMinDistance = val;
+      notifyListeners();
+    }
+  }
+
+  bool _locationShowAdvancedSetting = false;
+  bool get locationShowAdvancedSetting => _locationShowAdvancedSetting;
+  set locationShowAdvancedSetting(val) {
+    if (_locationShowAdvancedSetting != val) {
+      _locationShowAdvancedSetting = val;
+      notifyListeners();
+    }
+  }
+
+  String _locationUpdateFail = "";
+  String get locationUpdateFail => _locationUpdateFail;
+  set locationUpdateFail(val) {
+    if (_locationUpdateFail != val) {
+      _locationUpdateFail = val;
+      notifyListeners();
+    }
+  }
+
+  String _locationUpdateSuccess = "";
+  String get locationUpdateSuccess => _locationUpdateSuccess;
+  set locationUpdateSuccess(val) {
+    if (_locationUpdateSuccess != val) {
+      _locationUpdateSuccess = val;
+      notifyListeners();
+    }
+  }
+
+  String get mobileAppState {
+    if (entities["device_tracker.${gd.settingMobileApp.deviceName}"] == null) {
+      return "...";
+    }
+    return entities["device_tracker.${gd.settingMobileApp.deviceName}"].state;
+  }
+
+  List<LocationZone> locationZones = [];
+  DateTime locationRecordTime = DateTime.parse("2020-01-01 00:00:00");
+
+  double getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1); // deg2rad below
+    var dLon = deg2rad(lon2 - lon1);
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) *
+            Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
+  }
+
+  double deg2rad(deg) {
+    return deg * (Math.pi / 180);
+  }
+
+  Map<String, dynamic> configUnitSystem = {};
+  String configVersion = "";
+  String configLocationName = "";
+  List<String> configComponent = [];
+
+  String _connectivityStatus = "";
+  String get connectivityStatus => _connectivityStatus;
+  set connectivityStatus(val) {
+    if (_connectivityStatus != val) {
+      print("_connectivityStatus $_connectivityStatus val $val");
+      _connectivityStatus = val;
+      if (_connectivityStatus == "ConnectivityResult.mobile" ||
+          _connectivityStatus == "ConnectivityResult.wifi") {
+        gd.locationUpdateTime = DateTime.now().subtract(Duration(days: 1));
+        GeoLocatorHelper.updateLocation(
+            "connectivityStatus $_connectivityStatus");
+      }
+      notifyListeners();
+    }
   }
 }

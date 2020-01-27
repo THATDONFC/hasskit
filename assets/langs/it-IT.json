@@ -12,6 +12,7 @@
         "left": "Sinistra",
         "right": "Destra",
         "connect_hass": "Perfavore connettiti a\nHome Assistant",
+        "connect_demo": "Impostare\nHassKit Demo",
         "last_update": "Ultimo aggiornamento",
         "cancel": "Annulla",
         "settings": "Impostazioni",

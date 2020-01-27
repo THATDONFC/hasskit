@@ -48,6 +48,7 @@ FCM_TOKEN = 'token'
 CONF_DEVICE_INDEX = 'device_index' # start = 1
 CONF_TITLE = 'title'
 CONF_BODY= 'body'
+CONF_IMAGE = 'image'
 
 # const data
 url = "https://fcm.googleapis.com/fcm/send"
@@ -55,8 +56,8 @@ api_key = "key=AAAA7WhBA9E:APA91bGxg52oNvwKsq50pcWa-k4JGZMkXvO11m3QP0rnEVSS7D4qh
 header_parameters = {'Authorization': api_key, 'content-type': 'application/json',}
 
 import requests
-def send_msg(token_, title_, body_):
-    data_msg = {"to": token_, "notification": {"body": body_, "title": title_}}
+def send_msg(token_, title_, body_, image_):
+    data_msg = {"to": token_, "notification": {"body": body_, "title": title_, "image": image_}}
     status_response = requests.post(url, json = data_msg, headers = header_parameters).status_code
     if (status_response != 200): # try again
         requests.post(url, json = data_msg, headers = header_parameters)
@@ -70,10 +71,11 @@ def setup(hass, config):
         index  = int(data_call.data.get(CONF_DEVICE_INDEX, 1))
         title  = str(data_call.data.get(CONF_TITLE, "Title of notification"))
         body  = str(data_call.data.get(CONF_BODY, "Body of notification"))
+        image  = str(data_call.data.get(CONF_IMAGE, ""))
         index = max(1, min(index, len(list_token))) - 1
         token = list_token[index]
         # send msg
-        send_msg(token, title, body)
+        send_msg(token, title, body, image)
         
     hass.services.register(DOMAIN, SERVICE_SEND, call_send_msg)
     return True

@@ -128,12 +128,15 @@ class _BackgroundImageDropdownButtonState
   }
 
   void removeDeviceSettingBackgroundPhoto() {
+    print("removeDeviceSettingBackgroundPhoto");
     List<String> recToRemove = [];
     for (var rec in gd.deviceSetting.backgroundPhoto) {
       if (rec.contains("[${widget.roomIndex}]")) recToRemove.add(rec);
     }
+    print("recToRemove $recToRemove");
     for (var rec in recToRemove) {
       gd.deviceSetting.backgroundPhoto.remove(rec);
     }
+    gd.deviceSettingSave();
   }
 }

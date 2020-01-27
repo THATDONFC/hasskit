@@ -12,6 +12,7 @@
         "left": "Αριστερά",
         "right": "Δεξιά",
         "connect_hass": "Παρακαλώ συδεθείτε στο\nHome Assistant",
+        "connect_demo": "Εγκαθιστώ\nHassKit Demo",
         "last_update": "Τελευταία ενημέρωση",
         "cancel": "Ακύρωση",
         "settings": "Ρυθμίσεις",

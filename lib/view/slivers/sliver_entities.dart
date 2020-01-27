@@ -5,9 +5,9 @@ import 'package:hasskit/helper/theme_info.dart';
 import 'package:hasskit/model/entity.dart';
 import 'package:hasskit/view/entity_button.dart';
 import 'package:hasskit/view/entity_camera.dart';
-import 'package:hasskit/view/entitycontrol/entity_control_camera_video_player.dart';
-import 'package:hasskit/view/entitycontrol/entity_control_camera_webview.dart';
-import 'package:hasskit/view/entitycontrol/entity_control_parent.dart';
+import 'package:hasskit/view/entity_control/entity_control_camera_video_player.dart';
+import 'package:hasskit/view/entity_control/entity_control_camera_webview.dart';
+import 'package:hasskit/view/entity_control/entity_control_parent.dart';
 import 'package:hasskit/view/slivers/sliver_web_view.dart';
 import 'package:reorderables/reorderables.dart';
 

@@ -44,7 +44,7 @@ class Entity {
   int angle;
   //Light
   int supportedFeatures;
-  int brightness;
+  double brightness;
   List<int> rgbColor;
   int minMireds;
   int maxMireds;
@@ -88,6 +88,10 @@ class Entity {
   //input_select
   List<String> options;
   bool hidden;
+  //water_heater
+  String awayMode;
+  String operationMode;
+  List<String> operationList;
 
   Entity({
     this.entityId,
@@ -155,6 +159,10 @@ class Entity {
     //input_select
     this.options,
     this.hidden = false,
+    //water_heater
+    this.awayMode,
+    this.operationMode,
+    this.operationList,
   });
 
   factory Entity.fromJson(Map<String, dynamic> json) {
@@ -240,9 +248,9 @@ class Entity {
                 ? int.parse(json['attributes']['supported_features'].toString())
                 : 0,
         brightness:
-            int.tryParse(json['attributes']['brightness'].toString()) != null
-                ? int.parse(json['attributes']['brightness'].toString())
-                : 0,
+            double.tryParse(json['attributes']['brightness'].toString()) != null
+                ? double.parse(json['attributes']['brightness'].toString())
+                : null,
         rgbColor: json['attributes']['rgb_color'] != null
             ? List<int>.from(json['attributes']['rgb_color'])
             : [],
@@ -348,17 +356,26 @@ class Entity {
         latitude:
             double.tryParse(json["attributes"]["latitude"].toString()) != null
                 ? double.parse(json["attributes"]["latitude"].toString())
-                : null,
+                : 0,
         longitude:
             double.tryParse(json["attributes"]["longitude"].toString()) != null
                 ? double.parse(json["attributes"]["longitude"].toString())
-                : null,
+                : 0,
         options: json['attributes']['options'] != null
             ? List<String>.from(json['attributes']['options'])
             : [],
         hidden: json['attributes']['hidden'] != null
             ? json['attributes']['hidden']
             : false,
+        awayMode: json['attributes']['away_mode'] != null
+            ? json['attributes']['away_mode']
+            : 'off',
+        operationMode: json['attributes']['operation_mode'] != null
+            ? json['attributes']['operation_mode']
+            : "eco",
+        operationList: json['attributes']['operation_list'] != null
+            ? List<String>.from(json['attributes']['operation_list'])
+            : ["eco"],
       );
     } catch (e) {
       log.e("Entity.fromJson newEntity $e");
@@ -422,7 +439,9 @@ class Entity {
   }
 
   EntityType get entityType {
-    if (entityId.contains('fan.') || entityId.contains('climate.')) {
+    if (entityId.contains('climate.') ||
+        entityId.contains('fan.') ||
+        entityId.contains('water_heater.')) {
       return EntityType.climateFans;
     } else if (entityId.contains('camera.')) {
       return EntityType.cameras;
@@ -616,6 +635,7 @@ class Entity {
     }
 
     if ((entityId.split('.')[0] == 'climate' ||
+            entityId.split('.')[0] == 'water_heater' ||
             entityId.split('.')[0] == 'media_player') &&
         stateLower != 'idle') {
       return true;
@@ -777,9 +797,28 @@ class Entity {
     }
 
     if (DateTime.tryParse(state) != null) {
-//      log.d("DateTime.tryParse $state");
-      return DateFormat('dd/MM kk:mm').format(DateTime.parse(state));
+      if (state.contains(":") && state.contains("-")) {
+//        print("entityId $entityId.$state containt : and -");
+        if (gd.configUnitSystem['length'].toString() == "km") {
+          return DateFormat('dd/MM kk:mm').format(DateTime.parse(state));
+        } else {
+          return DateFormat('MM/dd kk:mm').format(DateTime.parse(state));
+        }
+      } else if (state.contains("-")) {
+//        print("entityId $entityId.$state containt -");
+        if (gd.configUnitSystem['length'].toString() == "km") {
+          return DateFormat('E dd/MM').format(DateTime.parse(state));
+        } else {
+          return DateFormat('E MM/dd').format(DateTime.parse(state));
+        }
+      }
+//      Can't parse only time
+//      else if (state.contains(":")) {
+//        print("entityId $entityId.$state containt :");
+//        return DateFormat('kk:mm').format(DateTime.parse(state));
+//      }
     }
+
     if (double.tryParse(state) != null) {
       var recVal = double.parse(state);
       if (recVal >= 100 || recVal.toStringAsFixed(1).contains(".0"))
@@ -796,9 +835,7 @@ class Entity {
         brightness != null &&
         brightness > 0) {
       openPercent = " " +
-          gd
-              .mapNumber(brightness.toDouble(), 0, 254, 0, 100)
-              .toStringAsFixed(0) +
+          gd.mapNumber(brightness, 0, 254, 0, 100).toStringAsFixed(0) +
           "%";
     }
     if (isStateOn &&

@@ -8,18 +8,17 @@ import 'package:hasskit/helper/logger.dart';
 import 'package:hasskit/helper/material_design_icons.dart';
 import 'package:hasskit/helper/squircle_border.dart';
 import 'package:hasskit/helper/theme_info.dart';
-import 'package:hasskit/integration/device_registration.dart';
 import 'package:hasskit/model/local_language.dart';
 import 'package:hasskit/model/login_data.dart';
-import 'package:hasskit/view/backup_restore.dart';
-import 'package:hasskit/view/notification_guide.dart';
+import 'package:hasskit/view/setting_control/backup_restore.dart';
+import 'package:hasskit/view/setting_control/setting_mobile_app.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:validators/validators.dart';
-import 'setting_lock.dart';
+import 'setting_control/setting_lock.dart';
 import 'home_assistant_login.dart';
-import 'server_select_panel.dart';
+import 'setting_control/server_select_panel.dart';
 import 'slivers/sliver_header.dart';
 
 class SettingPage extends StatefulWidget {
@@ -112,8 +111,15 @@ class _SettingPageState extends State<SettingPage> {
 //      builder: (context, gd, child) {
     return Selector<GeneralData, String>(
       selector: (_, generalData) => ("${generalData.useSSL} | "
+          "${generalData.locationUpdateFail} | "
+          "${generalData.locationUpdateSuccess} | "
+          "${generalData.loginDataCurrent.url} | "
+          "${generalData.settingMobileApp.deviceName} | "
+          "${generalData.settingMobileApp.trackLocation} | "
+          "${generalData.settingMobileApp.webHookId} | "
+          "${generalData.mobileAppState} | "
           "${generalData.currentTheme} | "
-          "${generalData.connectionStatus} | "
+          "${generalData.webSocketConnectionStatus} | "
           "${generalData.deviceSetting.settingLocked} | "
           "${generalData.deviceSetting.phoneLayout} | "
           "${generalData.deviceSetting.tabletLayout} | "
@@ -311,6 +317,20 @@ class _SettingPageState extends State<SettingPage> {
                         childCount: gd.loginDataList.length,
                       ),
                     ),
+              gd.deviceSetting.settingLocked ||
+                      gd.currentUrl.contains("hasskit.duckdns.org")
+                  ? gd.emptySliver
+                  : SliverHeaderNormal(
+                      icon: Icon(
+                        MaterialDesignIcons.getIconDataFromIconName(
+                            "mdi:devices"),
+                      ),
+                      title: "Mobile App",
+                    ),
+              gd.deviceSetting.settingLocked ||
+                      gd.currentUrl.contains("http://hasskit.duckdns.org")
+                  ? gd.emptySliver
+                  : SettingMobileAppRegistration(),
               gd.deviceSetting.settingLocked
                   ? gd.emptySliver
                   : SliverHeaderNormal(
@@ -321,6 +341,16 @@ class _SettingPageState extends State<SettingPage> {
                       title: Translate.getString("settings.sync", context),
                     ),
               gd.deviceSetting.settingLocked ? gd.emptySliver : GoogleSign(),
+              gd.deviceSetting.settingLocked
+                  ? gd.emptySliver
+                  : SliverHeaderNormal(
+                      icon: Icon(
+                        MaterialDesignIcons.getIconDataFromIconName(
+                            "mdi:backup-restore"),
+                      ),
+                      title: "Backup & Restore",
+                    ),
+              gd.deviceSetting.settingLocked ? gd.emptySliver : BackupRestore(),
               SettingLock(),
               SliverHeaderNormal(
                 icon: Icon(
@@ -345,28 +375,14 @@ class _SettingPageState extends State<SettingPage> {
                 title: Translate.getString("settings.language", context),
               ),
               LocalLanguagePicker(),
-              SliverHeaderNormal(
-                icon: Icon(
-                  MaterialDesignIcons.getIconDataFromIconName("mdi:devices"),
-                ),
-                title: "Device Registration",
-              ),
-              DeviceRegistration(),
-              SliverHeaderNormal(
-                icon: Icon(
-                  MaterialDesignIcons.getIconDataFromIconName("mdi:bell-ring"),
-                ),
-                title: "Notification Token",
-              ),
-              NotificationGuide(),
-              SliverHeaderNormal(
-                icon: Icon(
-                  MaterialDesignIcons.getIconDataFromIconName(
-                      "mdi:backup-restore"),
-                ),
-                title: "Backup & Restore",
-              ),
-              BackupRestore(),
+//              SliverHeaderNormal(
+//                icon: Icon(
+//                  MaterialDesignIcons.getIconDataFromIconName("mdi:bell-ring"),
+//                ),
+//                title: "Notification Token",
+//              ),
+//              NotificationGuide(),
+
               SliverHeaderNormal(
                 icon: Icon(
                   MaterialDesignIcons.getIconDataFromIconName(
@@ -452,7 +468,12 @@ class _SettingPageState extends State<SettingPage> {
 //                        "App Name: ${_packageInfo.appName} - "
 //                      "Package: ${_packageInfo.packageName}\n"
                             "Version: ${_packageInfo.version} - "
-                            "Build: ${_packageInfo.buildNumber}",
+                            "Build: ${_packageInfo.buildNumber}\n"
+                            "${gd.configLocationName} - "
+                            "Version: ${gd.configVersion}"
+//                            "temperature: ${gd.configUnitSystem['temperature']}"
+                            "",
+                            maxLines: 4,
                             style: Theme.of(context).textTheme.body1,
                             textAlign: TextAlign.center,
                             textScaleFactor: gd.textScaleFactorFix,
@@ -614,9 +635,6 @@ class _LayoutSelectorState extends State<LayoutSelector> {
 
   @override
   Widget build(BuildContext context) {
-    log.d("deviceSetting.phoneLayout 2 ${gd.deviceSetting.phoneLayout}");
-    log.d("deviceSetting.shapeLayout 2 ${gd.deviceSetting.shapeLayout}");
-
     phoneValue = gd.deviceSetting.phoneLayout;
     tabletValue = gd.deviceSetting.tabletLayout;
     return SliverList(
@@ -662,50 +680,45 @@ class ShapeSelector extends StatefulWidget {
 class _ShapeSelectorState extends State<ShapeSelector> {
   @override
   Widget build(BuildContext context) {
-    Widget widget0 = Column(
-      children: <Widget>[
-        Container(
+    Widget widget0 = Container(
+      padding: EdgeInsets.all(4),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: gd.deviceSetting.shapeLayout == 0
+            ? Colors.white.withOpacity(0.5)
+            : Colors.grey.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      width: 30,
+      height: 30,
+    );
+    Widget widget1 = Container(
+      padding: EdgeInsets.all(4),
+      child: Material(
+        color: gd.deviceSetting.shapeLayout == 1
+            ? Colors.white.withOpacity(0.5)
+            : Colors.grey.withOpacity(0.5),
+        shape: SquircleBorder(superRadius: 5),
+        child: Container(
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: gd.deviceSetting.shapeLayout == 0
-                ? ThemeInfo.colorIconActive
-                : ThemeInfo.colorIconInActive,
-            borderRadius: BorderRadius.circular(4),
-          ),
           width: 30,
           height: 30,
-        )
-      ],
-    );
-    Widget widget1 = Column(
-      children: <Widget>[
-        Material(
-          color: gd.deviceSetting.shapeLayout == 1
-              ? ThemeInfo.colorIconActive
-              : ThemeInfo.colorIconInActive,
-          shape: SquircleBorder(superRadius: 5),
-          child: Container(
-            alignment: Alignment.center,
-            width: 30,
-            height: 30,
-          ),
         ),
-      ],
+      ),
     );
-    Widget widget2 = Column(
-      children: <Widget>[
-        Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: gd.deviceSetting.shapeLayout == 2
-                ? ThemeInfo.colorIconActive
-                : ThemeInfo.colorIconInActive,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          width: 48,
-          height: 30,
+    Widget widget2 = Container(
+      padding: EdgeInsets.all(4),
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: gd.deviceSetting.shapeLayout == 2
+              ? Colors.white.withOpacity(0.5)
+              : Colors.grey.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(4),
         ),
-      ],
+        width: 48,
+        height: 30,
+      ),
     );
 
     final Map<int, Widget> phoneSegment = <int, Widget>{
@@ -723,7 +736,7 @@ class _ShapeSelectorState extends State<ShapeSelector> {
                 color: ThemeInfo.colorBottomSheet.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(8)),
             child: CupertinoSlidingSegmentedControl<int>(
-              thumbColor: Colors.transparent,
+              thumbColor: ThemeInfo.colorIconActive,
               backgroundColor: Colors.transparent,
               children: phoneSegment,
               onValueChanged: (int val) {

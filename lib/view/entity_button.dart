@@ -24,7 +24,7 @@ class EntityButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<GeneralData, String>(
       selector: (_, generalData) =>
-          "${generalData.connectionStatus} " +
+          "${generalData.webSocketConnectionStatus} " +
           "${generalData.eventEntity(entityId)} " +
           "${generalData.entities[entityId].getStateDisplay} " +
           "${generalData.entities[entityId].getOverrideName} " +
@@ -186,7 +186,7 @@ class _EntityButtonDisplayState extends State<EntityButtonDisplay> {
                         ),
                         Expanded(
                           child: Container(
-                            alignment: Alignment.topLeft,
+                            alignment: Alignment.bottomLeft,
                             child: Text(
                               "${gd.textToDisplay(gd.entities[widget.entityId].getOverrideName)}",
                               style: gd.entities[widget.entityId].isStateOn
@@ -200,6 +200,7 @@ class _EntityButtonDisplayState extends State<EntityButtonDisplay> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 2),
                         AutoSizeText(
                           "${gd.textToDisplay(gd.entities[widget.entityId].getStateDisplayTranslated(context))} ${gd.entities[widget.entityId].unitOfMeasurement}",
                           style: gd.entities[widget.entityId].isStateOn
