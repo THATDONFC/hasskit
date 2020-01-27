@@ -19,6 +19,7 @@ class MobileAppHelper {
       return;
     }
 
+    //Make sure new refresh data
     if (gd.configVersion == "") {
       print("MobileAppHelper gd.configVersion ==");
       return;
