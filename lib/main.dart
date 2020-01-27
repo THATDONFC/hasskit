@@ -34,15 +34,15 @@ void callbackDispatcher() {
     switch (task) {
       case simplePeriodicTask:
         GeoLocatorHelper.updateLocation("simplePeriodicTask");
-        print("$simplePeriodicTask was executed");
         print("ANDROID gd.locationUpdateSuccess ${gd.locationUpdateSuccess} ");
         print("ANDROID gd.locationUpdateFail ${gd.locationUpdateFail} ");
+        print("$simplePeriodicTask was executed");
         break;
       case Workmanager.iOSBackgroundTask:
         GeoLocatorHelper.updateLocation("Workmanager.iOSBackgroundTask");
-        print("The iOS background fetch was triggered");
         print("iOS gd.locationUpdateSuccess ${gd.locationUpdateSuccess} ");
         print("iOS gd.locationUpdateFail ${gd.locationUpdateFail} ");
+        print("The iOS background fetch was triggered");
         break;
     }
     return Future.value(true);
