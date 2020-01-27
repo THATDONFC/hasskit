@@ -37,7 +37,7 @@ class MobileAppHelper {
       await register("webHookId empty");
     } else {
       print("MobileAppHelper check webHookId not empty");
-      var validMobileApp = checkValidMobileApp();
+      var validMobileApp = await checkValidMobileApp();
       if (!validMobileApp) {
         await register("!validMobileApp");
       }
@@ -171,13 +171,35 @@ class MobileAppHelper {
     return deviceName;
   }
 
-  bool checkValidMobileApp() {
-    if (gd.mobileAppState == "...") {
-      print("checkValidMobileApp gd.mobileAppState == ...");
-      return false;
+  Future<bool> checkValidMobileApp() async {
+    bool retVal = false;
+//    if (gd.mobileAppState != "...") {
+//      print("checkValidMobileApp gd.mobileAppState != ...");
+//      retVal = true;
+//      return retVal;
+//    }
+
+    var checkData = {
+      "type": "get_zones",
+    };
+
+    String url =
+        gd.currentUrl + "/api/webhook/${gd.settingMobileApp.webHookId}";
+    print("checkValidMobileApp.url $url");
+    String body = jsonEncode(checkData);
+    print("checkValidMobileApp.body $body");
+    var response = await http.post(url, body: body);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.body == null || response.body.isEmpty) {
+      print("checkValidMobileApp response.body empty ${response.body}");
+      retVal = false;
+      return retVal;
+    } else {
+      print("checkValidMobileApp response.body not empty ${response.body}");
+      retVal = true;
+      return retVal;
     }
-    print(
-        "checkValidMobileApp device_tracker.${gd.settingMobileApp.deviceName} != null");
-    return true;
   }
 }
