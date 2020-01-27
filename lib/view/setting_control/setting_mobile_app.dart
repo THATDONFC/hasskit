@@ -137,8 +137,8 @@ class _SettingMobileAppRegistrationState
                                 return FlatButton(
                                   child: Text(
                                     controller.expanded
-                                        ? "  Hide Advance Settings  "
-                                        : "  Show Advance Settings  ",
+                                        ? "Hide Advance Settings"
+                                        : "Show Advance Settings",
                                     style: Theme.of(context)
                                         .textTheme
                                         .button
@@ -211,7 +211,7 @@ class _SettingMobileAppRegistrationState
                   children: <Widget>[
                     FlatButton(
                       child: Text(
-                        "  Setup Guide",
+                        "Setup Guide",
                         style: Theme.of(context)
                             .textTheme
                             .button
@@ -234,7 +234,7 @@ class _SettingMobileAppRegistrationState
                       builder: (context) {
                         return FlatButton(
                           child: Text(
-                            "  Open App Settings",
+                            "Open App Settings",
                             style: Theme.of(context)
                                 .textTheme
                                 .button

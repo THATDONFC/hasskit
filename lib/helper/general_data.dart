@@ -263,6 +263,10 @@ class GeneralData with ChangeNotifier {
         }
       }
 
+      if (entity.entityId.contains("water_heater.")) {
+        print("\nsocketGetStates water_heater $mess\n");
+      }
+
       if (previousEntitiesList.contains(entity.entityId)) {
         previousEntitiesList.remove(entity.entityId);
       }

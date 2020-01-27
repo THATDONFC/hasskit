@@ -88,6 +88,10 @@ class Entity {
   //input_select
   List<String> options;
   bool hidden;
+  //water_heater
+  String awayMode;
+  String operationMode;
+  List<String> operationList;
 
   Entity({
     this.entityId,
@@ -155,6 +159,10 @@ class Entity {
     //input_select
     this.options,
     this.hidden = false,
+    //water_heater
+    this.awayMode,
+    this.operationMode,
+    this.operationList,
   });
 
   factory Entity.fromJson(Map<String, dynamic> json) {
@@ -359,6 +367,15 @@ class Entity {
         hidden: json['attributes']['hidden'] != null
             ? json['attributes']['hidden']
             : false,
+        awayMode: json['attributes']['away_mode'] != null
+            ? json['attributes']['away_mode']
+            : 'off',
+        operationMode: json['attributes']['operation_mode'] != null
+            ? json['attributes']['operation_mode']
+            : "eco",
+        operationList: json['attributes']['operation_list'] != null
+            ? List<String>.from(json['attributes']['operation_list'])
+            : ["eco"],
       );
     } catch (e) {
       log.e("Entity.fromJson newEntity $e");
@@ -422,7 +439,9 @@ class Entity {
   }
 
   EntityType get entityType {
-    if (entityId.contains('fan.') || entityId.contains('climate.')) {
+    if (entityId.contains('climate.') ||
+        entityId.contains('fan.') ||
+        entityId.contains('water_heater.')) {
       return EntityType.climateFans;
     } else if (entityId.contains('camera.')) {
       return EntityType.cameras;
@@ -616,6 +635,7 @@ class Entity {
     }
 
     if ((entityId.split('.')[0] == 'climate' ||
+            entityId.split('.')[0] == 'water_heater' ||
             entityId.split('.')[0] == 'media_player') &&
         stateLower != 'idle') {
       return true;

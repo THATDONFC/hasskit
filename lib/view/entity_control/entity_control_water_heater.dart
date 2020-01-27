@@ -6,13 +6,19 @@ import 'package:hasskit/helper/theme_info.dart';
 import 'package:hasskit/model/entity.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-class EntityControlClimate extends StatelessWidget {
+class EntityControlWaterHeater extends StatefulWidget {
   final String entityId;
-  const EntityControlClimate({@required this.entityId});
+  const EntityControlWaterHeater({@required this.entityId});
 
   @override
+  _EntityControlWaterHeaterState createState() =>
+      _EntityControlWaterHeaterState();
+}
+
+class _EntityControlWaterHeaterState extends State<EntityControlWaterHeater> {
+  @override
   Widget build(BuildContext context) {
-    var entity = gd.entities[entityId];
+    var entity = gd.entities[widget.entityId];
     var info04 = InfoProperties(
         bottomLabelStyle: Theme.of(context).textTheme.title,
 //        bottomLabelStyle: TextStyle(
@@ -28,14 +34,15 @@ class EntityControlClimate extends StatelessWidget {
 //            fontSize: 30.0,
 //            fontWeight: FontWeight.w600),
         modifier: (double value) {
-          if (gd.entities[entityId].targetTempStep == 1 ||
-              gd.configUnitSystem['temperature'].toString() != "°C") {
-            return ' ${value.toInt()}˚';
-          } else if (gd.entities[entityId].targetTempStep == 0.5) {
-            return ' ${gd.roundTo05(value)}˚';
-          } else {
-            return ' ${value.toStringAsFixed(1)}˚';
-          }
+          return ' ${value.toInt()}˚';
+//          if (gd.entities[entityId].targetTempStep == 1 ||
+//              gd.configUnitSystem['temperature'].toString() != "°C") {
+//            return ' ${value.toInt()}˚';
+//          } else if (gd.entities[entityId].targetTempStep == 0.5) {
+//            return ' ${gd.roundTo05(value)}˚';
+//          } else {
+//            return ' ${value.toStringAsFixed(1)}˚';
+//          }
         });
 
     var customColors05 = CustomSliderColors(
@@ -62,50 +69,25 @@ class EntityControlClimate extends StatelessWidget {
       ),
       min: entity.minTemp,
       max: entity.maxTemp,
-      initialValue: entity.getTemperature < entity.minTemp
+      initialValue: entity.temperature < entity.minTemp
           ? entity.minTemp
-          : entity.getTemperature,
+          : entity.temperature,
       onChangeEnd: (double value) {
-        print('onChangeEnd $value');
-        var outMsg;
-        if (gd.entities[entityId].targetTempStep == 1 ||
-            gd.configUnitSystem['temperature'].toString() != "°C") {
-          outMsg = {
+        setState(() {
+          print('onChangeEnd $value');
+          var outMsg = {
             "id": gd.socketId,
             "type": "call_service",
-            "domain": "climate",
+            "domain": "water_heater",
             "service": "set_temperature",
             "service_data": {
               "entity_id": entity.entityId,
               "temperature": value.toInt(),
             }
           };
-        } else if (gd.entities[entityId].targetTempStep == 0.5) {
-          outMsg = {
-            "id": gd.socketId,
-            "type": "call_service",
-            "domain": "climate",
-            "service": "set_temperature",
-            "service_data": {
-              "entity_id": entity.entityId,
-              "temperature": gd.roundTo05(value),
-            }
-          };
-        } else {
-          outMsg = {
-            "id": gd.socketId,
-            "type": "call_service",
-            "domain": "climate",
-            "service": "set_temperature",
-            "service_data": {
-              "entity_id": entity.entityId,
-              "temperature": double.parse(value.toStringAsFixed(1)),
-            }
-          };
-        }
-
-        var outMsgEncoded = json.encode(outMsg);
-        gd.sendSocketMessage(outMsgEncoded);
+          var outMsgEncoded = json.encode(outMsg);
+          gd.sendSocketMessage(outMsgEncoded);
+        });
       },
     );
 
@@ -117,76 +99,101 @@ class EntityControlClimate extends StatelessWidget {
           height: 240,
           child: slider,
         ),
-        gd.entities[entityId].fanModes.length > 1
-            ? FanSpeed(entityId: entityId)
+        gd.entities[widget.entityId].operationList.length > 1
+            ? OperationList(entityId: widget.entityId)
             : Container(),
-        gd.entities[entityId].hvacModes.length > 1
-            ? SizedBox(height: 16)
-            : Container(),
-        gd.entities[entityId].hvacModes.length > 1
-            ? HvacModes(entityId: entityId)
-            : Container(),
-        gd.entities[entityId].presetModes.length > 1
-            ? SizedBox(height: 16)
-            : Container(),
-        gd.entities[entityId].presetModes.length > 1
-            ? PresetModes(
-                entityId: entityId,
-              )
-            : Container(),
+        Row(
+          children: <Widget>[
+            Switch.adaptive(
+              value: entity.awayMode == 'off' ? false : true,
+              onChanged: (val) {
+                setState(() {
+                  var outMsg = {
+                    "id": gd.socketId,
+                    "type": "call_service",
+                    "domain": "water_heater",
+                    "service": "set_away_mode",
+                    "service_data": {
+                      "entity_id": widget.entityId,
+                      "away_mode": val,
+                    }
+                  };
+                  var message = json.encode(outMsg);
+                  gd.sendSocketMessage(message);
+                  val ? entity.awayMode = 'on' : entity.awayMode = 'off';
+                });
+              },
+            ),
+            Expanded(child: Text("Away Mode")),
+          ],
+        ),
         Spacer(),
       ],
     );
   }
 }
 
-class FanSpeed extends StatefulWidget {
+class OperationList extends StatefulWidget {
   final String entityId;
-  const FanSpeed({@required this.entityId});
+  const OperationList({@required this.entityId});
   @override
-  _FanSpeedState createState() => _FanSpeedState();
+  _OperationListState createState() => _OperationListState();
 }
 
-class _FanSpeedState extends State<FanSpeed> {
-  final children = <String, Widget>{};
-  Entity entity;
-  String groupValue;
+class _OperationListState extends State<OperationList> {
+  List<DropdownMenuItem<String>> dropdownMenuItems = [];
+  List<String> options = [];
 
   @override
   Widget build(BuildContext context) {
-    entity = gd.entities[widget.entityId];
-    groupValue = entity.fanMode;
-
-    for (String fanMode in entity.fanModes) {
-      children[fanMode] = Text(
-        gd.textToDisplay(fanMode),
-        textScaleFactor: gd.textScaleFactorFix,
-        overflow: TextOverflow.ellipsis,
+    Entity entity = gd.entities[widget.entityId];
+    dropdownMenuItems = [];
+    options = entity.operationList;
+    print(options);
+    for (String option in options) {
+      var dropdownMenuItem = DropdownMenuItem<String>(
+        value: option,
+        child: Text(
+          gd.textToDisplay("$option"),
+//          style: Theme.of(context).textTheme.body1,
+          overflow: TextOverflow.ellipsis,
+          textScaleFactor: gd.textScaleFactorFix,
+        ),
       );
+      dropdownMenuItems.add(dropdownMenuItem);
     }
 
     return Container(
-      child: CupertinoSlidingSegmentedControl<String>(
-        thumbColor: ThemeInfo.colorBottomSheetReverse.withOpacity(0.75),
-        children: children,
-        onValueChanged: (String val) {
-          setState(() {
-            groupValue = val;
-            var outMsg = {
-              "id": gd.socketId,
-              "type": "call_service",
-              "domain": "climate",
-              "service": "set_fan_mode",
-              "service_data": {
-                "entity_id": widget.entityId,
-                "fan_mode": "$groupValue"
-              }
-            };
-            var message = json.encode(outMsg);
-            gd.sendSocketMessage(message);
-          });
-        },
-        groupValue: groupValue,
+      alignment: Alignment.center,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+        margin: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+            color: ThemeInfo.colorBottomSheetReverse.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(8)),
+        child: DropdownButton<String>(
+          underline: Container(),
+          isExpanded: true,
+          value: entity.state,
+          items: dropdownMenuItems,
+          onChanged: (String newValue) {
+            setState(() {
+              entity.state = newValue;
+              var outMsg = {
+                "id": gd.socketId,
+                "type": "call_service",
+                "domain": "water_heater",
+                "service": "set_operation_mode",
+                "service_data": {
+                  "entity_id": widget.entityId,
+                  "operation_mode": newValue,
+                }
+              };
+              var message = json.encode(outMsg);
+              gd.sendSocketMessage(message);
+            });
+          },
+        ),
       ),
     );
   }

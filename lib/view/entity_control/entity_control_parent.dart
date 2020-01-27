@@ -14,6 +14,7 @@ import 'package:hasskit/view/entity_control/entity_control_google_maps.dart';
 import 'package:hasskit/view/entity_control/entity_control_input_select.dart';
 import 'package:hasskit/view/entity_control/entity_control_media_player.dart';
 import 'package:hasskit/view/entity_control/entity_control_vacuum.dart';
+import 'package:hasskit/view/entity_control/entity_control_water_heater.dart';
 import 'package:provider/provider.dart';
 import 'entity_control_binary_sensor.dart';
 import 'entity_control_fan.dart';
@@ -140,6 +141,8 @@ class _EntityControlParentState extends State<EntityControlParent> {
           entityControl = EntityControlGoogleMaps(entityId: widget.entityId);
         } else if (entity.entityId.contains("input_select.")) {
           entityControl = EntityControlInputSelect(entityId: widget.entityId);
+        } else if (entity.entityId.contains("water_heater.")) {
+          entityControl = EntityControlWaterHeater(entityId: widget.entityId);
         } else if (entity.entityType == EntityType.lightSwitches ||
             entity.entityType == EntityType.mediaPlayers ||
             entity.entityId.contains("automation.") ||

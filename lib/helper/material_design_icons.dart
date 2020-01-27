@@ -44,6 +44,7 @@ class MaterialDesignIcons {
     "alarm_control_panel": "mdi:bell",
     "updater": "mdi:cloud-upload",
     "vacuum": "mdi:robot-vacuum",
+    "water_heater": "mdi:water-boiler",
   };
 
   static final Map defaultIconsByDeviceClass = {

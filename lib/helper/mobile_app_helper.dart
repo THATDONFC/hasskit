@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:hasskit/helper/theme_info.dart';
 import 'package:hasskit/view/setting_control/setting_mobile_app.dart';
 import 'package:http/http.dart' as http;
 import 'package:device_info/device_info.dart';
@@ -87,6 +89,48 @@ class MobileAppHelper {
         print(
             "gd.deviceIntegration.webHookId ${gd.settingMobileApp.webHookId}");
         gd.settingMobileAppSave();
+
+        showDialog(
+          context: gd.mediaQueryContext,
+          builder: (BuildContext context) {
+            // return object of type Dialog
+            return AlertDialog(
+              title: Text("Register Mobile App Success"),
+              content: new Text("Restart Home Assistant Now?"),
+              backgroundColor: ThemeInfo.colorBottomSheet,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
+              ),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                RaisedButton(
+                  child: new Text("Later"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                RaisedButton(
+                  child: new Text("Restart"),
+                  onPressed: () {
+                    var outMsg = {
+                      "id": gd.socketId,
+                      "type": "call_service",
+                      "domain": "homeassistant",
+                      "service": "restart",
+                    };
+
+                    var outMsgEncoded = json.encode(outMsg);
+                    gd.sendSocketMessage(outMsgEncoded);
+
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
       } else {
         print(
             "Register Mobile App Response From Server With Code ${response.statusCode}");
