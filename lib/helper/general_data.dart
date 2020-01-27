@@ -263,10 +263,6 @@ class GeneralData with ChangeNotifier {
         }
       }
 
-//      if (entity.entityId.contains('input_datetime')) {
-//        print("input_datetime $mess");
-//      }
-
       if (previousEntitiesList.contains(entity.entityId)) {
         previousEntitiesList.remove(entity.entityId);
       }

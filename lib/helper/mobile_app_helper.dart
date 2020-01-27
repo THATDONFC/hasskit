@@ -19,6 +19,11 @@ class MobileAppHelper {
       return;
     }
 
+    if (gd.configVersion == "") {
+      print("MobileAppHelper gd.configVersion ==");
+      return;
+    }
+
     if (!gd.configComponent.contains("mobile_app")) {
       print("MobileAppHelper contains !mobile_app");
       return;
@@ -122,10 +127,8 @@ class MobileAppHelper {
   }
 
   bool checkValidMobileApp() {
-    if (gd.entities["device_tracker.${gd.settingMobileApp.deviceName}"] ==
-        null) {
-      print(
-          "checkValidMobileApp device_tracker.${gd.settingMobileApp.deviceName} == null");
+    if (gd.mobileAppState == "...") {
+      print("checkValidMobileApp gd.mobileAppState == ...");
       return false;
     }
     print(

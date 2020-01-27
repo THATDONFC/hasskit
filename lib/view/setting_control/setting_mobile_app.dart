@@ -248,13 +248,12 @@ class _SettingMobileAppRegistrationState
                     ),
                   ],
                 ),
-
-//                Text(
-//                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n\n"
-//                    "deviceName ${gd.settingMobileApp.deviceName}\n\n"
-//                    "webHookId ${gd.settingMobileApp.webHookId}\n\n"
-//                    "${gd.locationUpdateFail}\n\n"
-//                    "${gd.locationUpdateSuccess}"),
+                Text(
+                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n\n"
+                    "deviceName ${gd.settingMobileApp.deviceName}\n\n"
+                    "webHookId ${gd.settingMobileApp.webHookId}\n\n"
+                    "${gd.locationUpdateFail}\n\n"
+                    "${gd.locationUpdateSuccess}"),
               ],
             ),
           ),
