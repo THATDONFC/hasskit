@@ -12,7 +12,7 @@ class SettingMobileApp {
   String remoteUiUrl = "";
   String secret = "";
   String webHookId = "";
-  bool trackLocation = true;
+  bool trackLocation = false;
 
   SettingMobileApp({
     @required this.deviceName,
@@ -40,7 +40,7 @@ class SettingMobileApp {
       secret: json['secret'] != null ? json['secret'] : "",
       webHookId: json['webhook_id'] != null ? json['webhook_id'] : "",
       trackLocation:
-          json['trackLocation'] != null ? json['trackLocation'] : true,
+          json['trackLocation'] != null ? json['trackLocation'] : false,
     );
   }
 }

@@ -7,9 +7,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hasskit/helper/geolocator_helper.dart';
 import 'package:hasskit/helper/locale_helper.dart';
@@ -25,6 +25,7 @@ import 'helper/general_data.dart';
 import 'helper/google_sign.dart';
 import 'helper/logger.dart';
 import 'helper/material_design_icons.dart';
+import 'package:rxdart/subjects.dart';
 
 const simplePeriodicTask = "simplePeriodicTask";
 
@@ -48,31 +49,47 @@ void callbackDispatcher() {
   });
 }
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+// Streams are created so that app can respond to notification-related events since the plugin is initialised in the `main` function
+final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
+    BehaviorSubject<ReceivedNotification>();
+
+final BehaviorSubject<String> selectNotificationSubject =
+    BehaviorSubject<String>();
+
+class ReceivedNotification {
+  final int id;
+  final String title;
+  final String body;
+  final String payload;
+
+  ReceivedNotification(
+      {@required this.id,
+      @required this.title,
+      @required this.body,
+      @required this.payload});
+}
+
 Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
-
-  // NOTE: if you want to find out if the app was launched via notification then you could use the following call and then do something like
-  // change the default route of the app
-  // var notificationAppLaunchDetails =
-  //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-
-//  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-//  var initializationSettingsIOS = IOSInitializationSettings(
-//      onDidReceiveLocalNotification:
-//          (int id, String title, String body, String payload) async {
-//    didReceiveLocalNotificationSubject.add(ReceivedNotification(
-//        id: id, title: title, body: body, payload: payload));
-//  });
-//  var initializationSettings = InitializationSettings(
-//      initializationSettingsAndroid, initializationSettingsIOS);
-//  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-//      onSelectNotification: (String payload) async {
-//    if (payload != null) {
-//      debugPrint('notification payload: ' + payload);
-//    }
-//    selectNotificationSubject.add(payload);
-//  });
+  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+  var initializationSettingsIOS = IOSInitializationSettings(
+      onDidReceiveLocalNotification:
+          (int id, String title, String body, String payload) async {
+    didReceiveLocalNotificationSubject.add(ReceivedNotification(
+        id: id, title: title, body: body, payload: payload));
+  });
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+    selectNotificationSubject.add(payload);
+  });
 
   Workmanager.initialize(
     callbackDispatcher,
@@ -198,6 +215,18 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     );
   }
 
+  Future<void> _showNotification(String title, String body) async {
+    print("_showNotification");
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin
+        .show(0, title, body, platformChannelSpecifics, payload: 'item x');
+  }
+
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   void firebaseCloudMessagingListeners() {
@@ -220,21 +249,21 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           gd.firebaseMessagingTitle = message["notification"]["title"];
           gd.firebaseMessagingBody = message["notification"]["body"];
         }
+        _showNotification(gd.firebaseMessagingTitle, gd.firebaseMessagingBody);
+//        String spacer = "";
+//        if (gd.firebaseMessagingTitle == null) gd.firebaseMessagingTitle = "";
+//        if (gd.firebaseMessagingBody == null) gd.firebaseMessagingBody = "";
+//        if (gd.firebaseMessagingTitle != "" && gd.firebaseMessagingBody != "")
+//          spacer = "\n";
 
-        String spacer = "";
-        if (gd.firebaseMessagingTitle == null) gd.firebaseMessagingTitle = "";
-        if (gd.firebaseMessagingBody == null) gd.firebaseMessagingBody = "";
-        if (gd.firebaseMessagingTitle != "" && gd.firebaseMessagingBody != "")
-          spacer = "\n";
-
-        Fluttertoast.showToast(
-            msg:
-                "${gd.firebaseMessagingTitle}$spacer${gd.firebaseMessagingBody}",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.TOP,
-            backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-            textColor: Theme.of(context).textTheme.title.color,
-            fontSize: 14.0);
+//        Fluttertoast.showToast(
+//            msg:
+//                "${gd.firebaseMessagingTitle}$spacer${gd.firebaseMessagingBody}",
+//            toastLength: Toast.LENGTH_LONG,
+//            gravity: ToastGravity.TOP,
+//            backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
+//            textColor: Theme.of(context).textTheme.title.color,
+//            fontSize: 14.0);
       },
       onResume: (Map<String, dynamic> message) async {
         print('on resume $message');
@@ -262,6 +291,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _connectivitySubscription.cancel();
+    didReceiveLocalNotificationSubject.close();
+    selectNotificationSubject.close();
     super.dispose();
   }
 

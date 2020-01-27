@@ -2530,7 +2530,7 @@ class GeneralData with ChangeNotifier {
     remoteUiUrl: "",
     secret: "",
     webHookId: "",
-    trackLocation: true,
+    trackLocation: false,
   );
 
   String _settingMobileAppString;
@@ -2553,7 +2553,7 @@ class GeneralData with ChangeNotifier {
       settingMobileApp.remoteUiUrl = "";
       settingMobileApp.secret = "";
       settingMobileApp.webHookId = "";
-      settingMobileApp.trackLocation = true;
+      settingMobileApp.trackLocation = false;
     }
 
     notifyListeners();
