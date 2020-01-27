@@ -9,11 +9,8 @@ To enable this feature, please follow these 3 easy steps
 
 ## 1. Register Mobile App
 
-![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_1.png)
-<br>Click Register to regist HassKit as an Home Assistant's Mobile App
-<br><br>
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_2.png)
-<br>Then Restart Home Assistant
+<br>Upon connected to a new Home Assistant server, HassKit will automatically register a Mobile App to enable send Push Notification and Location Tracking feature. When the new Mobile App registered, just click Restart Home Assistant.
 
 ## 2. View Mobile App Location History
 
