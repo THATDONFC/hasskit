@@ -5,11 +5,10 @@ https://flutter.dev/docs/get-started/install
 ## Download and Install Android Studio
 https://developer.android.com/studio/
 
-## Clone HassKit
+## Open Android Studioand Clone HassKit
 
 ![untitled](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/installation_01.png?raw=true)
 
-Open Android Studio and clone this reposity
 https://github.com/tuanha2000vn/hasskit.git
 
 ## Run Terminal Command
