@@ -1,4 +1,7 @@
 
+## Download and Install Flutter
+https://flutter.dev/docs/get-started/install
+
 ## Clone HassKit
 
 ![untitled](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/installation_01.png?raw=true)
