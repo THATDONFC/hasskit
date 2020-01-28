@@ -46,7 +46,14 @@ https://discord.gg/cqYr52P
 
 https://www.facebook.com/groups/709634206223205
 
-## How can I install #HassKit?
+## How can I track location and send notification to #HassKit?
+
+![untitled](https://user-images.githubusercontent.com/2765517/72196631-4354a100-344c-11ea-87d9-47c9ad2dbbba.gif)
+<br>
+You can track location and send notification directly from Home Assistant to #HassKit using this guide.
+https://github.com/tuanha2000vn/hasskit/blob/master/mobile_app.md
+
+## How Can I Install HassKit on My Phone?
 
 Download from Github, usually the most updated version (android only)
 https://github.com/tuanha2000vn/hasskit/releases
@@ -57,9 +64,7 @@ https://apps.apple.com/us/app/hasskit/id1485362169
 Download on the Google Playstore
 https://play.google.com/store/apps/details?id=com.thhkstudio.hasskit
 
-## How can I track location and send notification to #HassKit?
+## How Can I Build HassKit Myself?
 
-![untitled](https://user-images.githubusercontent.com/2765517/72196631-4354a100-344c-11ea-87d9-47c9ad2dbbba.gif)
-<br>
-You can track location and send notification directly from Home Assistant to #HassKit using this guide.
-https://github.com/tuanha2000vn/hasskit/blob/master/mobile_app.md
+Please follow our guide to get started
+https://github.com/tuanha2000vn/hasskit/blob/master/installation.md
