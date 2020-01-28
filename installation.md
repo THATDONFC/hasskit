@@ -7,6 +7,8 @@ https://developer.android.com/studio
 
 ## Open Android Studio and Clone HassKit
 
+![untitled](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/installation_05.png?raw=true)
+
 ![untitled](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/installation_01.png?raw=true)
 
 https://github.com/tuanha2000vn/hasskit.git
