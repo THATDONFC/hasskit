@@ -75,6 +75,39 @@ class _SettingMobileAppRegistrationState
                   textAlign: TextAlign.justify,
                   textScaleFactor: gd.textScaleFactorFix,
                 ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text(
+                        "Open App Settings",
+                        style: Theme.of(context)
+                            .textTheme
+                            .button
+                            .copyWith(color: ThemeInfo.colorIconActive),
+                      ),
+                      onPressed: () {
+                        LocationPermissions().openAppSettings();
+                      },
+                    ),
+                    FlatButton(
+                      child: Text(
+                        "Setup Guide",
+                        style: Theme.of(context)
+                            .textTheme
+                            .button
+                            .copyWith(color: ThemeInfo.colorIconActive),
+                      ),
+                      onPressed: () {
+                        _launchMobileAppGuide();
+                      },
+                    ),
+                  ],
+                ),
+                Divider(
+                  height: 1,
+                ),
                 Row(
                   children: <Widget>[
                     Switch.adaptive(
@@ -105,7 +138,6 @@ class _SettingMobileAppRegistrationState
                             }
                           : null,
                     ),
-                    SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         gd.settingMobileApp.trackLocation
@@ -124,9 +156,6 @@ class _SettingMobileAppRegistrationState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Divider(
-                          height: 1,
-                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
@@ -204,56 +233,13 @@ class _SettingMobileAppRegistrationState
                     ),
                   ),
                 ),
-                Divider(
-                  height: 1,
-                ),
-                Row(
-                  children: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        "Setup Guide",
-                        style: Theme.of(context)
-                            .textTheme
-                            .button
-                            .copyWith(color: ThemeInfo.colorIconActive),
-                      ),
-                      onPressed: () {
-                        _launchMobileAppGuide();
-                      },
-                    ),
-                    Spacer(),
-                  ],
-                ),
-                Divider(
-                  height: 1,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Builder(
-                      builder: (context) {
-                        return FlatButton(
-                          child: Text(
-                            "Open App Settings",
-                            style: Theme.of(context)
-                                .textTheme
-                                .button
-                                .copyWith(color: ThemeInfo.colorIconActive),
-                          ),
-                          onPressed: () {
-                            LocationPermissions().openAppSettings();
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                Text(
-                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n\n"
-                    "deviceName ${gd.settingMobileApp.deviceName}\n\n"
-                    "webHookId ${gd.settingMobileApp.webHookId}\n\n"
-                    "${gd.locationUpdateFail}\n\n"
-                    "${gd.locationUpdateSuccess}"),
+
+//                Text(
+//                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n\n"
+//                    "deviceName ${gd.settingMobileApp.deviceName}\n\n"
+//                    "webHookId ${gd.settingMobileApp.webHookId}\n\n"
+//                    "${gd.locationUpdateFail}\n\n"
+//                    "${gd.locationUpdateSuccess}"),
               ],
             ),
           ),
