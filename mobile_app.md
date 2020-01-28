@@ -123,3 +123,8 @@ By default, iOS will only allow HassKit to track your location `While Using the 
 2. Go into: `Privacy` > `Location Services`.
 3. Find `HassKit` in the list and click it.
 4. Change `Allow Location Access` to `Always`.
+
+## 8. Build HassKit Yourself
+
+Please read this guide to build HassKit yourself.
+https://github.com/tuanha2000vn/hasskit/blob/master/installation.md
