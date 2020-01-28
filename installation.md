@@ -28,3 +28,10 @@ Create new simulation device and click Start
 ![untitled](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/installation_04.png?raw=true)
 
 Select the simulation device in dropdown selection and click Start
+
+## Update Google Map API
+
+Open file C:\Temp\hasskit\android\app\src\main\AndroidManifest.xml and replace "ENTER_YOUR_API_KEY" with your own API Key.
+
+You can obtain Google Map API key here:
+https://developers.google.com/maps/documentation/embed/get-api-key
