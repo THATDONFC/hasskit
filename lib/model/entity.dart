@@ -33,6 +33,7 @@ class Entity {
   double currentTemperature;
   double temperature;
   String fanMode;
+  String hvacAction;
   List<String> fanModes;
   String lastOnOperation;
   int deviceCode;
@@ -108,6 +109,7 @@ class Entity {
     this.temperature,
     this.fanMode,
     this.fanModes,
+    this.hvacAction,
     this.deviceCode,
     this.manufacturer,
     //fan
@@ -212,6 +214,9 @@ class Entity {
             : null,
         fanMode: json['attributes']['fan_mode'].toString() != null
             ? json['attributes']['fan_mode'].toString()
+            : "",
+        hvacAction: json['attributes']['hvac_action'].toString() != null
+            ? json['attributes']['hvac_action'].toString()
             : "",
         fanModes: json['attributes']['fan_modes'] != null
             ? List<String>.from(json['attributes']['fan_modes'])
@@ -907,4 +912,12 @@ class Entity {
     if (currentTemperature != null) return currentTemperature;
     return 0;
   }
+
+  bool get getClimateActive {
+    if (hvacAction != null){
+      if (hvacAction == 'heating' || hvacAction == 'cooling') return true;
+    }
+    return false;
+  }
+
 }
