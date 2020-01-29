@@ -47,16 +47,16 @@ homeassistant:
 ```
 
 Add notify.ALL_DEVICES service:
-(Replace mobile_app_hasskit_mobile_app_1 with your registered device name)
+(Replace mobile_app_hasskit_mobile_app_1234 with your registered device name)
 
 ```
 notify:
   - name: ALL_DEVICES
     platform: group
     services:
-      - service: mobile_app_hasskit_mobile_app_1
-      - service: mobile_app_hasskit_mobile_app_2
-      - service: mobile_app_hasskit_mobile_app_3      
+      - service: mobile_app_hasskit_mobile_app_1234
+      - service: mobile_app_hasskit_mobile_app_2345
+      - service: mobile_app_hasskit_mobile_app_3456
 ```
 <br>
 <br>
