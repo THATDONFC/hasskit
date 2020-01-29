@@ -16,6 +16,10 @@ class MobileAppHelper {
   check(String reason) async {
     print("MobileAppHelper register $reason");
 
+    if (!gd.webSocketConnected) {
+      print("MobileAppHelper gd.webSocketConnected");
+      return;
+    }
     if (gd.loginDataCurrent.url.contains('http://hasskit.duckdns.org:8123')) {
       print("MobileAppHelper contains http://hasskit.duckdns.org:8123");
       return;
