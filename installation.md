@@ -21,7 +21,7 @@ Open Terminal window and run the following command:
 
 `flutter channel beta`
 
-`flutter create .` (don't remove the . )
+`flutter create .` (include the . )
 
 ## Test Simulation Device
 
