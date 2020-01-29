@@ -38,7 +38,6 @@ lib/generated_plugin_registrant.dart
 android/app/build.gradle
 android/app/src/main/AndroidManifest.xml
 android/key.properties
-android/app/google-services.json
 ios/Runner/AppDelegate.swift
 ios/Runner/GoogleService-Info.plist
 ios/Runner/Info.plist
