@@ -1,7 +1,6 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:hasskit/helper/general_data.dart';
-import 'package:hasskit/helper/geolocator_helper.dart';
 import 'package:hasskit/helper/theme_info.dart';
 import 'package:location_permissions/location_permissions.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -68,27 +67,46 @@ class _SettingMobileAppRegistrationState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Text(
-                  "HassKit create a Mobile App component in Home Assistant to enable location tracking and push notification.\n"
-                  "\n"
-                  "device_tracker.${gd.settingMobileApp.deviceName}",
+                  "HassKit created a Mobile App component in Home Assistant to enable push notification.",
                   style: Theme.of(context).textTheme.caption,
                   textAlign: TextAlign.justify,
                   textScaleFactor: gd.textScaleFactorFix,
                 ),
+                SizedBox(height: 8),
+                Divider(
+                  height: 8,
+                ),
+                Text(
+                  "${gd.settingMobileApp.deviceName}",
+                  style: Theme.of(context).textTheme.caption,
+                  textAlign: TextAlign.justify,
+                  textScaleFactor: gd.textScaleFactorFix,
+                ),
+                Divider(
+                  height: 8,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    FlatButton(
+//                    FlatButton(
+//                      child: Text(
+//                        "Open App Settings",
+//                        style: Theme.of(context)
+//                            .textTheme
+//                            .button
+//                            .copyWith(color: ThemeInfo.colorIconActive),
+//                      ),
+//                      onPressed: () {
+//                        LocationPermissions().openAppSettings();
+//                      },
+//                    ),
+                    Expanded(
                       child: Text(
-                        "Open App Settings",
-                        style: Theme.of(context)
-                            .textTheme
-                            .button
-                            .copyWith(color: ThemeInfo.colorIconActive),
+                        "To enable Push Notification, please read the Setup Guide",
+                        style: Theme.of(context).textTheme.caption,
+                        textAlign: TextAlign.justify,
+                        textScaleFactor: gd.textScaleFactorFix,
                       ),
-                      onPressed: () {
-                        LocationPermissions().openAppSettings();
-                      },
                     ),
                     FlatButton(
                       child: Text(
@@ -104,134 +122,134 @@ class _SettingMobileAppRegistrationState
                     ),
                   ],
                 ),
-                Divider(
-                  height: 1,
-                ),
-                Row(
-                  children: <Widget>[
-                    Switch.adaptive(
-                      value: gd.settingMobileApp.webHookId != ""
-                          ? gd.settingMobileApp.trackLocation
-                          : false,
-                      onChanged: gd.settingMobileApp.webHookId != ""
-                          ? (val) {
-                              setState(
-                                () {
-                                  gd.settingMobileApp.trackLocation = val;
-                                  print(
-                                      "onChanged $val gd.deviceIntegration.trackLocation ${gd.settingMobileApp.trackLocation}");
-                                  if (val == true) {
-                                    if (gd.settingMobileApp.webHookId != "") {
-                                      gd.locationUpdateTime = DateTime.now()
-                                          .subtract(Duration(days: 1));
-                                      GeoLocatorHelper.updateLocation(
-                                          "Switch.adaptive");
-                                    }
-                                  } else {
-                                    gd.locationLatitude = 51.48;
-                                    gd.locationLongitude = 0.0;
-                                  }
-                                  gd.settingMobileAppSave();
-                                },
-                              );
-                            }
-                          : null,
-                    ),
-                    Expanded(
-                      child: Text(
-                        gd.settingMobileApp.trackLocation
-                            ? "Location Tracking Enabled"
-                                "\n${gd.textToDisplay(gd.mobileAppState)}"
-                            : "Location Tracking Disabled",
-                        style: Theme.of(context).textTheme.caption,
-                        textAlign: TextAlign.justify,
-                        textScaleFactor: gd.textScaleFactorFix,
-                      ),
-                    ),
-                  ],
-                ),
-                ExpandableNotifier(
-                  child: ScrollOnExpand(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Builder(
-                              builder: (context) {
-                                var controller =
-                                    ExpandableController.of(context);
-                                return FlatButton(
-                                  child: Text(
-                                    controller.expanded
-                                        ? "Hide Advance Settings"
-                                        : "Show Advance Settings",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .button
-                                        .copyWith(
-                                            color: ThemeInfo.colorIconActive),
-                                  ),
-                                  onPressed: () {
-                                    controller.toggle();
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                        Expandable(
-                          collapsed: null,
-                          expanded: Row(
-                            children: <Widget>[
-                              SizedBox(width: 24),
-                              Text(
-                                  "Update Interval: ${gd.locationUpdateInterval} minutes")
-                            ],
-                          ),
-                        ),
-                        Expandable(
-                          collapsed: null,
-                          expanded: Slider(
-                            value: gd.locationUpdateInterval.toDouble(),
-                            onChanged: (val) {
-                              setState(() {
-                                gd.locationUpdateInterval = val.toInt();
-                              });
-                            },
-                            min: 1,
-                            max: 30,
-                          ),
-                        ),
-                        Expandable(
-                          collapsed: null,
-                          expanded: Row(
-                            children: <Widget>[
-                              SizedBox(width: 24),
-                              Text(
-                                  "Min Distance Change: ${(gd.locationUpdateMinDistance * 1000).toInt()} meters")
-                            ],
-                          ),
-                        ),
-                        Expandable(
-                          collapsed: null,
-                          expanded: Slider(
-                            value: gd.locationUpdateMinDistance,
-                            onChanged: (val) {
-                              setState(() {
-                                gd.locationUpdateMinDistance = val;
-                              });
-                            },
-                            min: 0.05,
-                            max: 0.5,
-                            divisions: 45,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+//                Divider(
+//                  height: 1,
+//                ),
+//                Row(
+//                  children: <Widget>[
+//                    Switch.adaptive(
+//                      value: gd.settingMobileApp.webHookId != ""
+//                          ? gd.settingMobileApp.trackLocation
+//                          : false,
+//                      onChanged: gd.settingMobileApp.webHookId != ""
+//                          ? (val) {
+//                              setState(
+//                                () {
+//                                  gd.settingMobileApp.trackLocation = val;
+//                                  print(
+//                                      "onChanged $val gd.deviceIntegration.trackLocation ${gd.settingMobileApp.trackLocation}");
+//                                  if (val == true) {
+//                                    if (gd.settingMobileApp.webHookId != "") {
+//                                      gd.locationUpdateTime = DateTime.now()
+//                                          .subtract(Duration(days: 1));
+////                                      GeoLocatorHelper.updateLocation(
+////                                          "Switch.adaptive");
+//                                    }
+//                                  } else {
+//                                    gd.locationLatitude = 51.48;
+//                                    gd.locationLongitude = 0.0;
+//                                  }
+//                                  gd.settingMobileAppSave();
+//                                },
+//                              );
+//                            }
+//                          : null,
+//                    ),
+//                    Expanded(
+//                      child: Text(
+//                        gd.settingMobileApp.trackLocation
+//                            ? "Location Tracking Enabled"
+//                                "\n${gd.textToDisplay(gd.mobileAppState)}"
+//                            : "Location Tracking Disabled",
+//                        style: Theme.of(context).textTheme.caption,
+//                        textAlign: TextAlign.justify,
+//                        textScaleFactor: gd.textScaleFactorFix,
+//                      ),
+//                    ),
+//                  ],
+//                ),
+//                ExpandableNotifier(
+//                  child: ScrollOnExpand(
+//                    child: Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Row(
+//                          mainAxisAlignment: MainAxisAlignment.start,
+//                          children: <Widget>[
+//                            Builder(
+//                              builder: (context) {
+//                                var controller =
+//                                    ExpandableController.of(context);
+//                                return FlatButton(
+//                                  child: Text(
+//                                    controller.expanded
+//                                        ? "Hide Advance Settings"
+//                                        : "Show Advance Settings",
+//                                    style: Theme.of(context)
+//                                        .textTheme
+//                                        .button
+//                                        .copyWith(
+//                                            color: ThemeInfo.colorIconActive),
+//                                  ),
+//                                  onPressed: () {
+//                                    controller.toggle();
+//                                  },
+//                                );
+//                              },
+//                            ),
+//                          ],
+//                        ),
+//                        Expandable(
+//                          collapsed: null,
+//                          expanded: Row(
+//                            children: <Widget>[
+//                              SizedBox(width: 24),
+//                              Text(
+//                                  "Update Interval: ${gd.locationUpdateInterval} minutes")
+//                            ],
+//                          ),
+//                        ),
+//                        Expandable(
+//                          collapsed: null,
+//                          expanded: Slider(
+//                            value: gd.locationUpdateInterval.toDouble(),
+//                            onChanged: (val) {
+//                              setState(() {
+//                                gd.locationUpdateInterval = val.toInt();
+//                              });
+//                            },
+//                            min: 1,
+//                            max: 30,
+//                          ),
+//                        ),
+//                        Expandable(
+//                          collapsed: null,
+//                          expanded: Row(
+//                            children: <Widget>[
+//                              SizedBox(width: 24),
+//                              Text(
+//                                  "Min Distance Change: ${(gd.locationUpdateMinDistance * 1000).toInt()} meters")
+//                            ],
+//                          ),
+//                        ),
+//                        Expandable(
+//                          collapsed: null,
+//                          expanded: Slider(
+//                            value: gd.locationUpdateMinDistance,
+//                            onChanged: (val) {
+//                              setState(() {
+//                                gd.locationUpdateMinDistance = val;
+//                              });
+//                            },
+//                            min: 0.05,
+//                            max: 0.5,
+//                            divisions: 45,
+//                          ),
+//                        ),
+//                      ],
+//                    ),
+//                  ),
+//                ),
 //                Text(
 //                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n\n"
 //                    "deviceName ${gd.settingMobileApp.deviceName}\n\n"

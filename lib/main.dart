@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:background_fetch/background_fetch.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,7 +11,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hasskit/helper/geolocator_helper.dart';
 import 'package:hasskit/helper/locale_helper.dart';
 import 'package:hasskit/helper/theme_info.dart';
 import 'package:hasskit/helper/web_socket.dart';
@@ -49,12 +47,6 @@ class ReceivedNotification {
       @required this.payload});
 }
 
-void backgroundFetchHeadlessTask() async {
-  print('[BackgroundFetch] Headless event received.');
-  GeoLocatorHelper.updateLocation("backgroundFetchHeadlessTask");
-  BackgroundFetch.finish();
-}
-
 Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
@@ -88,8 +80,6 @@ Future<void> main() async {
       ),
     ),
   );
-
-  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }
 
 class MyApp extends StatelessWidget {
@@ -289,36 +279,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     timer60 =
         Timer.periodic(Duration(seconds: 60), (Timer t) => timer60Callback());
 
-    BackgroundFetch.start().then((int status) {
-      print('[BackgroundFetch] start success: $status');
-    }).catchError((e) {
-      print('[BackgroundFetch] start FAILURE: $e');
-    });
-
-    BackgroundFetch.configure(
-            BackgroundFetchConfig(
-                minimumFetchInterval: 15,
-                stopOnTerminate: false,
-                startOnBoot: true,
-                enableHeadless: true,
-                requiresBatteryNotLow: false,
-                requiresCharging: false,
-                requiresStorageNotLow: false,
-                requiresDeviceIdle: false,
-                requiredNetworkType: BackgroundFetchConfig.NETWORK_TYPE_NONE),
-            _onBackgroundFetch)
-        .then((int status) {
-      print('[BackgroundFetch] configure success: $status');
-    }).catchError((e) {
-      print('[BackgroundFetch] configure ERROR: $e');
-    });
-
     mainInitState();
-  }
-
-  void _onBackgroundFetch() async {
-    GeoLocatorHelper.updateLocation("_onBackgroundFetch");
-    BackgroundFetch.finish();
   }
 
   mainInitState() async {
@@ -351,7 +312,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   }
 
   timer15Callback() {
-    GeoLocatorHelper.updateLocation("timer15Callback");
+//    GeoLocatorHelper.updateLocation("timer15Callback");
   }
 
   timer30Callback() {
