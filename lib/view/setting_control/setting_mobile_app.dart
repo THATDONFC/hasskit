@@ -1,8 +1,6 @@
-import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:hasskit/helper/general_data.dart';
 import 'package:hasskit/helper/theme_info.dart';
-import 'package:location_permissions/location_permissions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingMobileApp {
