@@ -93,7 +93,7 @@ Future<void> main() async {
 
   Workmanager.initialize(
     callbackDispatcher,
-    isInDebugMode: false,
+//    isInDebugMode: true,
   );
 
   Workmanager.registerPeriodicTask(

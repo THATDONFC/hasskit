@@ -177,11 +177,12 @@ class MobileAppHelper {
 
   Future<bool> checkValidMobileApp() async {
     bool retVal = false;
-//    if (gd.mobileAppState != "...") {
-//      print("checkValidMobileApp gd.mobileAppState != ...");
-//      retVal = true;
-//      return retVal;
-//    }
+
+    if (gd.mobileAppState != "...") {
+      print("checkValidMobileApp gd.mobileAppState != ...");
+      retVal = true;
+      return retVal;
+    }
 
     var checkData = {
       "type": "get_zones",

@@ -75,7 +75,6 @@ class _SettingMobileAppRegistrationState
                   textAlign: TextAlign.justify,
                   textScaleFactor: gd.textScaleFactorFix,
                 ),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -233,7 +232,6 @@ class _SettingMobileAppRegistrationState
                     ),
                   ),
                 ),
-
 //                Text(
 //                    "Debug: trackLocation ${gd.settingMobileApp.trackLocation}\n\n"
 //                    "deviceName ${gd.settingMobileApp.deviceName}\n\n"
