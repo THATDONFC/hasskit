@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:background_fetch/background_fetch.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -20,34 +21,11 @@ import 'package:hasskit/view/page_view_builder.dart';
 import 'package:hasskit/view/setting_page.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
-import 'package:workmanager/workmanager.dart';
 import 'helper/general_data.dart';
 import 'helper/google_sign.dart';
 import 'helper/logger.dart';
 import 'helper/material_design_icons.dart';
 import 'package:rxdart/subjects.dart';
-
-const simplePeriodicTask = "simplePeriodicTask";
-
-void callbackDispatcher() {
-  Workmanager.executeTask((task, inputData) async {
-    switch (task) {
-      case simplePeriodicTask:
-        GeoLocatorHelper.updateLocation("simplePeriodicTask");
-        print("ANDROID gd.locationUpdateSuccess ${gd.locationUpdateSuccess} ");
-        print("ANDROID gd.locationUpdateFail ${gd.locationUpdateFail} ");
-        print("$simplePeriodicTask was executed");
-        break;
-      case Workmanager.iOSBackgroundTask:
-        GeoLocatorHelper.updateLocation("Workmanager.iOSBackgroundTask");
-        print("iOS gd.locationUpdateSuccess ${gd.locationUpdateSuccess} ");
-        print("iOS gd.locationUpdateFail ${gd.locationUpdateFail} ");
-        print("The iOS background fetch was triggered");
-        break;
-    }
-    return Future.value(true);
-  });
-}
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -71,6 +49,12 @@ class ReceivedNotification {
       @required this.payload});
 }
 
+void backgroundFetchHeadlessTask() async {
+  print('[BackgroundFetch] Headless event received.');
+  GeoLocatorHelper.updateLocation("backgroundFetchHeadlessTask");
+  BackgroundFetch.finish();
+}
+
 Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
@@ -91,17 +75,6 @@ Future<void> main() async {
     selectNotificationSubject.add(payload);
   });
 
-  Workmanager.initialize(
-    callbackDispatcher,
-//    isInDebugMode: true,
-  );
-
-  Workmanager.registerPeriodicTask(
-    "3",
-    simplePeriodicTask,
-    initialDelay: Duration(seconds: 10),
-  );
-
   runApp(
     EasyLocalization(
       child: MultiProvider(
@@ -115,6 +88,8 @@ Future<void> main() async {
       ),
     ),
   );
+
+  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }
 
 class MyApp extends StatelessWidget {
@@ -215,7 +190,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> _showNotification(String title, String body) async {
+  Future<void> localNotification(String title, String body) async {
     print("_showNotification");
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
@@ -239,9 +214,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-//        print("on message Fluttertoast.showToast");
         print('on message $message');
-//        print('on message 1 ${message["aps"]["alert"]["title"]}');
         if (Platform.isIOS) {
           gd.firebaseMessagingTitle = message["aps"]["alert"]["title"];
           gd.firebaseMessagingBody = message["aps"]["alert"]["body"];
@@ -249,31 +222,19 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           gd.firebaseMessagingTitle = message["notification"]["title"];
           gd.firebaseMessagingBody = message["notification"]["body"];
         }
-        _showNotification(gd.firebaseMessagingTitle, gd.firebaseMessagingBody);
-//        String spacer = "";
-//        if (gd.firebaseMessagingTitle == null) gd.firebaseMessagingTitle = "";
-//        if (gd.firebaseMessagingBody == null) gd.firebaseMessagingBody = "";
-//        if (gd.firebaseMessagingTitle != "" && gd.firebaseMessagingBody != "")
-//          spacer = "\n";
-
-//        Fluttertoast.showToast(
-//            msg:
-//                "${gd.firebaseMessagingTitle}$spacer${gd.firebaseMessagingBody}",
-//            toastLength: Toast.LENGTH_LONG,
-//            gravity: ToastGravity.TOP,
-//            backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-//            textColor: Theme.of(context).textTheme.title.color,
-//            fontSize: 14.0);
+        localNotification(gd.firebaseMessagingTitle, gd.firebaseMessagingBody);
       },
       onResume: (Map<String, dynamic> message) async {
         print('on resume $message');
         gd.firebaseMessagingTitle = message["notification"]["title"];
         gd.firebaseMessagingBody = message["notification"]["body"];
+        localNotification(gd.firebaseMessagingTitle, gd.firebaseMessagingBody);
       },
       onLaunch: (Map<String, dynamic> message) async {
         print('on launch $message');
         gd.firebaseMessagingTitle = message["notification"]["title"];
         gd.firebaseMessagingBody = message["notification"]["body"];
+        localNotification(gd.firebaseMessagingTitle, gd.firebaseMessagingBody);
       },
     );
   }
@@ -328,7 +289,36 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     timer60 =
         Timer.periodic(Duration(seconds: 60), (Timer t) => timer60Callback());
 
+    BackgroundFetch.start().then((int status) {
+      print('[BackgroundFetch] start success: $status');
+    }).catchError((e) {
+      print('[BackgroundFetch] start FAILURE: $e');
+    });
+
+    BackgroundFetch.configure(
+            BackgroundFetchConfig(
+                minimumFetchInterval: 15,
+                stopOnTerminate: false,
+                startOnBoot: true,
+                enableHeadless: true,
+                requiresBatteryNotLow: false,
+                requiresCharging: false,
+                requiresStorageNotLow: false,
+                requiresDeviceIdle: false,
+                requiredNetworkType: BackgroundFetchConfig.NETWORK_TYPE_NONE),
+            _onBackgroundFetch)
+        .then((int status) {
+      print('[BackgroundFetch] configure success: $status');
+    }).catchError((e) {
+      print('[BackgroundFetch] configure ERROR: $e');
+    });
+
     mainInitState();
+  }
+
+  void _onBackgroundFetch() async {
+    GeoLocatorHelper.updateLocation("_onBackgroundFetch");
+    BackgroundFetch.finish();
   }
 
   mainInitState() async {
