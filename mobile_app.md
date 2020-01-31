@@ -1,9 +1,8 @@
 ## HassKit Mobile App Guide
 
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_6.png)
-![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_4.png)
 
-The new version bring a deeper integration into Home Assistant. You can now register #HassKit as a Mobile App and allow sending notification and update location directly into Home Assistant. No additional custom component required.
+The new version bring a deeper integration into Home Assistant. You can now register #HassKit as a Mobile App and allow sending notification to your device. No additional custom component required.
 
 To enable this feature, please follow these 3 easy steps
 
@@ -12,15 +11,7 @@ To enable this feature, please follow these 3 easy steps
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_2.png)
 <br>Upon connected to a new Home Assistant server, HassKit will automatically register a Mobile App to enable send Push Notification and Location Tracking feature. When the new Mobile App registered, just click Restart Home Assistant.
 
-## 2. View Mobile App Location History
-
-![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_3.png)
-<br>Add the newly registered Mobile App to room's screen.
-<br><br>
-![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_4.png)
-<br>Open the device to see location's history
-
-## 3. Send Notification with Picture
+## 2. Send Notification with Picture
 
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_5.png)
 <br>HassKit registered device will appear as a Mobile App, you can send notification directly into the device without additional custom component.
@@ -28,11 +19,11 @@ To enable this feature, please follow these 3 easy steps
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_6.png)
 <br>Notification now support image and sound.
 
-## 4. Delete Mobile App Integration
+## 3. Delete Mobile App Integration
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_7.png)
 <br>Go to Home Assistant > Configuration > Integrations > Mobile App: <App Name> and click the recycle bin icon.
 
-## 5. Automatically send Notification to HassKit
+## 4. Automatically send Notification to HassKit
 
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_9.png)
 
@@ -106,7 +97,7 @@ automation:
 <br>
 ![alt text](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/mobile_app/Screenshot_10.png)
 
-## 6. Troubleshooting
+## 5. Troubleshooting
 
 ### Error 404 during Mobile App registration:
 - Make sure you have ***default_config:*** in configuration.yaml
@@ -115,16 +106,3 @@ automation:
 mobile_app:
 ```
 https://developers.home-assistant.io/docs/en/app_integration_setup.html
-
-## 7. iPhone Location Tracking, Always Allow
-By default, iOS will only allow HassKit to track your location `While Using the App`. If you want you can allow HassKit to be able to update your location always.
-
-1. Open iOS `Settings`.
-2. Go into: `Privacy` > `Location Services`.
-3. Find `HassKit` in the list and click it.
-4. Change `Allow Location Access` to `Always`.
-
-## 8. Build HassKit Yourself
-
-Please read this guide to build HassKit yourself.
-https://github.com/tuanha2000vn/hasskit/blob/master/installation.md
