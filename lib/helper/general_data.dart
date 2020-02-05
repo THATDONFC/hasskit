@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hasskit/helper/material_design_icons.dart';
 import 'package:hasskit/helper/mobile_app_helper.dart';
 import 'package:hasskit/helper/theme_info.dart';
 import 'package:hasskit/helper/web_socket.dart';
@@ -2369,9 +2370,14 @@ class GeneralData with ChangeNotifier {
     var client = new http.Client();
 
     var url = gd.currentUrl + "/api/states";
+    var token = gd.loginDataList[0].accessToken;
+    if (gd.loginDataList[0].longToken != null &&
+        gd.loginDataList[0].longToken.length > 10)
+      token = gd.loginDataList[0].longToken;
+
     Map<String, String> headers = {
       'content-type': 'application/json',
-      'Authorization': 'Bearer ${gd.loginDataCurrent.longToken}',
+      'Authorization': 'Bearer $token',
     };
 
     log.d("httpApiStates $url");

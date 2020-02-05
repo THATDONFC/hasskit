@@ -22,8 +22,9 @@ import 'package:provider/provider.dart';
 import 'helper/general_data.dart';
 import 'helper/google_sign.dart';
 import 'helper/logger.dart';
-import 'helper/material_design_icons.dart';
 import 'package:rxdart/subjects.dart';
+
+import 'helper/material_design_icons.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();

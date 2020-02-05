@@ -914,10 +914,9 @@ class Entity {
   }
 
   bool get getClimateActive {
-    if (hvacAction != null){
+    if (hvacAction != null) {
       if (hvacAction == 'heating' || hvacAction == 'cooling') return true;
     }
     return false;
   }
-
 }

@@ -315,10 +315,12 @@ class EntityIcon extends StatelessWidget {
     if (entity.entityId.contains("climate.")) {
       iconWidget = Container(
         decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            // color: gd.climateModeToColor(entity.state),
-            color: entity.getClimateActive? ThemeInfo.colorBottomSheet : gd.climateModeToColor(entity.state),
-            ),
+          shape: BoxShape.circle,
+          // color: gd.climateModeToColor(entity.state),
+          color: entity.getClimateActive
+              ? ThemeInfo.colorBottomSheet
+              : gd.climateModeToColor(entity.state),
+        ),
         alignment: Alignment.center,
         padding: EdgeInsets.all(4 * gd.textScaleFactor),
         child: entity.getTemperature != entity.getTemperature.toInt()
@@ -327,8 +329,10 @@ class EntityIcon extends StatelessWidget {
                 child: Text(
                   "${entity.getTemperature}",
                   style: ThemeInfo.textNameButtonActive.copyWith(
-                    // color: ThemeInfo.colorBottomSheet,    
-                    color: entity.getClimateActive? gd.climateModeToColor(entity.state) : ThemeInfo.colorBottomSheet,
+                    // color: ThemeInfo.colorBottomSheet,
+                    color: entity.getClimateActive
+                        ? gd.climateModeToColor(entity.state)
+                        : ThemeInfo.colorBottomSheet,
                     fontSize: 100,
                   ),
                   maxLines: 1,
@@ -340,8 +344,10 @@ class EntityIcon extends StatelessWidget {
                 child: Text(
                   "${entity.getTemperature.toInt()}",
                   style: ThemeInfo.textNameButtonActive.copyWith(
-                    // color: ThemeInfo.colorBottomSheet,    
-                    color: entity.getClimateActive? gd.climateModeToColor(entity.state) : ThemeInfo.colorBottomSheet,
+                    // color: ThemeInfo.colorBottomSheet,
+                    color: entity.getClimateActive
+                        ? gd.climateModeToColor(entity.state)
+                        : ThemeInfo.colorBottomSheet,
                     fontSize: 100,
                   ),
                   maxLines: 1,
