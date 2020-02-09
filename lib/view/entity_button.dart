@@ -30,15 +30,12 @@ class EntityButton extends StatelessWidget {
           "${generalData.entities[entityId].getOverrideName} " +
           "${generalData.entities[entityId].getOverrideIcon} ",
       builder: (context, data, child) {
-        return Hero(
-          tag: entityId,
-          child: InkWell(
-            onTap: onTapCallback,
-            onLongPress: onLongPressCallback,
-            child: gd.viewMode == ViewMode.sort
-                ? EntityButtonDisplayAnimated(entityId: entityId)
-                : EntityButtonDisplay(entityId: entityId),
-          ),
+        return InkWell(
+          onTap: onTapCallback,
+          onLongPress: onLongPressCallback,
+          child: gd.viewMode == ViewMode.sort
+              ? EntityButtonDisplayAnimated(entityId: entityId)
+              : EntityButtonDisplay(entityId: entityId),
         );
       },
     );

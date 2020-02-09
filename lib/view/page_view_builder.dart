@@ -192,12 +192,14 @@ class SinglePage extends StatelessWidget {
 
         ImageProvider backgroundImage;
         String imageUrl = gd.getRoomBackgroundPhoto(roomIndex);
-
-        if (imageUrl != null) {
+        print("getRoomBackgroundPhoto $imageUrl");
+        if (imageUrl != null && gd.fileExists(imageUrl)) {
           backgroundImage = FileImage(File(imageUrl));
+          print("FileImage $backgroundImage");
         } else {
           backgroundImage =
               AssetImage(gd.backgroundImage[gd.roomList[roomIndex].imageIndex]);
+          print("AssetImage $backgroundImage");
         }
 
         return Container(

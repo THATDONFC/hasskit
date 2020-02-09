@@ -441,10 +441,24 @@ class GeneralData with ChangeNotifier {
       try {
 //        log.d(
 //            "CameraInfo.updateImage $entityId response.statusCode == 200 url $url");
+//        cameraInfo.previousImage = cameraInfo.currentImage;
+//        cameraInfo.currentImage = NetworkImage(url);
+//        cameraInfo.updatedTime = DateTime.now();
+//        notifyListeners();
         cameraInfo.previousImage = cameraInfo.currentImage;
-        cameraInfo.currentImage = NetworkImage(url);
-        cameraInfo.updatedTime = DateTime.now();
-        notifyListeners();
+        var _image = NetworkImage(url);
+
+        _image.resolve(ImageConfiguration()).addListener(
+          ImageStreamListener(
+            (info, call) {
+              print('Networkimage $entityId is fully loaded and saved');
+              cameraInfo.currentImage = _image;
+              cameraInfo.updatedTime =
+                  DateTime.now().add(Duration(seconds: 10));
+              notifyListeners();
+            },
+          ),
+        );
       } catch (e) {
         log.w("CameraInfo.updateImage $entityId catch $e");
       }
