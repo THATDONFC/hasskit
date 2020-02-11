@@ -121,6 +121,7 @@ class _SettingPageState extends State<SettingPage> {
           "${generalData.currentTheme} | "
           "${generalData.webSocketConnectionStatus} | "
           "${generalData.deviceSetting.settingLocked} | "
+          "${generalData.deviceSetting.launchIndex} | "
           "${generalData.deviceSetting.phoneLayout} | "
           "${generalData.deviceSetting.tabletLayout} | "
           "${generalData.deviceSetting.shapeLayout} | "
@@ -368,6 +369,13 @@ class _SettingPageState extends State<SettingPage> {
               ),
               ShapeSelector(),
               LayoutSelector(),
+              SliverHeaderNormal(
+                icon: Icon(
+                  MaterialDesignIcons.getIconDataFromIconName("mdi:launch"),
+                ),
+                title: "Launch",
+              ),
+              LaunchSelector(),
               SliverHeaderNormal(
                 icon: Icon(
                   MaterialDesignIcons.getIconDataFromIconName("mdi:web"),
@@ -746,6 +754,53 @@ class _ShapeSelectorState extends State<ShapeSelector> {
                 });
               },
               groupValue: gd.deviceSetting.shapeLayout,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class LaunchSelector extends StatefulWidget {
+  @override
+  _LaunchSelectorState createState() => _LaunchSelectorState();
+}
+
+class _LaunchSelectorState extends State<LaunchSelector> {
+
+
+  int launchValue;
+
+  @override
+  Widget build(BuildContext context) {
+    launchValue = gd.deviceSetting.launchIndex;
+
+  final Map<int, Widget> launchSegment = <int, Widget>{
+    0: Text(gd.getRoomName(0)),
+    1: Text(Translate.getString("global.rooms", context))
+  };
+
+    return SliverList(
+      delegate: SliverChildListDelegate(
+        [
+          Container(
+            margin: EdgeInsets.all(8),
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: ThemeInfo.colorBottomSheet.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(8)),
+            child: CupertinoSlidingSegmentedControl<int>(
+                thumbColor: ThemeInfo.colorIconActive,
+                backgroundColor: Colors.transparent,
+                children: launchSegment,
+                onValueChanged: (int val) {
+                  setState(() {
+                    gd.deviceSetting.launchIndex = val;
+                    gd.deviceSettingSave();
+                  });
+                },
+                groupValue: gd.deviceSetting.launchIndex,
             ),
           ),
         ],

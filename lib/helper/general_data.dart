@@ -1476,6 +1476,7 @@ class GeneralData with ChangeNotifier {
   }
 
   DeviceSetting deviceSetting = DeviceSetting(
+    launchIndex: 0,
     phoneLayout: 3,
     tabletLayout: 69,
     shapeLayout: 1,
@@ -1502,6 +1503,7 @@ class GeneralData with ChangeNotifier {
       deviceSetting = DeviceSetting.fromJson(val);
     } else {
       log.w('CAN NOT FIND deviceSetting adding default data');
+      deviceSetting.launchIndex = 0;
       deviceSetting.phoneLayout = 3;
       deviceSetting.tabletLayout = 69;
       deviceSetting.shapeLayout = 1;
@@ -1522,6 +1524,7 @@ class GeneralData with ChangeNotifier {
 
     try {
       var jsonDeviceSetting = {
+        'launchIndex': deviceSetting.launchIndex,
         'phoneLayout': deviceSetting.phoneLayout,
         'tabletLayout': deviceSetting.tabletLayout,
         'shapeLayout': deviceSetting.shapeLayout,
