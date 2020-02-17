@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DeviceSetting {
+  int launchIndex = 0;
   int phoneLayout = 3;
   int tabletLayout = 69;
   int shapeLayout = 1;
@@ -13,6 +14,7 @@ class DeviceSetting {
   List<String> backgroundPhoto = [];
 
   DeviceSetting({
+    @required this.launchIndex,
     @required this.phoneLayout,
     @required this.tabletLayout,
     @required this.shapeLayout,
@@ -26,6 +28,7 @@ class DeviceSetting {
   });
 
   Map<String, dynamic> toJson() => {
+        'launchIndex': launchIndex,
         'phoneLayout': phoneLayout,
         'tabletLayout': tabletLayout,
         'shapeLayout': shapeLayout,
@@ -40,6 +43,7 @@ class DeviceSetting {
 
   factory DeviceSetting.fromJson(Map<String, dynamic> json) {
     return DeviceSetting(
+      launchIndex: json['launchIndex'] != null ? json['launchIndex'] : 0,
       phoneLayout: json['phoneLayout'] != null ? json['phoneLayout'] : 3,
       tabletLayout: json['tabletLayout'] != null ? json['tabletLayout'] : 69,
       shapeLayout: json['shapeLayout'] != null ? json['shapeLayout'] : 1,

@@ -351,6 +351,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         DeviceOrientation.portraitUp,
       ]);
     }
+    if(showLoading) return Container();
     log.w(
         "gd.isTablet ${gd.isTablet} gd.mediaQueryShortestSide ${gd.mediaQueryShortestSide} gd.mediaQueryLongestSide ${gd.mediaQueryLongestSide} orientation ${gd.mediaQueryOrientation}");
     return Selector<GeneralData, String>(
@@ -358,6 +359,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           "${generalData.viewMode} | " +
           "${Localizations.localeOf(context).languageCode} | " +
           "${generalData.deviceSetting.settingLocked} | " +
+          "${generalData.deviceSetting.launchIndex} | " +
           "${generalData.deviceSetting.phoneLayout} | " +
           "${generalData.deviceSetting.tabletLayout} | " +
           "${generalData.deviceSetting.shapeLayout} | " +
@@ -381,7 +383,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                   log.d("CupertinoTabBar onTap $int");
                   gd.viewMode = ViewMode.normal;
                 },
-                currentIndex: 0,
+                // currentIndex: 0,
+                currentIndex: gd.deviceSetting.launchIndex,
                 items: [
                   BottomNavigationBarItem(
                     icon: Icon(MaterialDesignIcons.getIconDataFromIconName(
