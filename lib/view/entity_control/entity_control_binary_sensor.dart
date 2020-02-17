@@ -287,13 +287,11 @@ class _EntityControlBinarySensorState extends State<EntityControlBinarySensor> {
             deviceClass = "lock";
           }
         }
-//        setState(() {
+
         inAsyncCall = false;
-//        });
       } else {
-//        setState(() {
         inAsyncCall = false;
-//        });
+
         log.e("Request failed with status: ${response.statusCode}.");
       }
     } catch (e) {

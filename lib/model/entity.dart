@@ -677,12 +677,14 @@ class Entity {
   }
 
   String get getFriendlyName {
-    if (friendlyName != null) {
+    if (friendlyName != null && friendlyName != "" && friendlyName != "null") {
       return friendlyName;
-    } else if (entityId != null) {
-      return entityId;
+    } else if (entityId != null && entityId.split(".")[1] != null) {
+      return entityId.split(".")[1];
+    } else if (entityId != null && entityId.split(".")[0] != null) {
+      return entityId.split(".")[0];
     } else {
-      return "???";
+      return "";
     }
   }
 
