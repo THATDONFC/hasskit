@@ -31,13 +31,13 @@ class _TemperatureDropdownButtonState extends State<TemperatureDropdownButton> {
         contentPadding: EdgeInsets.fromLTRB(4, 2, 2, 2),
         title: Text(
           gd.textToDisplay("Clear"),
-          style: Theme.of(context).textTheme.body1,
+          style: Theme.of(context).textTheme.bodyText2,
           overflow: TextOverflow.ellipsis,
           textScaleFactor: gd.textScaleFactorFix,
         ),
         trailing: Text(
           "",
-          style: Theme.of(context).textTheme.body1,
+          style: Theme.of(context).textTheme.bodyText2,
           overflow: TextOverflow.ellipsis,
           textScaleFactor: gd.textScaleFactorFix,
         ),
@@ -61,13 +61,13 @@ class _TemperatureDropdownButtonState extends State<TemperatureDropdownButton> {
           contentPadding: EdgeInsets.fromLTRB(4, 2, 2, 2),
           title: Text(
             gd.textToDisplay("${entity.getFriendlyName}"),
-            style: Theme.of(context).textTheme.body1,
+            style: Theme.of(context).textTheme.bodyText2,
             overflow: TextOverflow.ellipsis,
             textScaleFactor: gd.textScaleFactorFix,
           ),
           trailing: Text(
             "${double.parse(entity.state).toStringAsFixed(1)} ${entity.unitOfMeasurement.trim()}",
-            style: Theme.of(context).textTheme.body1,
+            style: Theme.of(context).textTheme.bodyText2,
             overflow: TextOverflow.ellipsis,
             textScaleFactor: gd.textScaleFactorFix,
           ),

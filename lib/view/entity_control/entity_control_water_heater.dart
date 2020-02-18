@@ -20,7 +20,7 @@ class _EntityControlWaterHeaterState extends State<EntityControlWaterHeater> {
   Widget build(BuildContext context) {
     var entity = gd.entities[widget.entityId];
     var info04 = InfoProperties(
-        bottomLabelStyle: Theme.of(context).textTheme.title,
+        bottomLabelStyle: Theme.of(context).textTheme.headline6,
 //        bottomLabelStyle: TextStyle(
 //            color: HexColor('#54826D'),
 //            fontSize: 14,
@@ -28,7 +28,7 @@ class _EntityControlWaterHeaterState extends State<EntityControlWaterHeater> {
         bottomLabelText: entity.currentTemperature != null
             ? entity.currentTemperature.toString() + " ˚"
             : "",
-        mainLabelStyle: Theme.of(context).textTheme.display3,
+        mainLabelStyle: Theme.of(context).textTheme.headline2,
 //        mainLabelStyle: TextStyle(
 //            color: HexColor('#54826D'),
 //            fontSize: 30.0,
@@ -155,7 +155,7 @@ class _OperationListState extends State<OperationList> {
         value: option,
         child: Text(
           gd.textToDisplay("$option"),
-//          style: Theme.of(context).textTheme.body1,
+//          style: Theme.of(context).textTheme.bodyText2,
           overflow: TextOverflow.ellipsis,
           textScaleFactor: gd.textScaleFactorFix,
         ),

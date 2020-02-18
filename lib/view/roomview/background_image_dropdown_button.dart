@@ -41,7 +41,7 @@ class _BackgroundImageDropdownButtonState
           ),
           title: Text(
             gd.textToDisplay("$imageDisplay"),
-            style: Theme.of(context).textTheme.body1,
+            style: Theme.of(context).textTheme.bodyText2,
             overflow: TextOverflow.ellipsis,
             textScaleFactor: gd.textScaleFactorFix,
           ),

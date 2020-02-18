@@ -173,7 +173,7 @@ class _EntityControlVacuumState extends State<EntityControlVacuum> {
           status == null
               ? gd.textToDisplay(entity.getStateDisplay)
               : gd.textToDisplay(status),
-          style: Theme.of(context).textTheme.display1,
+          style: Theme.of(context).textTheme.headline4,
           overflow: TextOverflow.ellipsis,
           textScaleFactor: gd.textScaleFactorFix,
         ),

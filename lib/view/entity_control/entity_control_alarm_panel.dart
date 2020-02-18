@@ -95,8 +95,8 @@ class _EntityControlAlarmPanelState extends State<EntityControlAlarmPanel> {
         "text $text armType $armType gd.deviceSetting.lastArmType ${gd.deviceSetting.lastArmType}");
     Color getColor() {
       return gd.deviceSetting.lastArmType == armType
-          ? Theme.of(context).textTheme.body1.color
-          : Theme.of(context).textTheme.body1.color.withOpacity(0.25);
+          ? Theme.of(context).textTheme.bodyText2.color
+          : Theme.of(context).textTheme.bodyText2.color.withOpacity(0.25);
     }
 
     return Container(
@@ -104,7 +104,7 @@ class _EntityControlAlarmPanelState extends State<EntityControlAlarmPanel> {
         width: 80,
         decoration: BoxDecoration(
           color: gd.deviceSetting.lastArmType == armType
-              ? Theme.of(context).textTheme.body1.color.withOpacity(0.25)
+              ? Theme.of(context).textTheme.bodyText2.color.withOpacity(0.25)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8.0),
         ),

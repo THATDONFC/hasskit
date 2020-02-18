@@ -413,7 +413,7 @@ class _SettingPageState extends State<SettingPage> {
                               borderRadius: BorderRadius.circular(8)),
                           child: Text(
                             Translate.getString("settings.about_info", context),
-                            style: Theme.of(context).textTheme.body1,
+                            style: Theme.of(context).textTheme.bodyText2,
                             textAlign: TextAlign.justify,
                             textScaleFactor: gd.textScaleFactorFix,
                           ),
@@ -482,7 +482,7 @@ class _SettingPageState extends State<SettingPage> {
 //                            "temperature: ${gd.configUnitSystem['temperature']}"
                             "",
                             maxLines: 4,
-                            style: Theme.of(context).textTheme.body1,
+                            style: Theme.of(context).textTheme.bodyText2,
                             textAlign: TextAlign.center,
                             textScaleFactor: gd.textScaleFactorFix,
                             overflow: TextOverflow.ellipsis,
@@ -768,18 +768,16 @@ class LaunchSelector extends StatefulWidget {
 }
 
 class _LaunchSelectorState extends State<LaunchSelector> {
-
-
   int launchValue;
 
   @override
   Widget build(BuildContext context) {
     launchValue = gd.deviceSetting.launchIndex;
 
-  final Map<int, Widget> launchSegment = <int, Widget>{
-    0: Text(gd.getRoomName(0)),
-    1: Text(Translate.getString("global.rooms", context))
-  };
+    final Map<int, Widget> launchSegment = <int, Widget>{
+      0: Text(gd.getRoomName(0)),
+      1: Text(Translate.getString("global.rooms", context))
+    };
 
     return SliverList(
       delegate: SliverChildListDelegate(
@@ -791,16 +789,16 @@ class _LaunchSelectorState extends State<LaunchSelector> {
                 color: ThemeInfo.colorBottomSheet.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(8)),
             child: CupertinoSlidingSegmentedControl<int>(
-                thumbColor: ThemeInfo.colorIconActive,
-                backgroundColor: Colors.transparent,
-                children: launchSegment,
-                onValueChanged: (int val) {
-                  setState(() {
-                    gd.deviceSetting.launchIndex = val;
-                    gd.deviceSettingSave();
-                  });
-                },
-                groupValue: gd.deviceSetting.launchIndex,
+              thumbColor: ThemeInfo.colorIconActive,
+              backgroundColor: Colors.transparent,
+              children: launchSegment,
+              onValueChanged: (int val) {
+                setState(() {
+                  gd.deviceSetting.launchIndex = val;
+                  gd.deviceSettingSave();
+                });
+              },
+              groupValue: gd.deviceSetting.launchIndex,
             ),
           ),
         ],

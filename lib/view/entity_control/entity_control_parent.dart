@@ -275,7 +275,7 @@ class _IconSelectionState extends State<IconSelection> {
             child: Center(
               child: Text(
                 Translate.getString("edit.select_icon", context),
-                style: Theme.of(context).textTheme.title,
+                style: Theme.of(context).textTheme.headline6,
                 overflow: TextOverflow.ellipsis,
                 textScaleFactor: gd.textScaleFactorFix,
               ),
@@ -307,11 +307,11 @@ class _IconSelectionState extends State<IconSelection> {
                         return InkWell(
                           onTap: () {
                             if (gd.entitiesOverride[widget.entityId] != null) {
-                              gd.entitiesOverride[widget.entityId].icon =
-                                  gd.iconsOverride[index];
+                              gd.entitiesOverride[widget.entityId]
+                                  .overrideIcon = gd.iconsOverride[index];
                             } else {
-                              EntityOverride entityOverride =
-                                  EntityOverride(icon: gd.iconsOverride[index]);
+                              EntityOverride entityOverride = EntityOverride(
+                                  overrideIcon: gd.iconsOverride[index]);
                               gd.entitiesOverride[widget.entityId] =
                                   entityOverride;
                             }
@@ -424,7 +424,7 @@ class _EditEntityNormalState extends State<EditEntityNormal> {
           Expanded(
             child: Text(
               gd.textToDisplay(entity.getOverrideName),
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.subtitle1,
               textScaleFactor: gd.textScaleFactorFix,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -438,11 +438,11 @@ class _EditEntityNormalState extends State<EditEntityNormal> {
                     setState(
                       () {
                         if (gd.entitiesOverride[widget.entityId] != null) {
-                          gd.entitiesOverride[widget.entityId].friendlyName =
+                          gd.entitiesOverride[widget.entityId].overrideName =
                               _controller.text.trim();
                         } else {
                           gd.entitiesOverride[widget.entityId] = EntityOverride(
-                              friendlyName: _controller.text.trim());
+                              overrideName: _controller.text.trim());
                         }
                         gd.entitiesOverrideSave(true);
                         widget.showEditNameToggle();
@@ -707,7 +707,7 @@ class _EditModeState extends State<EditMode> {
                           ),
                           focusNode: _focusNodeName,
                           controller: _controllerName,
-                          style: Theme.of(context).textTheme.subhead,
+                          style: Theme.of(context).textTheme.subtitle1,
                           maxLines: 1,
                           textAlign: TextAlign.left,
                           autocorrect: false,
@@ -718,12 +718,12 @@ class _EditModeState extends State<EditMode> {
                                 if (gd.entitiesOverride[widget.entityId] !=
                                     null) {
                                   gd.entitiesOverride[widget.entityId]
-                                          .friendlyName =
+                                          .overrideName =
                                       _controllerName.text.trim();
                                 } else {
                                   gd.entitiesOverride[widget.entityId] =
                                       EntityOverride(
-                                          friendlyName:
+                                          overrideName:
                                               _controllerName.text.trim());
                                 }
                                 print("onEditingComplete");
@@ -740,7 +740,7 @@ class _EditModeState extends State<EditMode> {
                         onPressed: () {
                           setState(() {
                             _controllerName.clear();
-                            gd.entitiesOverride[widget.entityId].friendlyName =
+                            gd.entitiesOverride[widget.entityId].overrideName =
                                 "";
                             gd.entitiesOverrideSave(true);
                             FocusScope.of(context)
@@ -780,7 +780,7 @@ class _EditModeState extends State<EditMode> {
                               ),
                               focusNode: _focusNodeSearch,
                               controller: _controllerSearch,
-                              style: Theme.of(context).textTheme.subhead,
+                              style: Theme.of(context).textTheme.subtitle1,
                               maxLines: 1,
                               textAlign: TextAlign.left,
                               autocorrect: false,
@@ -794,12 +794,12 @@ class _EditModeState extends State<EditMode> {
                                     if (gd.entitiesOverride[widget.entityId] !=
                                         null) {
                                       gd.entitiesOverride[widget.entityId]
-                                              .friendlyName =
+                                              .overrideName =
                                           _controllerName.text.trim();
                                     } else {
                                       gd.entitiesOverride[widget.entityId] =
                                           EntityOverride(
-                                              friendlyName:
+                                              overrideName:
                                                   _controllerName.text.trim());
                                     }
                                     print("onEditingComplete");
@@ -846,12 +846,12 @@ class _EditModeState extends State<EditMode> {
                                                   widget.entityId] !=
                                               null) {
                                             gd.entitiesOverride[widget.entityId]
-                                                    .icon =
+                                                    .overrideIcon =
                                                 iconsOverrideFiltered[index];
                                           } else {
                                             EntityOverride entityOverride =
                                                 EntityOverride(
-                                                    icon: gd
+                                                    overrideIcon: gd
                                                         .iconsOverride[index]);
                                             gd.entitiesOverride[widget
                                                 .entityId] = entityOverride;
@@ -965,17 +965,20 @@ class _EditModeState extends State<EditMode> {
                                     : Icons.notifications_off,
                                 color: gd.baseSetting.notificationDevices
                                         .contains(widget.entityId)
-                                    ? Theme.of(context).textTheme.title.color
+                                    ? Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        .color
                                     : (gd.activeDevicesSupportedType(
                                             widget.entityId))
                                         ? Theme.of(context)
                                             .textTheme
-                                            .title
+                                            .headline6
                                             .color
                                             .withOpacity(0.25)
                                         : Theme.of(context)
                                             .textTheme
-                                            .title
+                                            .headline6
                                             .color
                                             .withOpacity(0.0),
                               )

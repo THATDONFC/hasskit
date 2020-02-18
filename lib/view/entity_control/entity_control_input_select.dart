@@ -28,7 +28,7 @@ class _EntityControlInputSelectState extends State<EntityControlInputSelect> {
         value: option,
         child: Text(
           gd.textToDisplay("$option"),
-//          style: Theme.of(context).textTheme.body1,
+//          style: Theme.of(context).textTheme.bodyText2,
           overflow: TextOverflow.ellipsis,
           textScaleFactor: gd.textScaleFactorFix,
         ),

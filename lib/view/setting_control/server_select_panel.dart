@@ -68,7 +68,7 @@ class ServerSelectPanel extends StatelessWidget {
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.TOP,
                 backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-                textColor: Theme.of(context).textTheme.title.color,
+                textColor: Theme.of(context).textTheme.headline6.color,
                 fontSize: 14.0);
           } else {
             Fluttertoast.showToast(
@@ -76,7 +76,7 @@ class ServerSelectPanel extends StatelessWidget {
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.TOP,
                 backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-                textColor: Theme.of(context).textTheme.title.color,
+                textColor: Theme.of(context).textTheme.headline6.color,
                 fontSize: 14.0);
           }
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -108,7 +108,7 @@ class ServerSelectPanel extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(loginData.getUrl,
-                          style: Theme.of(context).textTheme.subhead,
+                          style: Theme.of(context).textTheme.subtitle1,
                           maxLines: 2,
                           textScaleFactor: gd.textScaleFactorFix,
                           overflow: TextOverflow.ellipsis),
@@ -123,7 +123,7 @@ class ServerSelectPanel extends StatelessWidget {
                               : Translate.getString(
                                       "global.last_access", context) +
                                   ": ${loginData.timeSinceLastAccess}",
-                          style: Theme.of(context).textTheme.body1,
+                          style: Theme.of(context).textTheme.bodyText2,
                           maxLines: 5,
                           textScaleFactor: gd.textScaleFactorFix,
                           overflow: TextOverflow.ellipsis),

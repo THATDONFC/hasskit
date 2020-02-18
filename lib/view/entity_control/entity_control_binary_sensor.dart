@@ -77,7 +77,7 @@ class _EntityControlBinarySensorState extends State<EntityControlBinarySensor> {
                       var changedTime =
                           DateTime.parse(rec.lastChanged).toLocal();
                       var formattedChangedTime =
-                          DateFormat('kk:mm:ss').format(changedTime);
+                          DateFormat('HH:mm:ss').format(changedTime);
                       var timeDiff = DateTime.now()
                           .difference(DateTime.parse(rec.lastChanged));
                       Duration duration;
@@ -148,7 +148,7 @@ class _EntityControlBinarySensorState extends State<EntityControlBinarySensor> {
                                 SizedBox(width: 8),
                                 Text(
                                   '$formattedChangedTime',
-                                  style: Theme.of(context).textTheme.subtitle,
+                                  style: Theme.of(context).textTheme.subtitle2,
                                   textScaleFactor: gd.textScaleFactorFix,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.right,
@@ -161,7 +161,7 @@ class _EntityControlBinarySensorState extends State<EntityControlBinarySensor> {
                                           '${printDuration(timeDiff, abbreviated: false, tersity: DurationTersity.minute, spacer: ' ', delimiter: ' ', conjugation: ' and ')} ago',
                                           style: Theme.of(context)
                                               .textTheme
-                                              .subtitle,
+                                              .subtitle2,
                                           textScaleFactor:
                                               gd.textScaleFactorFix,
                                           overflow: TextOverflow.ellipsis,
@@ -171,7 +171,7 @@ class _EntityControlBinarySensorState extends State<EntityControlBinarySensor> {
                                               "${Translate.getString("global.duration", context)}: ${printDuration(duration, abbreviated: true, tersity: DurationTersity.second, spacer: '', delimiter: ' ', conjugation: ' and ')}",
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .subtitle,
+                                                  .subtitle2,
                                               textScaleFactor:
                                                   gd.textScaleFactorFix,
                                               overflow: TextOverflow.ellipsis,
@@ -194,7 +194,7 @@ class _EntityControlBinarySensorState extends State<EntityControlBinarySensor> {
                       var changedTime =
                           DateTime.parse(rec.lastChanged).toLocal();
                       var formattedChangedTime =
-                          DateFormat('kk:mm').format(changedTime);
+                          DateFormat('HH:mm').format(changedTime);
 
                       if (!rec.isStateOn &&
                           index + 1 < binarySensorsReversed.length &&

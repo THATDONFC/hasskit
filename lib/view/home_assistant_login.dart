@@ -54,7 +54,7 @@ class HomeAssistantLogin extends StatelessWidget {
                 SizedBox(height: 25),
                 Text(
                   "${gd.loginDataCurrent.getUrl}",
-                  style: Theme.of(context).textTheme.title,
+                  style: Theme.of(context).textTheme.headline6,
                   textAlign: TextAlign.center,
                   maxLines: 10,
                 ),
@@ -163,7 +163,7 @@ class _HomeAssistantLoginWebViewState extends State<HomeAssistantLoginWebView> {
                 SizedBox(height: 16),
                 Text(
                   "${gd.loginDataCurrent.url}",
-                  style: Theme.of(context).textTheme.title,
+                  style: Theme.of(context).textTheme.headline6,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 16),

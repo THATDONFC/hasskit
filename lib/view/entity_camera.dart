@@ -87,7 +87,7 @@ class EntityCamera extends StatelessWidget {
                               child: Text(
                                 //"${Translate.getString('global.last_update', context)}: ${printDuration(timeDiff, abbreviated: true, tersity: DurationTersity.second, delimiter: ', ', conjugation: ' and ')} ago"
                                 gd.entities[entityId].getOverrideName,
-                                style: Theme.of(context).textTheme.body1,
+                                style: Theme.of(context).textTheme.bodyText2,
                                 textScaleFactor: gd.textScaleFactor,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -95,21 +95,24 @@ class EntityCamera extends StatelessWidget {
                             timeDiff.inDays >= 1
                                 ? Text(
                                     "...",
-                                    style: Theme.of(context).textTheme.body1,
+                                    style:
+                                        Theme.of(context).textTheme.bodyText2,
                                     textScaleFactor: gd.textScaleFactor,
                                   )
                                 : timeDiff.inSeconds < 20
                                     ? Text(
                                         "Few seconds ago",
-                                        style:
-                                            Theme.of(context).textTheme.body1,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2,
                                         textScaleFactor: gd.textScaleFactor,
                                         overflow: TextOverflow.ellipsis,
                                       )
                                     : Text(
                                         "${printDuration(timeDiff, abbreviated: false, tersity: DurationTersity.second, spacer: ' ', delimiter: ' ', conjugation: ' and ')} ago",
-                                        style:
-                                            Theme.of(context).textTheme.body1,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2,
                                         textScaleFactor: gd.textScaleFactor,
                                         overflow: TextOverflow.ellipsis,
                                       ),

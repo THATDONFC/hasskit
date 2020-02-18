@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hasskit/helper/general_data.dart';
 import 'package:hasskit/helper/locale_helper.dart';
-import 'package:hasskit/helper/logger.dart';
 import 'package:hasskit/helper/material_design_icons.dart';
 import 'package:hasskit/helper/web_socket.dart';
 import 'package:intl/intl.dart';
@@ -182,7 +180,7 @@ class Entity {
             : "",
         friendlyName: json['attributes']['friendly_name'].toString() != null
             ? json['attributes']['friendly_name'].toString()
-            : json['entity_id'].toString(),
+            : "",
         state: json['state'].toString(),
         //climate
         hvacModes: json['attributes']['hvac_modes'] != null
@@ -241,7 +239,7 @@ class Entity {
                 ? json['attributes']['direct_speed'].toString()
                 : json['attributes']['speed'] != null
                     ? json['attributes']['speed'].toString()
-                    : "Off",
+                    : "off",
 
         angle: int.tryParse(json['attributes']['angle'].toString()) != null
             ? int.parse(json['attributes']['angle'].toString())
@@ -383,14 +381,14 @@ class Entity {
             : ["eco"],
       );
     } catch (e) {
-      log.e("Entity.fromJson newEntity $e");
-      log.e("json $json");
+      print("Entity.fromJson newEntity $e");
+      print("json $json");
       return null;
     }
   }
 
   toggleState() {
-    log.d("toggleState entityId $entityId");
+//    print("toggleState entityId $entityId");
     var domain = entityId.split('.').first;
     if (domain == "group") domain = "homeassistant";
     var service = '';
@@ -428,6 +426,10 @@ class Entity {
       service = 'lock';
     } else if (domain == "scene") {
       service = 'turn_on';
+    } else if (domain == "automation") {
+      service = 'trigger';
+    } else if (domain == "script") {
+      service = 'turn_on';
     }
 
     var outMsg = {
@@ -438,7 +440,7 @@ class Entity {
       "service_data": {"entity_id": entityId}
     };
 
-    log.d("toggleState $entityId - $state");
+    print("toggleState $entityId - $state");
     var message = json.encode(outMsg);
     webSocket.send(message);
   }
@@ -484,26 +486,28 @@ class Entity {
 
   String get getOverrideIcon {
     if (gd.entitiesOverride[entityId] != null &&
-        gd.entitiesOverride[entityId].icon != null &&
-        gd.entitiesOverride[entityId].icon.length > 0) {
-      return gd.entitiesOverride[entityId].icon;
+        gd.entitiesOverride[entityId].overrideIcon != null &&
+        gd.entitiesOverride[entityId].overrideIcon != "") {
+      return gd.entitiesOverride[entityId].overrideIcon;
     }
     return null;
   }
 
   String get getDefaultIcon {
-    if (getOverrideIcon != null && getOverrideIcon != "null") {
+    if (getOverrideIcon != null && getOverrideIcon != "") {
+//      print("$entityId getDefaultIcon 1");
       return twoStateIcons(getOverrideIcon);
     }
 
-    if (icon != null && icon != "null") {
+    if (icon != null && icon != "" && icon != "null") {
+//      print("$entityId getDefaultIcon 2 $icon");
       return twoStateIcons(icon);
     }
 
     String domain = entityId.split(".")[0];
     String stateTranslate = isStateOn ? "on" : "off";
 
-//    log.d(
+//    print(
 //        "getDefaultIcon entityId $entityId icon $icon domain $domain.$deviceClass.$stateTranslate state $state");
 
     if (domain != "null") {
@@ -583,8 +587,8 @@ class Entity {
     if (isStateOn && currentIcon == "mdi:door-closed") return "mdi:door-open";
     if (!isStateOn && currentIcon == "mdi:door-open") return "mdi:door-closed";
 
-    if (isStateOn && currentIcon == "mdi:fan-off") return "mdi:fan";
-    if (!isStateOn && currentIcon == "mdi:fan") return "mdi:fan-off";
+//    if (isStateOn && currentIcon == "mdi:fan-off") return "mdi:fan";
+//    if (!isStateOn && currentIcon == "mdi:fan") return "mdi:fan-off";
 
     if (isStateOn && currentIcon == "mdi:garage") return "mdi:garage-open";
     if (!isStateOn && currentIcon == "mdi:garage-open") return "mdi:garage";
@@ -634,7 +638,9 @@ class Entity {
       'opening...',
       'unlocked',
       'unlocking...',
-      'cleaning'
+      'cleaning',
+      'heat',
+      'cool'
     ].contains(stateLower)) {
       return true;
     }
@@ -668,9 +674,9 @@ class Entity {
 
   String get getOverrideName {
     if (gd.entitiesOverride[entityId] != null &&
-        gd.entitiesOverride[entityId].friendlyName != null &&
-        gd.entitiesOverride[entityId].friendlyName.length > 0) {
-      return gd.entitiesOverride[entityId].friendlyName;
+        gd.entitiesOverride[entityId].overrideName != null &&
+        gd.entitiesOverride[entityId].overrideName.length > 0) {
+      return gd.entitiesOverride[entityId].overrideName;
     } else {
       return getFriendlyName;
     }
@@ -807,9 +813,9 @@ class Entity {
       if (state.contains(":") && state.contains("-")) {
 //        print("entityId $entityId.$state containt : and -");
         if (gd.configUnitSystem['length'].toString() == "km") {
-          return DateFormat('dd/MM kk:mm').format(DateTime.parse(state));
+          return DateFormat('dd/MM HH:mm').format(DateTime.parse(state));
         } else {
-          return DateFormat('MM/dd kk:mm').format(DateTime.parse(state));
+          return DateFormat('MM/dd HH:mm').format(DateTime.parse(state));
         }
       } else if (state.contains("-")) {
 //        print("entityId $entityId.$state containt -");
@@ -822,7 +828,7 @@ class Entity {
 //      Can't parse only time
 //      else if (state.contains(":")) {
 //        print("entityId $entityId.$state containt :");
-//        return DateFormat('kk:mm').format(DateTime.parse(state));
+//        return DateFormat('HH:mm').format(DateTime.parse(state));
 //      }
     }
 

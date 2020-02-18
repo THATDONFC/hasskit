@@ -185,7 +185,7 @@ class _LocalLanguagePickerState extends State<LocalLanguagePicker> {
                       Text(
                         gd.textToDisplay(
                             "${map.displayName} - © ${map.translator}"),
-                        style: Theme.of(context).textTheme.body1,
+                        style: Theme.of(context).textTheme.bodyText2,
                         overflow: TextOverflow.ellipsis,
                         textScaleFactor: gd.textScaleFactorFix,
                       ),

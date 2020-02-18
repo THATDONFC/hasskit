@@ -335,7 +335,7 @@ class SensorLowNumber extends StatelessWidget {
 
       var widget = Container(
           height: 40,
-          child: Text(DateFormat('dd-MMM kk:mm:ss').format(lastUpdated) +
+          child: Text(DateFormat('dd-MMM HH:mm:ss').format(lastUpdated) +
               " - " +
               gd.sensors[i].state));
       widgets.add(widget);

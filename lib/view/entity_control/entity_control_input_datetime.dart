@@ -41,7 +41,7 @@ class _EntityControlInputDateTimeState
             : "yyyy-MM-dd,HH:mm",
         pickerTheme: DateTimePickerTheme(
           backgroundColor: ThemeInfo.colorBottomSheet,
-          itemTextStyle: Theme.of(context).textTheme.subhead,
+          itemTextStyle: Theme.of(context).textTheme.subtitle1,
           showTitle: false,
           itemHeight: 30.0,
         ),
@@ -97,7 +97,7 @@ class _EntityControlInputDateTimeState
             gd.configUnitSystem["length"] == "km" ? "dd-MM-yyyy" : "yyyy-MM-dd",
         pickerTheme: DateTimePickerTheme(
           backgroundColor: ThemeInfo.colorBottomSheet,
-          itemTextStyle: Theme.of(context).textTheme.subhead,
+          itemTextStyle: Theme.of(context).textTheme.subtitle1,
           showTitle: false,
           itemHeight: 30.0,
         ),
@@ -153,7 +153,7 @@ class _EntityControlInputDateTimeState
         minuteDivider: 1,
         pickerTheme: DateTimePickerTheme(
           backgroundColor: ThemeInfo.colorBottomSheet,
-          itemTextStyle: Theme.of(context).textTheme.subhead,
+          itemTextStyle: Theme.of(context).textTheme.subtitle1,
           showTitle: false,
           itemHeight: 30.0,
         ),

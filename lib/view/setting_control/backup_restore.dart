@@ -57,7 +57,7 @@ class BackupRestore extends StatelessWidget {
                       toastLength: Toast.LENGTH_LONG,
                       gravity: ToastGravity.TOP,
                       backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-                      textColor: Theme.of(context).textTheme.title.color,
+                      textColor: Theme.of(context).textTheme.headline6.color,
                       fontSize: 14.0);
                 } else {
                   try {
@@ -78,7 +78,7 @@ class BackupRestore extends StatelessWidget {
                         gravity: ToastGravity.TOP,
                         backgroundColor:
                             ThemeInfo.colorIconActive.withOpacity(1),
-                        textColor: Theme.of(context).textTheme.title.color,
+                        textColor: Theme.of(context).textTheme.headline6.color,
                         fontSize: 14.0);
                   } catch (e) {
                     Fluttertoast.showToast(
@@ -87,7 +87,7 @@ class BackupRestore extends StatelessWidget {
                         gravity: ToastGravity.TOP,
                         backgroundColor:
                             ThemeInfo.colorIconActive.withOpacity(1),
-                        textColor: Theme.of(context).textTheme.title.color,
+                        textColor: Theme.of(context).textTheme.headline6.color,
                         fontSize: 14.0);
                   }
                 }

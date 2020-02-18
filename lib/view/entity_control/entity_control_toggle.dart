@@ -259,7 +259,7 @@ class RequireSlideToOpen extends StatelessWidget {
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.TOP,
               backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-              textColor: Theme.of(context).textTheme.title.color,
+              textColor: Theme.of(context).textTheme.headline6.color,
               fontSize: 14.0);
 
           refresh();

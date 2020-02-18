@@ -176,7 +176,7 @@ class _SettingLockDetailState extends State<SettingLockDetail> {
                                             .withOpacity(1),
                                         textColor: Theme.of(context)
                                             .textTheme
-                                            .title
+                                            .headline6
                                             .color,
                                         fontSize: 14.0);
                                   });

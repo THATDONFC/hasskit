@@ -676,7 +676,7 @@ class MediaPlayerSource extends StatelessWidget {
             : Alignment.center,
         child: (AutoSizeText(
           source,
-          style: Theme.of(context).textTheme.body1,
+          style: Theme.of(context).textTheme.bodyText2,
           maxLines: 1,
         )),
       );
@@ -707,7 +707,7 @@ class MediaPlayerSource extends StatelessWidget {
 //            padding: EdgeInsets.all(4),
 //            child: AutoSizeText(
 //              "Source",
-//              style: Theme.of(context).textTheme.body1,
+//              style: Theme.of(context).textTheme.bodyText2,
 //              maxLines: 1,
 //              overflow: TextOverflow.ellipsis,
 //            ),
@@ -783,7 +783,7 @@ class MediaPlayerSoundMode extends StatelessWidget {
             : Alignment.center,
         child: (AutoSizeText(
           source,
-          style: Theme.of(context).textTheme.body1,
+          style: Theme.of(context).textTheme.bodyText2,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         )),
@@ -815,7 +815,7 @@ class MediaPlayerSoundMode extends StatelessWidget {
 //            padding: EdgeInsets.all(4),
 //            child: AutoSizeText(
 //              "Sound Modes",
-//              style: Theme.of(context).textTheme.body1,
+//              style: Theme.of(context).textTheme.bodyText2,
 //              maxLines: 1,
 //              overflow: TextOverflow.ellipsis,
 //            ),

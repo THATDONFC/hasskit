@@ -34,7 +34,7 @@ class _LightEffectSelectorState extends State<LightEffectSelector> {
         contentPadding: EdgeInsets.fromLTRB(4, 2, 2, 2),
         title: Text(
           gd.textToDisplay("No Effect"),
-          style: Theme.of(context).textTheme.body1,
+          style: Theme.of(context).textTheme.bodyText2,
           overflow: TextOverflow.ellipsis,
           textScaleFactor: gd.textScaleFactorFix,
         ),
@@ -48,7 +48,7 @@ class _LightEffectSelectorState extends State<LightEffectSelector> {
           contentPadding: EdgeInsets.fromLTRB(4, 2, 2, 2),
           title: Text(
             gd.textToDisplay("$effect"),
-            style: Theme.of(context).textTheme.body1,
+            style: Theme.of(context).textTheme.bodyText2,
             overflow: TextOverflow.ellipsis,
             textScaleFactor: gd.textScaleFactorFix,
           ),

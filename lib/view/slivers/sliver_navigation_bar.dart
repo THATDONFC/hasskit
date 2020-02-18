@@ -108,7 +108,7 @@ class SliverNavigationBar extends StatelessWidget {
                 Text(
                   "${tempState.toStringAsFixed(1)} ${gd.entities[gd.roomList[roomIndex].tempEntityId].unitOfMeasurement.trim()}",
                   textScaleFactor: gd.textScaleFactorFix,
-                  style: Theme.of(context).textTheme.body1,
+                  style: Theme.of(context).textTheme.bodyText2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -158,7 +158,8 @@ class SliverNavigationBar extends StatelessWidget {
                         alignment: Alignment.topRight,
                         children: <Widget>[
                           Icon(Icons.notifications,
-                              color: Theme.of(context).textTheme.title.color),
+                              color:
+                                  Theme.of(context).textTheme.headline6.color),
                           Container(
                             width: 15,
                             height: 15,
@@ -197,7 +198,7 @@ class SliverNavigationBar extends StatelessWidget {
 //                              color: Colors.black.withOpacity(0.5)),
                         child: Icon(
                           topIcon,
-                          color: Theme.of(context).textTheme.title.color,
+                          color: Theme.of(context).textTheme.headline6.color,
                         ),
                       ),
                     )

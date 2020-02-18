@@ -37,7 +37,7 @@ class _LightRgbColorSelectorState extends State<LightRgbColorSelector> {
                 msg: Translate.getString("edit.rbg_color", context),
                 toastLength: Toast.LENGTH_SHORT,
                 backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-                textColor: Theme.of(context).textTheme.title.color,
+                textColor: Theme.of(context).textTheme.headline6.color,
                 fontSize: 14.0);
             showFlush = false;
           }

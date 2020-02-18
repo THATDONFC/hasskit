@@ -114,20 +114,20 @@ class SinglePage extends StatelessWidget {
                   SizedBox(height: 20),
                   Text(
                     "No Internet Access",
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 10),
                   Text(
                     "Make sure you have Wifi",
-//                    style: Theme.of(context).textTheme.title,
+//                    style: Theme.of(context).textTheme.headline6,
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     "or Mobile Data turned on",
-//                    style: Theme.of(context).textTheme.title,
+//                    style: Theme.of(context).textTheme.headline6,
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -154,13 +154,13 @@ class SinglePage extends StatelessWidget {
                   SizedBox(height: 20),
                   Text(
                     "Connecting...",
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 10),
                   Text(
                     "${gd.loginDataCurrent.url}",
-//                    style: Theme.of(context).textTheme.title,
+//                    style: Theme.of(context).textTheme.headline6,
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -168,7 +168,7 @@ class SinglePage extends StatelessWidget {
                   SizedBox(height: 10),
                   Text(
                     "${gd.webSocketConnectionStatus}",
-//                    style: Theme.of(context).textTheme.title,
+//                    style: Theme.of(context).textTheme.headline6,
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

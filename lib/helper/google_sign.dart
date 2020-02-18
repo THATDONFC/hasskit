@@ -135,7 +135,7 @@ class GoogleCloudAction extends StatelessWidget {
                 },
                 child: Text(
                   Translate.getString("global.ok", context),
-                  style: Theme.of(context).textTheme.title,
+                  style: Theme.of(context).textTheme.headline6,
                 ),
               ),
             )..show(context);
@@ -165,7 +165,7 @@ class GoogleCloudAction extends StatelessWidget {
                 },
                 child: Text(
                   Translate.getString("global.ok", context),
-                  style: Theme.of(context).textTheme.title,
+                  style: Theme.of(context).textTheme.headline6,
                 ),
               ),
             )..show(context);
@@ -195,7 +195,7 @@ class GoogleCloudAction extends StatelessWidget {
                 },
                 child: Text(
                   Translate.getString("global.ok", context),
-                  style: Theme.of(context).textTheme.title,
+                  style: Theme.of(context).textTheme.headline6,
                 ),
               ),
             )..show(context);

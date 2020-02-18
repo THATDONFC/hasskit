@@ -1,20 +1,20 @@
 import 'package:hasskit/helper/logger.dart';
 
 class EntityOverride {
-  String friendlyName;
-  String icon;
+  String overrideName;
+  String overrideIcon;
   bool openRequireAttention;
 
   EntityOverride({
-    this.friendlyName,
-    this.icon,
+    this.overrideName,
+    this.overrideIcon,
     this.openRequireAttention,
   });
   factory EntityOverride.fromJson(Map<String, dynamic> json) {
     try {
       return EntityOverride(
-        friendlyName: json['friendlyName'],
-        icon: json['icon'],
+        overrideName: json['friendlyName'],
+        overrideIcon: json['icon'],
         openRequireAttention: json['openRequireAttention'],
       );
     } catch (e) {
@@ -24,8 +24,8 @@ class EntityOverride {
   }
 
   Map<String, dynamic> toJson() => {
-        'friendlyName': friendlyName,
-        'icon': icon,
+        'friendlyName': overrideName,
+        'icon': overrideIcon,
         'openRequireAttention': openRequireAttention,
       };
 }

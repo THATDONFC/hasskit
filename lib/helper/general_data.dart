@@ -1299,7 +1299,7 @@ class GeneralData with ChangeNotifier {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.TOP,
           backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-          textColor: Theme.of(context).textTheme.title.color,
+          textColor: Theme.of(context).textTheme.headline6.color,
           fontSize: 14.0);
       roomListSave(true);
     }
@@ -1317,7 +1317,7 @@ class GeneralData with ChangeNotifier {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.TOP,
           backgroundColor: ThemeInfo.colorIconActive.withOpacity(1),
-          textColor: Theme.of(context).textTheme.title.color,
+          textColor: Theme.of(context).textTheme.headline6.color,
           fontSize: 14.0);
       roomListSave(true);
     }
@@ -1723,10 +1723,10 @@ class GeneralData with ChangeNotifier {
 
       for (var key in gd.entitiesOverride.keys) {
         var entityOverrideClean = gd.entitiesOverride[key];
-        if (entityOverrideClean.friendlyName != null &&
-                entityOverrideClean.friendlyName.length > 0 ||
-            entityOverrideClean.icon != null &&
-                entityOverrideClean.icon.length > 0 ||
+        if (entityOverrideClean.overrideName != null &&
+                entityOverrideClean.overrideName.length > 0 ||
+            entityOverrideClean.overrideIcon != null &&
+                entityOverrideClean.overrideIcon.length > 0 ||
             entityOverrideClean.openRequireAttention != null &&
                 entityOverrideClean.openRequireAttention == true) {
           entitiesOverrideClean[key] = entityOverrideClean;

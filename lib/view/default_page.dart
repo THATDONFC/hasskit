@@ -28,12 +28,12 @@ class DefaultPage extends StatelessWidget {
               gd.webSocketConnectionStatus == "" && gd.autoConnect
                   ? Text(
                       Translate.getString("global.connect_demo", context),
-                      style: Theme.of(context).textTheme.title,
+                      style: Theme.of(context).textTheme.headline6,
                       textAlign: TextAlign.center,
                     )
                   : Text(
                       Translate.getString("global.connect_hass", context),
-                      style: Theme.of(context).textTheme.title,
+                      style: Theme.of(context).textTheme.headline6,
                       textAlign: TextAlign.center,
                     ),
               SizedBox(height: 10),

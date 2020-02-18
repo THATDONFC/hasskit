@@ -32,7 +32,7 @@ class EntityControlGeneral extends StatelessWidget {
               ),
               Text(
                 gd.textToDisplay(entity.getStateDisplayTranslated(context)),
-                style: Theme.of(context).textTheme.title,
+                style: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),

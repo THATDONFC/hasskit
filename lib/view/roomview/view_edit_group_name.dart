@@ -54,7 +54,7 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                   Icon(
                     Icons.looks_one,
                     size: 28,
-                    color: Theme.of(context).textTheme.title.color,
+                    color: Theme.of(context).textTheme.headline6.color,
                   ),
                   SizedBox(width: 6),
                   Expanded(
@@ -66,7 +66,7 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                       controller: _controller1,
                       autocorrect: false,
                       textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.title,
+                      style: Theme.of(context).textTheme.headline6,
                       maxLines: 1,
                       onChanged: (val) {
                         setState(() {
@@ -94,7 +94,7 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                   Icon(
                     Icons.looks_two,
                     size: 28,
-                    color: Theme.of(context).textTheme.title.color,
+                    color: Theme.of(context).textTheme.headline6.color,
                   ),
                   SizedBox(width: 6),
                   Expanded(
@@ -106,7 +106,7 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                       controller: _controller2,
                       autocorrect: false,
                       textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.title,
+                      style: Theme.of(context).textTheme.headline6,
                       maxLines: 1,
                       onChanged: (val) {
                         setState(() {
@@ -134,7 +134,7 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                   Icon(
                     Icons.looks_3,
                     size: 28,
-                    color: Theme.of(context).textTheme.title.color,
+                    color: Theme.of(context).textTheme.headline6.color,
                   ),
                   SizedBox(width: 6),
                   Expanded(
@@ -146,7 +146,7 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                       controller: _controller3,
                       autocorrect: false,
                       textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.title,
+                      style: Theme.of(context).textTheme.headline6,
                       maxLines: 1,
                       onChanged: (val) {
                         setState(() {
@@ -174,7 +174,7 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                   Icon(
                     Icons.looks_4,
                     size: 28,
-                    color: Theme.of(context).textTheme.title.color,
+                    color: Theme.of(context).textTheme.headline6.color,
                   ),
                   SizedBox(width: 6),
                   Expanded(
@@ -186,7 +186,7 @@ class _ViewEditGroupNameState extends State<ViewEditGroupName> {
                       controller: _controller4,
                       autocorrect: false,
                       textAlign: TextAlign.left,
-                      style: Theme.of(context).textTheme.title,
+                      style: Theme.of(context).textTheme.headline6,
                       maxLines: 1,
                       onChanged: (val) {
                         setState(() {

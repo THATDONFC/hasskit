@@ -69,7 +69,7 @@ class _ViewEditState extends State<ViewEdit> {
                   controller: _controller,
                   autocorrect: false,
                   textAlign: TextAlign.left,
-                  style: Theme.of(context).textTheme.title,
+                  style: Theme.of(context).textTheme.headline6,
                   maxLines: 1,
                   onChanged: (val) {
                     setState(() {
@@ -136,7 +136,7 @@ class _ViewEditState extends State<ViewEdit> {
                   controller: _controllerSearch,
                   autocorrect: false,
                   textAlign: TextAlign.left,
-                  style: Theme.of(context).textTheme.title,
+                  style: Theme.of(context).textTheme.headline6,
                   maxLines: 1,
                   onChanged: (val) {
                     setState(() {});
@@ -368,7 +368,7 @@ class __EditItemsState extends State<_EditItems> {
                   child: Icon(
                     entities[index].mdiIcon,
                     size: 28,
-                    color: Theme.of(context).textTheme.title.color,
+                    color: Theme.of(context).textTheme.headline6.color,
                   ),
                 ),
                 SizedBox(width: 8),
@@ -386,7 +386,7 @@ class __EditItemsState extends State<_EditItems> {
                         : 0.5,
                     child: AutoSizeText(
                       "${gd.textToDisplay(entities[index].getOverrideName)}",
-                      style: Theme.of(context).textTheme.subhead,
+                      style: Theme.of(context).textTheme.subtitle1,
                       overflow: TextOverflow.ellipsis,
                       textScaleFactor: gd.textScaleFactorFix,
                       maxLines: 1,
@@ -415,10 +415,10 @@ class __EditItemsState extends State<_EditItems> {
                     size: 28,
                     color: gd.roomList[widget.roomIndex].row1
                             .contains(entities[index].entityId)
-                        ? Theme.of(context).textTheme.title.color
+                        ? Theme.of(context).textTheme.headline6.color
                         : Theme.of(context)
                             .textTheme
-                            .title
+                            .headline6
                             .color
                             .withOpacity(0.25),
                   ),
@@ -445,10 +445,10 @@ class __EditItemsState extends State<_EditItems> {
                     size: 28,
                     color: gd.roomList[widget.roomIndex].row2
                             .contains(entities[index].entityId)
-                        ? Theme.of(context).textTheme.title.color
+                        ? Theme.of(context).textTheme.headline6.color
                         : Theme.of(context)
                             .textTheme
-                            .title
+                            .headline6
                             .color
                             .withOpacity(0.25),
                   ),
@@ -475,10 +475,10 @@ class __EditItemsState extends State<_EditItems> {
                     size: 28,
                     color: gd.roomList[widget.roomIndex].row3
                             .contains(entities[index].entityId)
-                        ? Theme.of(context).textTheme.title.color
+                        ? Theme.of(context).textTheme.headline6.color
                         : Theme.of(context)
                             .textTheme
-                            .title
+                            .headline6
                             .color
                             .withOpacity(0.25),
                   ),
@@ -505,10 +505,10 @@ class __EditItemsState extends State<_EditItems> {
                     size: 28,
                     color: gd.roomList[widget.roomIndex].row4
                             .contains(entities[index].entityId)
-                        ? Theme.of(context).textTheme.title.color
+                        ? Theme.of(context).textTheme.headline6.color
                         : Theme.of(context)
                             .textTheme
-                            .title
+                            .headline6
                             .color
                             .withOpacity(0.25),
                   ),
@@ -538,17 +538,17 @@ class __EditItemsState extends State<_EditItems> {
                     size: 28,
                     color: gd.baseSetting.notificationDevices
                             .contains(entities[index].entityId)
-                        ? Theme.of(context).textTheme.title.color
+                        ? Theme.of(context).textTheme.headline6.color
                         : (gd.activeDevicesSupportedType(
                                 entities[index].entityId))
                             ? Theme.of(context)
                                 .textTheme
-                                .title
+                                .headline6
                                 .color
                                 .withOpacity(0.25)
                             : Theme.of(context)
                                 .textTheme
-                                .title
+                                .headline6
                                 .color
                                 .withOpacity(0.0),
                   ),
@@ -617,7 +617,7 @@ class _WebViewItemsState extends State<WebViewItems> {
                   child: Icon(
                     MaterialDesignIcons.getIconDataFromIconName("mdi:web"),
                     size: 28,
-                    color: Theme.of(context).textTheme.title.color,
+                    color: Theme.of(context).textTheme.headline6.color,
                   ),
                 ),
                 SizedBox(width: 8),
@@ -635,7 +635,7 @@ class _WebViewItemsState extends State<WebViewItems> {
                         : 0.5,
                     child: AutoSizeText(
                       "${gd.textToDisplay("Website #${index + 1}")}",
-                      style: Theme.of(context).textTheme.subhead,
+                      style: Theme.of(context).textTheme.subtitle1,
                       overflow: TextOverflow.ellipsis,
                       textScaleFactor: gd.textScaleFactorFix,
                       maxLines: 1,
@@ -664,10 +664,10 @@ class _WebViewItemsState extends State<WebViewItems> {
                     size: 28,
                     color: gd.roomList[widget.roomIndex].row1
                             .contains("WebView${index + 1}")
-                        ? Theme.of(context).textTheme.title.color
+                        ? Theme.of(context).textTheme.headline6.color
                         : Theme.of(context)
                             .textTheme
-                            .title
+                            .headline6
                             .color
                             .withOpacity(0.25),
                   ),
@@ -694,10 +694,10 @@ class _WebViewItemsState extends State<WebViewItems> {
                     size: 28,
                     color: gd.roomList[widget.roomIndex].row2
                             .contains("WebView${index + 1}")
-                        ? Theme.of(context).textTheme.title.color
+                        ? Theme.of(context).textTheme.headline6.color
                         : Theme.of(context)
                             .textTheme
-                            .title
+                            .headline6
                             .color
                             .withOpacity(0.25),
                   ),
@@ -724,10 +724,10 @@ class _WebViewItemsState extends State<WebViewItems> {
                     size: 28,
                     color: gd.roomList[widget.roomIndex].row3
                             .contains("WebView${index + 1}")
-                        ? Theme.of(context).textTheme.title.color
+                        ? Theme.of(context).textTheme.headline6.color
                         : Theme.of(context)
                             .textTheme
-                            .title
+                            .headline6
                             .color
                             .withOpacity(0.25),
                   ),
@@ -754,10 +754,10 @@ class _WebViewItemsState extends State<WebViewItems> {
                     size: 28,
                     color: gd.roomList[widget.roomIndex].row4
                             .contains("WebView${index + 1}")
-                        ? Theme.of(context).textTheme.title.color
+                        ? Theme.of(context).textTheme.headline6.color
                         : Theme.of(context)
                             .textTheme
-                            .title
+                            .headline6
                             .color
                             .withOpacity(0.25),
                   ),
