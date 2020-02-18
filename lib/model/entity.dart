@@ -402,7 +402,15 @@ class Entity {
         this.state = 'opening...';
         service = 'open_cover';
       }
-    } else if (state == 'on' ||
+    }
+//    else if (domain == "automation") {
+//      service = 'trigger';
+//      print("domain automation service $service");
+//    } else if (domain == "script") {
+//      service = 'turn_on';
+//    }
+
+    else if (state == 'on' ||
         this.state == 'turning on...' ||
         domain == 'climate' && state != 'off') {
       this.state = 'turning off...';
@@ -425,10 +433,6 @@ class Entity {
       domain = "lock";
       service = 'lock';
     } else if (domain == "scene") {
-      service = 'turn_on';
-    } else if (domain == "automation") {
-      service = 'trigger';
-    } else if (domain == "script") {
       service = 'turn_on';
     }
 

@@ -196,15 +196,17 @@ class _EntityControlToggleState extends State<EntityControlToggle> {
       if (gd.entities[widget.entityId].isStateOn) {
         stateValue = buttonHeight;
         if (diffY > 0) diffY = 0;
-        if (stateValue + diffY < lowerPartHeight + snap)
+        if (stateValue + diffY < lowerPartHeight + snap) {
           gd.toggleStatus(gd.entities[widget.entityId]);
+        }
       }
 
       if (!gd.entities[widget.entityId].isStateOn) {
         stateValue = lowerPartHeight;
         if (diffY < 0) diffY = 0;
-        if (stateValue + diffY > buttonHeight - snap)
+        if (stateValue + diffY > buttonHeight - snap) {
           gd.toggleStatus(gd.entities[widget.entityId]);
+        }
       }
 
       buttonValue = stateValue + diffY;

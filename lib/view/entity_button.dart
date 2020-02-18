@@ -33,6 +33,7 @@ class EntityButton extends StatelessWidget {
         return InkWell(
           onTap: onTapCallback,
           onLongPress: onLongPressCallback,
+          onDoubleTap: onLongPressCallback,
           child: gd.viewMode == ViewMode.sort
               ? EntityButtonDisplayAnimated(entityId: entityId)
               : EntityButtonDisplay(entityId: entityId),

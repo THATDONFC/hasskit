@@ -46,6 +46,7 @@ class EntityCamera extends StatelessWidget {
           child: InkWell(
             onTap: onTapCallback,
             onLongPress: onLongPressCallback,
+            onDoubleTap: onLongPressCallback,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Stack(
