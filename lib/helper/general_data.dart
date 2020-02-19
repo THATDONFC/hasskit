@@ -451,7 +451,7 @@ class GeneralData with ChangeNotifier {
         _image.resolve(ImageConfiguration()).addListener(
           ImageStreamListener(
             (info, call) {
-              print('Networkimage $entityId is fully loaded and saved');
+              // print('Networkimage $entityId is fully loaded and saved');
               cameraInfo.currentImage = _image;
               cameraInfo.updatedTime =
                   DateTime.now().add(Duration(seconds: 10));
