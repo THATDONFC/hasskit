@@ -280,10 +280,10 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     timer60 =
         Timer.periodic(Duration(seconds: 60), (Timer t) => timer60Callback());
 
-    mainInitState();
+    initStateAsync();
   }
 
-  mainInitState() async {
+  initStateAsync() async {
     log.w("mainInitState showLoading $showLoading");
     log.w("mainInitState...");
     log.w("mainInitState START await loginDataInstance.loadLoginData");
@@ -294,6 +294,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     gd.loginDataListString = await gd.getString('loginDataList');
     await gd.getSettings("mainInitState");
     deviceInfo.getDeviceInfo();
+    gd.userBackgroundPathUpdate();
   }
 
   timer200Callback() {}
@@ -351,7 +352,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         DeviceOrientation.portraitUp,
       ]);
     }
-    if(showLoading) return Container();
+    if (showLoading) return Container();
     log.w(
         "gd.isTablet ${gd.isTablet} gd.mediaQueryShortestSide ${gd.mediaQueryShortestSide} gd.mediaQueryLongestSide ${gd.mediaQueryLongestSide} orientation ${gd.mediaQueryOrientation}");
     return Selector<GeneralData, String>(

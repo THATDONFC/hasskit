@@ -52,7 +52,11 @@ class _BackgroundImageDropdownButtonState
     }
     File _image;
     Future getImage() async {
-      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      var image = await ImagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxHeight: 1920,
+        maxWidth: 1920,
+      );
       setState(() {
         _image = image;
         int roomIndex = widget.roomIndex;

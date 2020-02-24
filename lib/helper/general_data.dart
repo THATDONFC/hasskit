@@ -27,6 +27,8 @@ import 'package:hasskit/model/login_data.dart';
 import 'package:hasskit/model/room.dart';
 import 'package:hasskit/model/sensor.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validators/validators.dart';
 import 'dart:math' as Math;
@@ -2715,5 +2717,22 @@ class GeneralData with ChangeNotifier {
 //      }
       notifyListeners();
     }
+  }
+
+  String _backgroundUserFolderPath = "";
+  String get backgroundUserFolderPath => _backgroundUserFolderPath;
+  set backgroundUserFolderPath(val) {
+    if (_backgroundUserFolderPath != val) {
+      _backgroundUserFolderPath = val;
+      print("backgroundUserFolderPath $backgroundUserFolderPath");
+      notifyListeners();
+    }
+  }
+
+  void userBackgroundPathUpdate() async {
+    gd.backgroundUserFolderPath = join(
+      (await getTemporaryDirectory()).path,
+      '',
+    );
   }
 }
