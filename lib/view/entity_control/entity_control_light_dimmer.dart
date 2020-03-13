@@ -146,6 +146,7 @@ class LightSliderState extends State<LightSlider> {
       selector: (_, generalData) =>
           "${generalData.entities[widget.entityId].state} " +
           "${generalData.entities[widget.entityId].brightness} " +
+          "${generalData.entities[widget.entityId].whiteValue} " +
           "${generalData.entities[widget.entityId].colorTemp} " +
           "${generalData.entities[widget.entityId].rgbColor} ",
       builder: (context, data, child) {
@@ -159,7 +160,7 @@ class LightSliderState extends State<LightSlider> {
             buttonValue = lowerPartHeight;
           } else {
             var mapValue = gd.mapNumber(
-                gd.entities[widget.entityId].brightness.toDouble(),
+              widget.viewMode == "SUPPORT_COLOR_TEMP" ? gd.entities[widget.entityId].whiteValue.toDouble() : gd.entities[widget.entityId].brightness.toDouble(),
                 0,
                 254,
                 lowerPartHeight,
@@ -329,7 +330,7 @@ class LightSliderState extends State<LightSlider> {
             "service": "turn_on",
             "service_data": {
               "entity_id": entity.entityId,
-              "brightness": sendValue.toInt()
+              widget.viewMode == "SUPPORT_COLOR_TEMP"? "white_value" : "brightness": sendValue.toInt()
             },
           };
         }

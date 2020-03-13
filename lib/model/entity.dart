@@ -44,6 +44,7 @@ class Entity {
   //Light
   int supportedFeatures;
   double brightness;
+  double whiteValue;
   List<int> rgbColor;
   int minMireds;
   int maxMireds;
@@ -118,6 +119,7 @@ class Entity {
     //light
     this.supportedFeatures,
     this.brightness,
+    this.whiteValue,
     this.rgbColor,
     this.minMireds,
     this.maxMireds,
@@ -253,6 +255,10 @@ class Entity {
         brightness:
             double.tryParse(json['attributes']['brightness'].toString()) != null
                 ? double.parse(json['attributes']['brightness'].toString())
+                : null,
+        whiteValue:
+            double.tryParse(json['attributes']['white_value'].toString()) != null
+                ? double.parse(json['attributes']['white_value'].toString())
                 : null,
         rgbColor: json['attributes']['rgb_color'] != null
             ? List<int>.from(json['attributes']['rgb_color'])
@@ -849,10 +855,11 @@ class Entity {
     var openPercent = "";
     if (isStateOn &&
         entityId.contains("light.") &&
-        brightness != null &&
-        brightness > 0) {
+        ((brightness != null &&
+        brightness > 0) || (whiteValue != null &&
+        whiteValue > 0))) {
       openPercent = " " +
-          gd.mapNumber(brightness, 0, 254, 0, 100).toStringAsFixed(0) +
+          gd.mapNumber(brightness > whiteValue? brightness : whiteValue, 0, 254, 0, 100).toStringAsFixed(0) +
           "%";
     }
     if (isStateOn &&
