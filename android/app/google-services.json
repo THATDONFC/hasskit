@@ -1,0 +1,71 @@
+{
+  "project_info": {
+    "project_number": "1019656340433",
+    "firebase_url": "https://hasskit-a81c7.firebaseio.com",
+    "project_id": "hasskit-a81c7",
+    "storage_bucket": "hasskit-a81c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1019656340433:android:471671a2c4a74d061816f0",
+        "android_client_info": {
+          "package_name": "com.thhkstudio.hasskit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1019656340433-cd2hpdk4pbced7ofejp4k6v6tg2euuep.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thhkstudio.hasskit",
+            "certificate_hash": "e201b12c9b180881850135b02d606aaff1a09bd0"
+          }
+        },
+        {
+          "client_id": "1019656340433-td85t8t0fs7u2h49milknhvm2n1scbu7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thhkstudio.hasskit",
+            "certificate_hash": "b43524f67d2871ac9c8e014b48fbbdca240f40e0"
+          }
+        },
+        {
+          "client_id": "1019656340433-mqv20j4ai54ie20ksmnel03ev4ij5a2q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thhkstudio.hasskit",
+            "certificate_hash": "8a4738ff8a45edbbb719639882a459741e0b575e"
+          }
+        },
+        {
+          "client_id": "1019656340433-9oao9jvfipn4bdr9u5js61vb9csub2gt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDruV4ekjqHR19dbRtKkYQcmBlKk542DNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1019656340433-9oao9jvfipn4bdr9u5js61vb9csub2gt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1019656340433-tmjv60nkusud6e3fjv4hgct7gfgtcpk4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.thhkstudio.hasskitios"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

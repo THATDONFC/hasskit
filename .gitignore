@@ -30,18 +30,23 @@
 /build/
 pubspec.lock
 ios/Podfile.lock
+.flutter-plugins-dependencies
 
 # Web related
 lib/generated_plugin_registrant.dart
 
 /DoNotUpload/
 android/app/build.gradle
+android/app/src/main/AndroidManifest.xml
 android/key.properties
-android/app/google-services.json
+ios/Runner/AppDelegate.swift
 ios/Runner/GoogleService-Info.plist
 ios/Runner/Info.plist
 
 
+
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+
 

@@ -12,6 +12,7 @@
         "left": "Links",
         "right": "Rechts",
         "connect_hass": "Verbind aub met Home Assistant",
+        "connect_demo": "Opzetten\nHassKit Demo",
         "last_update": "Nieuwste update",
         "cancel": "Annuleren",
         "settings": "Instellingen",
@@ -61,7 +62,9 @@
         "windy": "Winderig!",
         "y_weather": "Y! Weer",
         "live_score": "LiveScore",
-        "aspect": "Aspect"
+        "aspect": "Aspect",
+        "settingLocked": "Lock server connection, cloud sync and room setting"
+        
     },
     "login": {
         "connecting": "Verbinden met",
@@ -85,8 +88,8 @@
     "google_sync": {
         "use": "Gebruik Cloud Data Synchronisatie",
         "info": "Synchroniseer de lay-out van uw kamers en applicatieaanpassigen tussen verschillende apparaten. HassKit zet uw aanmeldingsgegevens niet online...",
-        "sign_out": "Aanmelden",
-        "sign_in": "Afmelden",
+        "sign_out": "Afmelden",
+        "sign_in": "Aanmelden",
         "force_download": "Gedwongen download van gegevens zoals opgeslagen in de cloud",
         "sync_problem": "ALLEEN gebruiken als u synchronisatieproblemen heeft",
         "force_upload": "Gedwongen upload van gegevens naar de cloud",

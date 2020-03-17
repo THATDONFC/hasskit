@@ -1,0 +1,127 @@
+{
+  "global": {
+    "duration": "Duração",
+    "open": "aberto",
+    "closed": "fechado",
+    "on": "ligado",
+    "off": "desligado",
+    "error": "Erro",
+    "no_data": "nenhuma informação disponivel",
+    "reset": "Repor",
+    "ok": "Ok",
+    "left": "para a esquerda",
+    "right": "para a direita",
+    "connect_hass": "Por favor ligue-se ao\nHome Assistant",
+    "connect_demo": "Configurando\nHassKit Demo",
+    "last_update": "Ultima atualização",
+    "cancel": "Cancelar",
+    "settings": "Definições",
+    "rooms": "Divisões",
+    "disconnect": "Desconectar",
+    "refresh": "Actualizar",
+    "last_access": "Ultimo Acesso",
+    "connected": "Conectado",
+    "disconnected": "Desconectado"
+  },
+  "edit": {
+    "select_icon": "Selecione Icone Costumizado",
+    "reset_icon": "Repor Icone",
+    "rbg_color": "Pressão longa para editar a côr",
+    "edit": "Editar",
+    "arrange": "Organizar",
+    "move": "Mover",
+    "delete": "Apagar",
+    "devices": "dispositivos",
+    "add_room": "Adicionar divisão"
+  },
+  "alarm_panel": {
+    "arm_home":"Armar Casa",
+    "arm_away": "Armar Ausente",
+    "disarmed": "Desarmado",
+    "pending": "Pendente",
+    "armed_away": "Armado Ausente",
+    "armed_home": "Armado Casa",
+    "armed_night": "Armado Noite",
+    "armed": "Armado"
+  },
+  "toggle": {
+    "require_slide_open_disabled": "Deslizar para abrir Activo",
+    "require_slide_open_enabled": "Deslizar para abrir Inactivo",
+    "prevent_accidentally_open": "Prevenir abertura acidental",
+    "1_touch": "agora pode ser aberto com 1 toque"
+  },
+  "rgb": {
+    "pick_color": "Escolha uma Côr!"
+  },
+  "webview": {
+    "edit": "Editar Website",
+    "saved": "Website gravado",
+    "reload": "Recarregar Website",
+    "pin": "Marcar pagina Web - Previne que o ecrã role",
+    "unpin": "Desmarcar Pagina Web - permite que o ecrã role",
+    "windy": "Ventoso",
+    "y_weather": "Y! Tempo",
+    "live_score": "tempo real",
+    "aspect": "Aspecto"
+  },
+  "login": {
+    "connecting": "A Conectar-se a",
+    "correct_info": "Certifique-se que a seguinte informação está correcta",
+    "cancel": "Cancelar conecção de autenticação à Web"
+  },
+  "settings": {
+    "home_assistant": "Conecção ao Home Assistant",
+    "new_connection": "Criar Nova Conecção...",
+    "use_https": "Usar https",
+    "connect": "Conectar",
+    "sync": "Google Cloud Sync",
+    "theme_color": "Côr do Tema",
+    "language": "Lingua",
+    "layout": "Disposição",
+    "about": "Acerca do HassKit",
+    "about_info": "HassKit é uma aplicação simples, de facil configuração, que vai ajudar instantaneamente os utilizadores a usar o Home Assistant.\n\nHome Assistant é uma das melhores plataformas para domótica residencial, com poderosas funcionalidades e com um suporte para equipamentos a nivel global. O Home Assistant apenas requer um equipamento simples/barato para poder começar a usar.\n\nContudo, o Home Assistant não é de facil configuração e leva algum tempo a configurar e a ajustar-se a todas as suas necessidades. HassKit tem como finalidade facilitar todos os processos e melhorar a qualidade de vida aos utilizadores do Home Assistant, fornecendo uma fantástica visualização e uma configuração de apenas 10 segundos para que possa  começar a utilizar esta fantástica plataforma de domótica.\n\nHassKit é gratuito, de código aberto (open-source) e está ainda em desenvolvimento. Necessitamos toda a sua ajuda para aperfeiçoar as opções dadas por esta aplicação de forma a servi-lo melhor.\n\nEncontre-nos no Discord e no Facebook. O seu donativo será bem-vindo.",
+    "3_buttons": "3 Botões",
+    "4_buttons": "4 Botões",
+    "settingLocked": "Bloquear conexão do servidor, sincronização na nuvem e configuração de salas"
+  },
+  "google_sync": {
+    "use": "Use a Cloud Data Sync",
+    "info": "Mantenha a disposição da suas divisões e a costumização do dispositivo sincronizado entre os dispositivos. HassKit não irá carregar as suas informações enquanto estiver conectado...",
+    "sign_out": "Finalizar",
+    "sign_in": "Iniciar",
+    "force_download": "Forçar o download dos dados da nuvem",
+    "sync_problem": "Utilizar APENAS quando houver problemas de sincronização",
+    "force_upload": "Forçar o envio dos dados para a nuvem",
+    "force_reset": "Forçar a reposição da informação na nuvem"
+  },
+  "theme_selector": {
+    "dark": "Tema Escuro",
+    "light": "Tema Claro"
+  },
+  "states": {
+    "on": "Ligar",
+    "turning_on": "A Ligar...",
+    "off": "Desligar",
+    "turning_off": "A Desligar...",
+    "closed": "Fechado",
+    "closing": "A Fechar...",
+    "open": "Abrir",
+    "opening": "A Abrir...",
+    "locked": "Travado",
+    "locking": "A travar...",
+    "unlocked": "Destravado",
+    "unlocking": "A Destravar...",
+    "disarmed": "Desarmado",
+    "arm_pending": "Pendente",
+    "armed_away": "Armado ausente",
+    "armed_home": "Armado casa",
+    "armed_night": "Armado noite",
+    "armed": "Armado",
+    "fan_high": "Alto",
+    "fan_high_medium": "Medio alto",
+    "fan_medium": "Medio",
+    "fan_medium_low": "Medio Baixo",
+    "fan_low": "Baixo",
+    "fan_lowest": "Minimo"
+  }
+}

@@ -1,0 +1,128 @@
+{
+    "global": {
+        "duration": "Durata",
+        "open": "aperto",
+        "closed": "chiuso",
+        "on": "on",
+        "off": "off",
+        "error": "Errore",
+        "no_data": "non ci sono informazioni disponibili",
+        "reset": "Reset",
+        "ok": "Ok",
+        "left": "Sinistra",
+        "right": "Destra",
+        "connect_hass": "Perfavore connettiti a\nHome Assistant",
+        "connect_demo": "Impostare\nHassKit Demo",
+        "last_update": "Ultimo aggiornamento",
+        "cancel": "Annulla",
+        "settings": "Impostazioni",
+        "rooms": "Stanze",
+        "disconnect": "Sconnessione",
+        "refresh": "Ricarica",
+        "last_access": "Ultimo Accesso",
+        "connected": "Connesso",
+        "disconnected": "Sconnesso"
+    },
+    "edit": {
+        "select_icon": "Seleziona un'icona personalizzata",
+        "reset_icon": "Re-imposta l'icona di default",
+        "rbg_color": "Tieni premuto per modificare il colore",
+        "edit": "Modifica",
+        "arrange": "Imposta",
+        "move": "Sposta",
+        "delete": "Elimina",
+        "devices": "Dispositivi",
+        "add_room": "Aggiungi una nuova stanza"
+    },
+    "alarm_panel": {
+        "arm_home":"Attiva 'a casa'",
+        "arm_away": "Attiva 'fuori casa'",
+        "disarmed": "Disattivato",
+        "pending": "In Attesa",
+        "armed_away": "Attivato 'fuori casa'",
+        "armed_home": "Attivato 'a casa'",
+        "armed_night": "Attivato 'notte'",
+        "armed": "Attivato"
+    },
+    "toggle": {
+        "require_slide_open_disabled": "Scorri per aprire disattivato",
+        "require_slide_open_enabled": "Scorri per aprire attivato",
+        "prevent_accidentally_open": "Evita l'appertura accidentale",
+        "1_touch": "ora può essere aperto con 1 tocco"
+    },
+    "rgb": {
+        "pick_color": "Scegli un colore!"
+    },
+    "webview": {
+        "edit": "Modifica siti",
+        "saved": "Sito salvato",
+        "reload": "Ricarica siti",
+        "pin": "Sito Fissato - Non potrai scorrere il sito",
+        "unpin": "Sito Liberato - Potrai scorrere il sito",
+        "windy": "Ventoso",
+        "y_weather": "Y! Mateo",
+        "live_score": "Valore",
+        "aspect": "Aspetto"
+    },
+    "login": {
+        "connecting": "Sto connettendo",
+        "correct_info": "Assicurati di aver inserito le informazioni corrette",
+        "cancel": "Rimuovi la connessione"
+    },
+    "settings": {
+        "home_assistant": "Connessione a Home Assistant",
+        "new_connection": "Crea una nuova connessione...",
+        "use_https": "Usa https",
+        "connect": "Connetti",
+        "sync": "Google Cloud Sync",
+        "theme_color": "Tema colore",
+        "language": "Lingua",
+        "layout": "Layout",
+        "about": "Su HassKit",
+        "about_info": "HassKit è un'app Touch-Friendly - Zero Config per aiutare gli utenti a iniziare a utilizzare immediatamente Home Assistant.\n\nHome Assistant è una delle migliori piattaforme per l'automazione domestica, con potenti funzionalità e la più ampia gamma di dispositivi al mondo. Home Assistant richiede solo hardware semplice/economico per iniziare.\n\nTuttavia, Home Assistant non è molto facile da configurare e richiede un po 'di tempo per adattarsi alle tue esigenze. HassKit mira a semplificare le fasi di apprendimento e migliorare la qualità della vita degli utenti di Home Assistant fornendo un aspetto sorprendente e una configurazione di 10 secondi per iniziare a utilizzare questa meravigliosa piattaforma di automazione domestica.\n\nHassKit è gratuito, open-source e in fase di sviluppo. Abbiamo bisogno del tuo aiuto per migliorare le funzionalità dell'app per consentirci di offrirti un servizio migliore.\n\nTrovaci su Discord e Facebook. I tuoi contributi sono sempre ben accetti.",
+        "3_buttons": "3 Bottoni",
+        "4_buttons": "4 Bottoni",
+        "settingLocked": "Blocca la connessione al server, cloud sync e le impostazioni delle stanze"
+        
+    },
+    "google_sync": {
+        "use": "Utilizza Cloud Data Sync",
+        "info": "Mantieni il layout delle stanze e la personalizzazione tra i vari dispositivi. HassKit non caricherà le tue credenzialità online...",
+        "sign_out": "Esci",
+        "sign_in": "Login",
+        "force_download": "Scarica le informazioni dal cloud",
+        "sync_problem": "Utilizzalo SOLO quando hai problemi di sincronizzazione.",
+        "force_upload": "Forza il caricamento di informazioni sul cloud",
+        "force_reset": "Forza l'azzeramento di informazioni sul cloud"
+    },
+    "theme_selector": {
+        "dark": "Tema Scuro",
+        "light": "Tema Chiaro"
+    },
+    "states": {
+        "on": "Acceso",
+        "turning_on": "Accendo...",
+        "off": "Spento",
+        "turning_off": "Spegnendo...",
+        "closed": "Chiuso",
+        "closing": "Chiudendo...",
+        "open": "Aperto",
+        "opening": "Aprendo...",
+        "locked": "Bloccato",
+        "locking": "Bloccando...",
+        "unlocked": "Sbloccato",
+        "unlocking": "Sbloccando...",
+        "disarmed": "Disinserito",
+        "arm_pending": "In Attesa",
+        "armed_away": "Inserito 'fuori casa'",
+        "armed_home": "Inserito 'a casa'",
+        "armed_night": "Inserito 'notte'",
+        "armed": "Inserito",
+        "fan_high": "Veloce",
+        "fan_high_medium": "Medio-Veloce",
+        "fan_medium": "Medio",
+        "fan_medium_low": "Medio-Lento",
+        "fan_low": "Lento",
+        "fan_lowest": "Lentissimo"
+    }
+}

@@ -1,0 +1,128 @@
+{
+    "global": {
+        "duration": "Czas trwania",
+        "open": "Otwarte",
+        "closed": "Zamknięte",
+        "on": "Wł.",
+        "off": "Wył.",
+        "error": "Błąd",
+        "no_data": "brak danych",
+        "reset": "Reset",
+        "ok": "OK",
+        "left": "w lewo",
+        "right": "w prawo",
+        "connect_hass": "Połącz się z\nHome Assistant",
+        "connect_demo": "Konfiguracja\nHass KitDemo",
+        "last_update": "Ostatnia aktualizacja",
+        "cancel": "Anuluj",
+        "settings": "Ustawienia",
+        "rooms": "Pokoje",
+        "disconnect": "Rozłącz",
+        "refresh": "Odśwież",
+        "last_access": "Ostatni dostęp",
+        "connected": "Połączono",
+        "disconnected": "Rozłączono"
+    },
+    "edit": {
+        "select_icon": "Wybierz ikonę",
+        "reset_icon": "Resetuj ikonę",
+        "rbg_color": "Przytrzymaj, aby zmienić kolor",
+        "edit": "Edytuj",
+        "arrange": "Ułóż",
+        "move": "Przesuń",
+        "delete": "Usuń",
+        "devices": "(urządzenia)",
+        "add_room": "Dodaj nowy pokój"
+    },
+    "alarm_panel": {
+        "arm_home": "Uzbrój (w domu)",
+        "arm_away": "Uzbrój (poza domem)",
+        "disarmed": "Nieuzbrojone",
+        "pending": "W trakcie",
+        "armed_away": "Uzbrojone (poza domem)",
+        "armed_home": "Uzbrojone (w domu)",
+        "armed_night": "Uzbrojone (noc)",
+        "armed": "Uzbrojone"
+    },
+    "toggle": {
+        "require_slide_open_disabled": "Wymagaj przesunięcia, żeby otworzyć - wyłączone",
+        "require_slide_open_enabled": "Wymagaj przesunięcia, żeby otworzyć - włączone",
+        "prevent_accidentally_open": "Zapobiegaj przypadkowemu otwarciu",
+        "1_touch": "może być teraz otwarte jednym dotknięciem"
+    },
+    "rgb": {
+        "pick_color": "Wybierz kolor!"
+    },
+    "webview": {
+        "edit": "Edytuj stronę",
+        "saved": "Strona zapisana",
+        "reload": "Odśwież stronę",
+        "pin": "Przypnij stronę - zapobiegaj przewijaniu",
+        "unpin": "Odepnij stronę - pozwalaj na przewijanie",
+        "windy": "Windy",
+        "y_weather": "Y! Weather",
+        "live_score": "LiveScore",
+        "aspect": "Aspect"
+    },
+    "login": {
+        "connecting": "Łączenie z",
+        "correct_info": "Upewnij się, że poniższe dane są prawidłowe",
+        "cancel": "Anuluj logowanie przez sieć"
+    },
+    "settings": {
+        "home_assistant": "Połączenie z Home Assistant",
+        "new_connection": "Utwórz nowe połączenie...",
+        "use_https": "Używaj https",
+        "connect": "Połącz",
+        "sync": "Google Cloud Sync",
+        "theme_color": "Kolor motywu",
+        "language": "Język",
+        "layout": "Układ",
+        "about": "O HassKit",
+        "about_info": "HassKit to zoptymalizowana pod obsługę dotykową, bezkonfiguracyjna aplikacja, pomagająca użytkownikom od razu zacząć korzystać z Home Assistant.\n\nHome Assistant jest jedną z najlepszych platform automatyki domowej, oferującą zaawansowane funkcje i najszerszy na świecie zakres wspieranych urządzeń. Aby rozpocząć, Home Assistant wymaga jedynie niewielkiej ilości prostego/niedrogiego sprzętu.\n\nHome Assistant nie jest jednak najłatwiejszy w konfiguracji i dostosowanie go do swoich potrzeb zajmuje trochę czasu. HassKit ma na celu ułatwić uczenie się i poprawić jakość życia użytkowników Home Assistant, zapewniając fantastyczny wygląd i 10-sekundową konfigurację, aby rozpocząć korzystanie z tej wspaniałej platformy automatyki domowej.\n\nHassKit jest darmowy, open source i w ciągłym rozwoju. Potrzebujemy Twojej pomocy w ulepszaniu aplikacji, aby mogła lepiej Ci służyć.\n\nZnajdź nas na Discord i Facebooku. Twój wkład jest zawsze mile widziany.",
+        "3_buttons": "3 przyciski",
+        "4_buttons": "4 przyciski",
+        "settingLocked": "Blokada ustawień połączenia, synchronizacji i pokojów"
+        
+    },
+    "google_sync": {
+        "use": "Używaj synchronizacji danych w chmurze",
+        "info": "Synchronizuj układ pokojów i ustawienia sprzętu między urządzeniami. HassKit nie przechowuje Twoich danych logowania online.",
+        "sign_out": "Wyloguj",
+        "sign_in": "Zaloguj",
+        "force_download": "Wymuś pobranie danych z chmury",
+        "sync_problem": "Używaj TYLKO przy problemach z synchronizacją",
+        "force_upload": "Wymuś wysłanie danych do chmury",
+        "force_reset": "Wymuś reset danych w chmurze"
+    },
+    "theme_selector": {
+        "dark": "Ciemny motyw",
+        "light": "Jasny motyw"
+    },
+    "states": {
+        "on": "Wł.",
+        "turning_on": "Włączanie...",
+        "off": "Wył.",
+        "turning_off": "Wyłączanie...",
+        "closed": "Zamknięte",
+        "closing": "Zamykanie...",
+        "open": "Otwarte",
+        "opening": "Otwieranie...",
+        "locked": "Zablokowane",
+        "locking": "Blokowanie...",
+        "unlocked": "Odblokowane",
+        "unlocking": "Blokowanie...",
+        "disarmed": "Nieuzbrojone",
+        "arm_pending": "W trakcie",
+        "armed_away": "Uzbr. (poza domem)",
+        "armed_home": "Uzbr. (w domu)",
+        "armed_night": "Uzbr. (noc)",
+        "armed": "Uzbrojone",
+        "fan_high": "Wysoki",
+        "fan_high_medium": "Śr. wys.",
+        "fan_medium": "Średni",
+        "fan_medium_low": "Śr. nis.",
+        "fan_low": "Niski",
+        "fan_lowest": "Najniższy"
+    }
+}

@@ -1,0 +1,128 @@
+{
+    "global": {
+        "duration": "Duración",
+        "open": "abierta",
+        "closed": "cerrada",
+        "on": "encendida",
+        "off": "apagada",
+        "error": "Error",
+        "no_data": "no hay datos disponibles",
+        "reset": "Reiniciar",
+        "ok": "Ok",
+        "left": "Izquierda",
+        "right": "Derecha",
+        "connect_hass": "Por favor conecta a\nHome Assistant",
+        "connect_demo": "Configurando\nHassKit Demo",
+        "last_update": "Última actualización",
+        "cancel": "Cancelar",
+        "settings": "Preferencias",
+        "rooms": "Habitaciones",
+        "disconnect": "Desconectar",
+        "refresh": "Refrescar",
+        "last_access": "Último Acceso",
+        "connected": "Conectado",
+        "disconnected": "Desconectado"
+    },
+    "edit": {
+        "select_icon": "Seleccionar Icono Propio",
+        "reset_icon": "Reiniciar Icono",
+        "rbg_color": "Pulsación Larga Para Editar Color",
+        "edit": "Editar",
+        "arrange": "Ordenar",
+        "move": "Mover",
+        "delete": "Borrar",
+        "devices": "Dispositivos",
+        "add_room": "Añadir Nueva Habitación"
+    },
+    "alarm_panel": {
+        "arm_home":"Armar Casa",
+        "arm_away": "Armar Fuera",
+        "disarmed": "Desarmar",
+        "pending": "Pendiente",
+        "armed_away": "Armada Fuera",
+        "armed_home": "Armada Casa",
+        "armed_night": "Armada Noche",
+        "armed": "Armada"
+    },
+    "toggle": {
+        "require_slide_open_disabled": "Deslizar para abrir desactivado",
+        "require_slide_open_enabled": "Deslizar para abrir activado",
+        "prevent_accidentally_open": "Evitar apertura accidental",
+        "1_touch": "ahora puede ser abierta con 1 toque"
+    },
+    "rgb": {
+        "pick_color": "Elige un color!"
+    },
+    "webview": {
+        "edit": "Editar web",
+        "saved": "Web guardada",
+        "reload": "Recargar web",
+        "pin": "Web Fija - Evitar deslizamientpo por la web",
+        "unpin": "Web Libre - Permitir deslizamiento por la web",
+        "windy": "Ventoso",
+        "y_weather": "Y! Meteo",
+        "live_score": "Valores",
+        "aspect": "Aspecto"
+    },
+    "login": {
+        "connecting": "Conectando a",
+        "correct_info": "Asegura que la información siguiente sea correcta",
+        "cancel": "Cancelar Conexión Web"
+    },
+    "settings": {
+        "home_assistant": "Conexión a Home Assistant",
+        "new_connection": "Crear Nueva Conexión...",
+        "use_https": "Usar https",
+        "connect": "Conectar",
+        "sync": "Google Cloud Sync",
+        "theme_color": "Color del Tema",
+        "language": "Idioma",
+        "layout": "Plantilla",
+        "about": "Acerca de HassKit",
+        "about_info": "HassKit es una aplicación táctil fácilmente configurable para ayudar a los usuarios a usar Home Assistant.\n\nHome Assistant es una de las mejores plataformas de Automatización Doméstica, con características muy potentes y el mayor rango de dispositivos soportados del mundo. Home Assistant solamente requiere de un equipo económico para empezar.\n\nSin embargo, Home Assistant no es simple de configurar y requiere de tiempo para ajustarlo a tus necesidades. HassKit tiene como objetivo ayudar en los primero pasos y mejorar la calidad de vida de los usuarios de Home Assistant proporcionando un impresionante diseño y una configuración en 10 segundos para empezar a usar esta maravillosa plataforma de Automatización Doméstica.\n\nHassKit es gratuita, de código abierta y bajo desarrollo. Necesitamos tu ayuda para poder mejorar las características de la aplicación y que te sea útil.\n\nPor favor, encuéntranos en Discord y Facebook. Tus contribuciones son siempre bienvenidas.",
+        "3_buttons": "3 Botones",
+        "4_buttons": "4 Botones",
+        "settingLocked": "Bloquear la conexión al servidor, la sincronización en la nube y la configuración de las habitaciones"
+        
+    },
+    "google_sync": {
+        "use": "Usar Sincronización en la Nube",
+        "info": "Mantener tus datos de las habitaciones sincronizadas entre dispositivos. HassKit no almacenará tu contraseña...",
+        "sign_out": "Desconectar",
+        "sign_in": "Conectar",
+        "force_download": "Forzar la descarga de datos de la nube",
+        "sync_problem": "Usar SOLAMENTE cuando tengas algún problema de sincronización",
+        "force_upload": "Forzar la subida de datos a la nube",
+        "force_reset": "Forzar el reinicio de datos de la nube"
+    },
+    "theme_selector": {
+        "dark": "Tema Oscuro",
+        "light": "Tema Claro"
+    },
+    "states": {
+        "on": "Encendida",
+        "turning_on": "Encendiendo...",
+        "off": "Apagada",
+        "turning_off": "Apagando...",
+        "closed": "Cerrada",
+        "closing": "Cerrando...",
+        "open": "Abierta",
+        "opening": "Abriendo...",
+        "locked": "Bloqueada",
+        "locking": "Bloqueando...",
+        "unlocked": "Desbloqueada",
+        "unlocking": "Desbloqueando...",
+        "disarmed": "Desarmada",
+        "arm_pending": "Pendiente",
+        "armed_away": "Armada Fuera",
+        "armed_home": "Armada Casa",
+        "armed_night": "Armada Noche",
+        "armed": "Armada",
+        "fan_high": "Alto",
+        "fan_high_medium": "Medio Alto",
+        "fan_medium": "Medio",
+        "fan_medium_low": "Medio Bajo",
+        "fan_low": "Bajo",
+        "fan_lowest": "Mínimo"
+    }
+}

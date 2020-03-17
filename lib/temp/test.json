@@ -1,0 +1,14 @@
+{
+  "type": "update_registration",
+  "data": {
+    "app_data": {
+      "push_notification_key": "f-2VId26G0E:APA91bElfBuFpijwNvFzWGx7tj_J44ETigCqG7ChIBpX9OtxGfpgdn0XDbQjtibGzDXFMHZRKYgDQtM_hqUEFnIWuru3ZWv5IDzdUDezT6tJinCJohhdEE7QQNYOeRT7rpGPcbgCmQP3",
+      "push_url": "https://fcm.googleapis.com/fcm/send"
+    },
+    "app_version": "4.0",
+    "device_name": "HassKit-8905",
+    "manufacturer": "Google",
+    "model": "Android SDK built for x86",
+    "os_name": ""
+  }
+}

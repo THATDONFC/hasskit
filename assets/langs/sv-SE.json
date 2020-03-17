@@ -12,6 +12,7 @@
         "left": "Vänster",
         "right": "Höger",
         "connect_hass": "Var vänlig anslut till\nHome Assistant",
+        "connect_demo": "Ställa in\nHassKit Demo",
         "last_update": "Senast uppdaterad",
         "cancel": "Avbryt",
         "settings": "Inställningar",
@@ -80,7 +81,9 @@
         "about": "Om HassKit",
         "about_info": "HassKit är en touch-vänlig - noll konfigurerings app för att hjälpa till att få det lätt att komma igång med Home Assistant.\n\nHome Assistant är en av de bästa plattformarna för hem automatition, med kraftfulla funktioner och stödjer väldigt många enheter. Home Assistant kräver väldigt lite av hårdvaran och han köras på billig hårdvara. Dock så är Home Assistant inte lätt att komma igång med då det kräver mycket konfigurering och även lite script kunskaper. HassKits mål är att ta bort denna tröskel och göra Home Assistant tillgängligt för alla.\n\nHassKit är gratis och open source. Det är under utveckling. Vi behöver hjälp med att göra appen ännu bättre med mer funktioner!\n\nNi kan hitta oss på Discord eller Facebook. Dina bidrag är alltid välkomna.",
         "3_buttons": "3 Knappar",
-        "4_buttons": "4 Knappar"
+        "4_buttons": "4 Knappar",
+        "settingLocked": "Lås serveranslutning, molnsynk och rumsinställning"
+        
     },
     "google_sync": {
         "use": "Använd google måln sync",

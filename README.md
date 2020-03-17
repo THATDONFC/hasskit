@@ -2,37 +2,33 @@
 
 An Elegant Home Assistant Control App
 <br><br>
+[![Watch the video](https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/STORY%20(0-00-35-12).paused.png?raw=true)](https://www.youtube.com/watch?v=Cwpf4ENdC5k)
+<br><br>
 <table width="100%">
 <tbody>
 <tr align="center">
-<td><img width="400" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/Screenshot_1574148362.png?raw=true"></td>
-<td><img width="400" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/Screenshot_1574148393.png?raw=true"></td>
-<td><img width="400" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/Screenshot_1574148419.png?raw=true"></td>
+<td><img width="480" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/general.gif"></td>
+<td><img width="480" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/google_map.gif"></td>
 </tr>
 <tr align="center">
-<td><img width="400" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/climate.gif"></td>
-<td><img width="400" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/fan.gif"></td>
-<td><img width="400" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/garage.gif"></td>
+<td><img width="480" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/settings.gif"></td>
+<td><img width="480" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/climate.gif"></td>
 </tr>
 <tr align="center">
-<td><img width="400" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/camera.gif"></td>
-<td><img width="400" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/light.gif"></td>
-<td><img width="400" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/lock.gif"></td>
+<td><img width="480" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/fan.gif"></td>
+<td><img width="480" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/media_player.gif"></td>
+</tr>
+<tr align="center">
+<td><img width="480" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/home_alarm.gif"></td>
+<td><img width="480" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/light.gif"></td>
+</tr>
+<tr align="center">
+<td><img width="480" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/edit.gif"></td>
+<td><img width="480" src="https://github.com/tuanha2000vn/hasskit/blob/master/graphic%20template/Promo/graph.gif"></td>
 </tr>
 </tbody>
 </table>
 <br><br>
-
-## Please join us on
-
-<table width="100%">
-<tbody>
-<tr align="center">
-<td><a href="https://discord.gg/cqYr52P"><img src="https://github.com/tuanha2000vn/hasskit/blob/master/assets/images/discord-512.png" alt="" width="200" /><br />Discord</a></td>
-<td><a href="https://www.facebook.com/groups/709634206223205"><img src="https://github.com/tuanha2000vn/hasskit/blob/master/assets/images/facebook-logo.png" alt="" width="200" /><br />Facebook</a></td>
-</tr>
-</tbody>
-</table>
 
 ## What is HassKit
 
@@ -50,7 +46,7 @@ https://discord.gg/cqYr52P
 
 https://www.facebook.com/groups/709634206223205
 
-## How can I install the App?
+## How Can I Install HassKit on My Phone?
 
 Download from Github, usually the most updated version (android only)
 https://github.com/tuanha2000vn/hasskit/releases
@@ -60,3 +56,8 @@ https://apps.apple.com/us/app/hasskit/id1485362169
 
 Download on the Google Playstore
 https://play.google.com/store/apps/details?id=com.thhkstudio.hasskit
+
+## How Can I Build HassKit Myself?
+
+Please follow our guide to get started
+https://github.com/tuanha2000vn/hasskit/blob/master/installation.md

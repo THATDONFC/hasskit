@@ -11,7 +11,8 @@
         "ok": "Ok",
         "left": "Balra",
         "right": "Jobbra",
-        "connect_hass": "Csatlakozz a\nHome Assistant-hez.",
+        "connect_hass": "Kérjük, csatlakozzon a\nHome Assistanzt",
+        "connect_demo": "Felállítása\nHassKit Demo",
         "last_update": "Utolsó frissítés",
         "cancel": "Mégsem",
         "settings": "Beállítások",
@@ -80,7 +81,9 @@
         "about": "A HassKitről",
         "about_info": "A HassKit egy felhasználóbarát, konfigurálást nem igénylő alkalmazás, amely megkönnyíti a Home Assistant használatát.\n\nA Home Assistant az egyik legjobb okosotthon platform hatékony megoldásokkal és funkciókkal, mindemellett a világon a legszéleskörűbb eszköztámogatással. A Home Assistant mindössze néhány egyszerű és olcsó hardvert igényel.\n\nEnnek ellenére a Home Assistant konfigurálása nem egyszerű és eltart egy ideig, hogy testreszabjuk. A HassKit célja megkönnyíteni a kezdeti lépéseket és javítani a felhasználói élményen egy intuitív felhasználói felülettel, hogy mindössze 10 másodperc alatt használatba vehessük ezt a csodás otthonautomatizálási platformot.\n\nA HassKit egy ingyenes, nyílt forráskódú, fejlesztés alatt álló szoftver. A legjobb felhasználói élmény megvalósításához szükségünk van a segítségedre.\n\nKeress meg minket Discordon és Facebookon. Köszönjük az együttműködésed.",
         "3_buttons": "3 Gombos",
-        "4_buttons": "4 Gombos"
+        "4_buttons": "4 Gombos",
+        "settingLocked": "Zárolja a szerver kapcsolatot, a felhő szinkronizálását és a szoba beállítását"
+        
     },
     "google_sync": {
         "use": "Felhő Szinkronizálás Használata",
